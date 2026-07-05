@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* v1.1: Styling tetep utuh */
         .dynamic-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 8px; border-bottom: none; padding-bottom: 5px; }
         .dynamic-tabs::-webkit-scrollbar { display: none; }
         .dynamic-tabs .nav-item { flex: 0 0 auto; }
@@ -33,7 +34,6 @@
         
         <nav class="navbar navbar-expand bg-white sticky-top shadow-sm mb-3 border-bottom border-danger border-3" style="z-index: 1020; padding: 6px 0;">
             <div class="container-fluid px-3 d-flex flex-column align-items-stretch">
-                <!-- BARIS 1: Header Atas -->
                 <div class="d-flex justify-content-between align-items-center w-100 mb-2">
                     <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden" style="font-size: 0.75rem; line-height: 1.25;">
                         <div class="d-flex align-items-center mb-1"><span id="netStatus" class="me-1"></span><span class="fw-bold text-danger" style="font-size: 0.85rem;"><i class="bi bi-shield-fill-check me-1"></i> ADMIN GOD MODE</span></div>
@@ -50,7 +50,6 @@
                     </div>
                 </div>
 
-                <!-- BARIS 2: MASTER DROPDOWN HANDLE SCHOOL -->
                 <div class="w-100 bg-danger bg-opacity-10 p-2 rounded border border-danger border-opacity-50 d-flex align-items-center">
                     <i class="bi bi-buildings-fill text-danger me-2 fs-5"></i>
                     <select id="masterSchoolSelect" class="form-select form-select-sm fw-bold border-danger text-danger bg-white shadow-sm">
@@ -61,7 +60,6 @@
             </div>
         </nav>
 
-        <!-- KONTEN UTAMA -->
         <div class="container pb-5" id="mainContentArea">
             <div class="row">
                 <div class="col-12 col-lg-7 mb-4">
@@ -77,7 +75,6 @@
 
                     <div class="tab-content h-100">
                         
-                        <!-- TAB TUTOR -->
                         <div class="tab-pane fade show active" id="tab-tutor"><div class="card card-custom p-3 shadow-sm bg-white border-primary border-2 mb-3"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-fill-add me-2"></i> Kelola Tutor (Global)</h6><div class="row g-2 mb-2"><div class="col-4"><input type="text" id="newUser" class="form-control form-control-sm text-xs text-lowercase fw-bold" placeholder="username"></div><div class="col-4"><input type="text" id="newPin" class="form-control form-control-sm text-xs text-danger fw-bold" placeholder="PIN Angka"></div><div class="col-4"><input type="text" id="newName" class="form-control form-control-sm text-xs" placeholder="Julukan"></div></div><div class="row g-2 mb-3"><div class="col-6"><select id="newRole" class="form-select form-select-sm text-xs"><option value="mentor">Mentor</option><option value="direktur">Direktur</option><option value="admin">Admin</option></select></div><div class="col-6"><button id="btnAddUser" class="btn btn-sm btn-primary w-100 fw-bold">Tambah Akun</button></div></div><div class="table-responsive"><table class="table table-sm table-bordered text-xs align-middle text-center"><thead class="table-light"><tr><th>User</th><th>Nama</th><th>Role</th><th>PIN</th><th>Aksi</th></tr></thead><tbody id="listUsersTable"></tbody></table></div></div><div class="card card-custom p-3 shadow-sm bg-white"><h6 class="fw-bold text-dark mb-2"><i class="bi bi-trophy text-warning me-2"></i> Kinerja Tutor (Di Sekolah Yg Dipilih)</h6><div id="leaderboardTutor" class="space-y-2">Pilih sekolah di atas untuk melihat ranking...</div></div></div>
 
                         <div class="tab-pane fade" id="tab-setup">
@@ -137,7 +134,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, sendTugasWA, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, sendJapri, deleteChat } from './script.js?v=14.1';
-        import { collection, setDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // v1.1: Penambahan fungsi deleteDoc ing import Firebase
+        import { collection, setDoc, doc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const actUser = sessionStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
         document.getElementById("userNameDisplay").innerText = "Login: " + actUser + " (" + sessionStorage.getItem("loggedInName") + ")";
@@ -147,19 +146,16 @@
 
         let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = [];
         
-        // VARIABEL PENYIMPAN LISTENER (PIPA) BEN ISO DITUTUP
         let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
 
-        // FUNGSI RESIK-RESIK PIPA BOCOR
         function bersihkanListener() {
             if(unsubSchool) { unsubSchool(); unsubSchool = null; }
             if(unsubLogbooks) { unsubLogbooks(); unsubLogbooks = null; }
             if(unsubChats) { unsubChats(); unsubChats = null; }
             if(unsubWA) { unsubWA(); unsubWA = null; }
-            dataLengkap = []; // Kosongkan array data
+            dataLengkap = [];
         }
 
-        // 1. INIT MASTER DROPDOWN
         listenToSchools((schools) => {
             const select = document.getElementById("masterSchoolSelect"); const prev = select.value;
             select.innerHTML = `<option value="">-- Pilih Handle School utk diedit --</option><option value="NEW" class="fw-bold text-primary">+ BUAT SEKOLAH BARU</option>`;
@@ -167,11 +163,9 @@
             if (Array.from(select.options).some(o=>o.value===prev)) select.value = prev;
         });
 
-        // KETIKA ADMIN MILIH SEKOLAH
         document.getElementById("masterSchoolSelect").onchange = (e) => {
             const val = e.target.value;
             
-            // TUTUP SEMUA PIPA DATA SEKOLAH SEBELUMNYA! (ANTI AMBURADUL)
             bersihkanListener();
 
             if(!val) { 
@@ -198,7 +192,6 @@
             }
         };
 
-        // 2. MUAT DATA SPESIFIK SEKOLAH
         function muatDataSekolah(sid) {
             unsubSchool = listenToSingleSchool(sid, (data) => {
                 if(!data) return;
@@ -212,10 +205,8 @@
                 renderTracker();
             });
 
-            // BUKA PIPA LOGBOOK BARU
             unsubLogbooks = listenToLogbooks(sid, (logs) => { dataLengkap = logs; ekstrakHari(); renderListAdmin(); renderTracker(); kalkulasiDataSiswa(); kalkulasiKinerjaMentor(); });
             
-            // BUKA PIPA CHAT BARU
             unsubChats = listenToChats(sid, (chats) => {
                 const box = document.getElementById("chatBox"); box.innerHTML = ""; const myName = sessionStorage.getItem("loggedInName");
                 chats.forEach(c => {
@@ -227,7 +218,6 @@
                 }); box.scrollTop = box.scrollHeight;
             });
 
-            // BUKA PIPA WA BARU
             unsubWA = listenToTugasWA(sid, (tugas) => {
                 const list = document.getElementById("listTugasAdmin"); list.innerHTML = "";
                 tugas.forEach(d => { const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', {dateStyle:'short', timeStyle:'short'}) : '-'; list.innerHTML += `<div class="p-2 border rounded bg-light mb-2"><div class="d-flex justify-content-between"><span class="badge bg-success mb-1">${d.targetKelas}</span><span class="text-xs text-muted">${w}</span></div><p class="text-xs mb-1 text-truncate">${d.instruksi}</p><button class="btn btn-xs btn-outline-danger w-100" onclick="aksidminHapusTugas('${d.id}')">Hapus Template</button></div>`; });
@@ -245,7 +235,6 @@
         };
         document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); document.getElementById("masterSchoolSelect").value = ""; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change')); } };
 
-        // 3. FUNGSI LOGBOOK DLL (Sama seperti sebelumnya, tapi butuh currentSchoolId)
         function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { const dStr = d.waktu.toDate().toLocaleDateString('id-ID'); if(!daysMap.has(dStr)) daysMap.set(dStr, d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
         function renderListAdmin() {
             const container = document.getElementById("adminLogbookList"); container.innerHTML = ""; const fHari = document.getElementById("filterHari").value; const fKelas = document.getElementById("filterKelasHistori").value;
@@ -265,7 +254,6 @@
         document.getElementById("btnSendChat").onclick = async () => { if(!currentSchoolId) return alert("Pilih sekolah dulu!"); const msg = document.getElementById("inputChat").value.trim(); const target = document.getElementById("chatTarget").value; if(!msg) return; if (target === "GLOBAL") { await sendGlobalChat(currentSchoolId, sessionStorage.getItem("loggedInName"), msg, "admin"); } else { await sendJapri(currentSchoolId, sessionStorage.getItem("loggedInName"), target, msg, "admin"); } document.getElementById("inputChat").value = ""; };
         document.getElementById("btnKirimTugasWA").onclick = async () => { if(!currentSchoolId) return alert("Pilih sekolah dulu!"); const t = document.getElementById("waTarget").value; const g = document.getElementById("waGambar").value; const i = document.getElementById("waInstruksi").value; if(!i) return alert("Instruksi wajib!"); await sendTugasWA(currentSchoolId, t, g, i); alert("Tugas WA Dibuat!"); document.getElementById("waInstruksi").value = ""; document.getElementById("waGambar").value = ""; };
         
-        // RENDER PDF MODEL TABEL (PAK DHE EXCEL)
         document.getElementById("btnExportPDF").onclick = () => {
             if(!currentSchoolId) return alert("Pilih sekolah dulu di bagian atas!");
             const fHari = document.getElementById("filterHari").value; let dataTampil = dataLengkap; if (fHari !== "SEMUA") dataTampil = dataTampil.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari);
@@ -280,10 +268,109 @@
             html2pdf().set({ margin: 0.3, filename: `AEC_Report_${currentSchoolId}_${fHari.replace(/\//g, "-")}.pdf`, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }}).from(printDiv).save();
         };
 
-        // LAIN-LAIN: Users, Tracker, Kalkulasi (Tetep jalan)
-        onSnapshot(collection(db, "users"), (snap) => { const tbody = document.getElementById("listUsersTable"); tbody.innerHTML = ""; const chatTarget = document.getElementById("chatTarget"); const prevTarget = chatTarget ? chatTarget.value : "GLOBAL"; if(chatTarget) chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; snap.forEach(d => { const ud = d.data(); const uid = d.id; const btnStatus = ud.status === 'aktif' ? `<button class="btn btn-sm btn-outline-danger py-0 px-1" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : `<button class="btn btn-sm btn-outline-success py-0 px-1" onclick="window.toggleUser('${uid}', 'aktif')"><i class="bi bi-person-check"></i></button>`; tbody.innerHTML += `<tr><td class="fw-bold text-primary">${uid}</td><td>${ud.julukan}</td><td class="text-uppercase" style="font-size:0.6rem;">${ud.role}</td><td class="font-monospace text-danger fw-bold">${ud.pin}</td><td>${btnStatus}</td></tr>`; if(chatTarget && ud.julukan !== sessionStorage.getItem("loggedInName")) { chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: ${ud.julukan}</option>`; } }); if(chatTarget) chatTarget.value = prevTarget; });
-        document.getElementById("btnAddUser").onclick = async () => { const u = document.getElementById("newUser").value.toLowerCase().trim(); const p = document.getElementById("newPin").value; const n = document.getElementById("newName").value; const r = document.getElementById("newRole").value; if(!u || !p || !n) return alert("Isi semua form!"); await setDoc(doc(db, "users", u), { pin: p, julukan: n, role: r, status: "aktif" }, { merge: true }); alert("Akun Disimpan!"); document.getElementById("newUser").value=""; document.getElementById("newPin").value=""; document.getElementById("newName").value=""; }; window.toggleUser = async function(uid, setStatus) { await setDoc(doc(db, "users", uid), { status: setStatus }, {merge: true}); };
+        // --- MULAI BLOK MANAJEMEN USER (Update v1.1) ---
+        // v1.1: Pembaruan logika onSnapshot supaya tabel nampilke tombol Edit lan Hapus
+        onSnapshot(collection(db, "users"), (snap) => { 
+            const tbody = document.getElementById("listUsersTable"); 
+            tbody.innerHTML = ""; 
+            const chatTarget = document.getElementById("chatTarget"); 
+            const prevTarget = chatTarget ? chatTarget.value : "GLOBAL"; 
+            
+            if(chatTarget) chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; 
+            
+            snap.forEach(d => { 
+                const ud = d.data(); 
+                const uid = d.id; 
+                
+                const btnStatus = ud.status === 'aktif' ? 
+                    `<button class="btn btn-sm btn-outline-danger py-0 px-1" title="Nonaktifkan" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : 
+                    `<button class="btn btn-sm btn-outline-success py-0 px-1" title="Aktifkan" onclick="window.toggleUser('${uid}', 'aktif')"><i class="bi bi-person-check"></i></button>`; 
+                
+                // v1.1: Tombol anyar dinggo edit lan hapus
+                const btnEdit = `<button class="btn btn-sm btn-outline-warning py-0 px-1 ms-1" title="Edit Akun" onclick="window.siapEditUser('${uid}', '${ud.julukan}', '${ud.role}', '${ud.pin}')"><i class="bi bi-pencil"></i></button>`;
+                const btnHapus = `<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1" title="Hapus Permanen" onclick="window.hapusUserPermanen('${uid}')"><i class="bi bi-trash"></i></button>`;
+
+                tbody.innerHTML += `<tr><td class="fw-bold text-primary">${uid}</td><td>${ud.julukan}</td><td class="text-uppercase" style="font-size:0.6rem;">${ud.role}</td><td class="font-monospace text-danger fw-bold">${ud.pin}</td><td>${btnStatus}${btnEdit}${btnHapus}</td></tr>`; 
+                
+                if(chatTarget && ud.julukan !== sessionStorage.getItem("loggedInName")) { 
+                    chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: ${ud.julukan}</option>`; 
+                } 
+            }); 
+            
+            if(chatTarget) chatTarget.value = prevTarget; 
+        });
+
+        // v1.1: Fungsi kanggo njupuk data sing arep diedit mlebu form
+        window.siapEditUser = function(uid, nama, role, pin) {
+            document.getElementById("newUser").value = uid;
+            document.getElementById("newUser").readOnly = true; 
+            document.getElementById("newPin").value = pin;
+            document.getElementById("newName").value = nama;
+            document.getElementById("newRole").value = role;
+            
+            const btn = document.getElementById("btnAddUser");
+            btn.innerText = "Update Akun";
+            btn.classList.replace("btn-primary", "btn-warning");
+
+            if(!document.getElementById("btnBatalEditUser")) {
+                const btnBatal = document.createElement("button");
+                btnBatal.id = "btnBatalEditUser";
+                btnBatal.className = "btn btn-sm btn-secondary w-100 mt-2 fw-bold";
+                btnBatal.innerText = "Batal Edit";
+                btnBatal.onclick = window.batalEditUser;
+                btn.parentNode.appendChild(btnBatal);
+            } else {
+                document.getElementById("btnBatalEditUser").style.display = "block";
+            }
+        };
+
+        // v1.1: Fungsi kanggo mbatalake mode edit lan ngosongake form
+        window.batalEditUser = function() {
+            document.getElementById("newUser").value = "";
+            document.getElementById("newUser").readOnly = false; 
+            document.getElementById("newPin").value = "";
+            document.getElementById("newName").value = "";
+            document.getElementById("newRole").value = "mentor";
+            
+            const btn = document.getElementById("btnAddUser");
+            btn.innerText = "Tambah Akun";
+            btn.classList.replace("btn-warning", "btn-primary");
+            
+            if(document.getElementById("btnBatalEditUser")) {
+                document.getElementById("btnBatalEditUser").style.display = "none";
+            }
+        };
+
+        // v1.1: Fungsi kanggo mbusak data user saka Firebase kanthi permanen
+        window.hapusUserPermanen = async function(uid) {
+            if(confirm(`Tenanan arep mbusak permanen akun: ${uid}?`)) {
+                await deleteDoc(doc(db, "users", uid));
+                alert("Akun kasil dibusak!");
+            }
+        };
+
+        // v1.1: Modifikasi fungsi simpan supaya bisa kanggo tambah anyar lan update data
+        document.getElementById("btnAddUser").onclick = async () => { 
+            const u = document.getElementById("newUser").value.toLowerCase().trim(); 
+            const p = document.getElementById("newPin").value; 
+            const n = document.getElementById("newName").value; 
+            const r = document.getElementById("newRole").value; 
+            
+            if(!u || !p || !n) return alert("Isi form dhisik!"); 
+            
+            await setDoc(doc(db, "users", u), { pin: p, julukan: n, role: r, status: "aktif" }, { merge: true }); 
+            alert("Data Akun Kasil Disimpen!"); 
+            
+            window.batalEditUser();
+        }; 
+
+        window.toggleUser = async function(uid, setStatus) { 
+            await setDoc(doc(db, "users", uid), { status: setStatus }, {merge: true}); 
+        };
+        // --- AKHIR BLOK MANAJEMEN USER ---
+
         document.getElementById('filterHari').onchange = () => renderListAdmin(); document.getElementById('filterKelasHistori').onchange = () => renderListAdmin(); document.getElementById('trackerKelas').onchange = () => renderTracker(); document.getElementById('filterKelasSiswa').onchange = () => kalkulasiDataSiswa();
+        
         function renderTracker() { const area = document.getElementById("areaTracker"); const kelasAktif = document.getElementById("trackerKelas").value; if(!rawKurikulum || Object.keys(rawKurikulum).length === 0) { area.innerHTML = "<div class='small text-muted'>Kosong.</div>"; return; } let materiSelesai = new Set(); dataLengkap.forEach(log => { if (log.kelas === kelasAktif && log.materi) { log.materi.forEach(m => materiSelesai.add(m)); } }); const renderBlok = (judul, arrayMateri, warna) => { if(!arrayMateri || arrayMateri.length === 0) return ''; let listHtml = ""; arrayMateri.forEach(mat => { const isDone = materiSelesai.has(mat); const icon = isDone ? `<i class="bi bi-check-circle-fill text-${warna}"></i>` : `<i class="bi bi-circle text-secondary opacity-50"></i>`; const bg = isDone ? `bg-${warna} bg-opacity-10 border-${warna}` : 'bg-white text-muted'; listHtml += `<div class="d-flex justify-content-between align-items-center p-2 mb-1 border rounded text-xs ${bg}"><span class="${isDone ? 'fw-bold' : ''}">${mat}</span> <span>${icon}</span></div>`; }); return `<div class="mb-3"><h6 class="text-xs fw-bold text-${warna} mb-1 border-bottom pb-1">${judul}</h6>${listHtml}</div>`; }; area.innerHTML = renderBlok("VOCABULARY", rawKurikulum.vocab, "primary") + renderBlok("SPEAKING", rawKurikulum.speaking, "success") + renderBlok("GRAMMAR", rawKurikulum.grammar, "danger"); }
         function kalkulasiDataSiswa() { const kls = document.getElementById("filterKelasSiswa").value; let rekap = {}; dataLengkap.forEach(log => { if(log.kelas === kls && log.dataSiswa) { log.dataSiswa.forEach(s => { if(!rekap[s.nama]) rekap[s.nama] = { h:0, a:0, s:0, i:0, poin:0 }; if(s.kehadiran === 'h') rekap[s.nama].h++; else if(s.kehadiran === 'a') rekap[s.nama].a++; else if(s.kehadiran === 's') rekap[s.nama].s++; else if(s.kehadiran === 'i') rekap[s.nama].i++; let nStr = (s.nilai || "").toString().toLowerCase().trim(); if(nStr === 'a' || nStr === 'a+') rekap[s.nama].poin += 90; else if(parseInt(nStr) > 0) rekap[s.nama].poin += parseInt(nStr); }); } }); const tBody = document.getElementById("tabelRekapSiswa"); tBody.innerHTML = ""; let arrSiswa = Object.keys(rekap).sort(); arrSiswa.forEach((nm, idx) => { const r = rekap[nm]; tBody.innerHTML += `<tr><td>${idx+1}</td><td class="text-start fw-bold">${nm}</td><td>${r.h}</td><td>${r.a}</td><td>${r.s}</td><td>${r.i}</td><td class="fw-bold text-success">${r.poin}</td></tr>`; }); const listTop = document.getElementById("listTop10"); listTop.innerHTML = ""; let arrPeringkat = Object.entries(rekap).map(([nama, data]) => ({ nama, poin: data.poin })).sort((a,b) => b.poin - a.poin).slice(0, 10); if(arrPeringkat.length === 0) { listTop.innerHTML = "<div class='text-muted small'>Belum ada data.</div>"; return; } arrPeringkat.forEach((item, idx) => { let badge = idx === 0 ? "bg-warning" : (idx === 1 ? "bg-secondary" : "bg-primary"); listTop.innerHTML += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1 bg-light text-sm"><div class="fw-bold"><span class="badge ${badge} me-2">#${idx+1}</span> ${item.nama}</div><div class="fw-bold text-success">${item.poin} Pts</div></div>`; }); }
         function kalkulasiKinerjaMentor() { let rekapMentor = {}; dataLengkap.forEach(log => { if(!rekapMentor[log.nama]) rekapMentor[log.nama] = 0; rekapMentor[log.nama]++; }); const board = document.getElementById("leaderboardTutor"); board.innerHTML = ""; let arrMentor = Object.entries(rekapMentor).map(([nama, count]) => ({nama, count})).sort((a,b) => b.count - a.count); arrMentor.forEach((m, idx) => { let med = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : "🏅"); board.innerHTML += `<div class="d-flex justify-content-between p-2 border rounded mb-1 bg-white shadow-sm text-sm"><div class="fw-bold">${med} ${m.nama}</div><div class="badge bg-primary">${m.count} Logbook</div></div>`; }); }
