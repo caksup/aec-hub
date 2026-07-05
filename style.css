@@ -20,7 +20,6 @@
 
 /* 2. ADAPTIVE DARK MODE OTOMATIS (SISTEM) */
 @media (prefers-color-scheme: dark) {
-    /* Yen user durung milih tema manual, melu sistem HP */
     :root:not([data-theme="light"]) {
         --wa-primary: #1f2c34; 
         --wa-dark: #111b21;
@@ -52,7 +51,12 @@
 }
 
 /* 3. CORE GLOBAL STYLES */
-body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: all 0.3s; padding-bottom: 70px; /* Space nggo bottom nav */ }
+body { 
+    background-color: var(--wa-bg) !important; 
+    color: var(--wa-text-main) !important; 
+    transition: all 0.3s; 
+    padding-bottom: 70px; /* Space nggo bottom nav ben ra ketutupan */ 
+}
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
 .bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: all 0.3s; }
 .text-wa { color: #00a884 !important; }
