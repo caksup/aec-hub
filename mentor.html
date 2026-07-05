@@ -1,3 +1,4 @@
+<!-- v1.3: Perombakan UI Header Mentor (Pindah nama, Dropdown ringkes, Format Timeline ❶/⓫) -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -39,16 +40,18 @@
                 <!-- BARIS 1: Header Atas -->
                 <div class="d-flex justify-content-between align-items-center w-100 mb-2">
                     <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden" style="font-size: 0.75rem; line-height: 1.25;">
-                        <div class="d-flex align-items-center mb-1"><span id="netStatus" class="me-1"></span><span class="fw-bold text-primary" style="font-size: 0.85rem;">AREA TUTOR</span></div>
+                        <div class="d-flex align-items-center mb-1">
+                            <span id="netStatus" class="me-1"></span>
+                            <!-- v1.3: Jeneng Julukan pindah kene -->
+                            <span class="fw-bold text-primary" style="font-size: 0.85rem;">AREA TUTOR <span class="text-dark mx-1">|</span> <span id="userNameDisplay" class="text-dark">Memuat...</span></span>
+                        </div>
                         <div class="mb-1 text-truncate"><span id="headClock" class="fw-bold text-dark font-monospace" style="font-size: 0.95rem; letter-spacing: 0.5px;">00:00:00</span><span class="text-secondary mx-1 fw-bold">|</span><span id="headDate" class="text-secondary fw-medium">Tanggal</span></div>
                     </div>
                     <div class="dropdown ms-2">
                         <button class="btn btn-light shadow-sm border-0 bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px;"><i class="bi bi-list text-primary" style="font-size: 1.5rem;"></i></button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width: 200px; border-radius: 12px;">
-                            <li><h6 class="dropdown-header text-dark fw-bold text-wrap" id="userNameDisplay">Login: Memuat...</h6></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Roadmap dalam pengembangan!')"><i class="bi bi-signpost-split text-primary me-2"></i> Roadmap</a></li>
-                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Panduan segera hadir!')"><i class="bi bi-book-half text-success me-2"></i> Panduan</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width: 150px; border-radius: 12px;">
+                            <!-- v1.3: Dropdown diringkes mung dadi Jeneng Sekolah & Logout -->
+                            <li><h6 class="dropdown-header text-primary fw-bold text-wrap text-uppercase" id="dropdownSchoolName">Pilih Sekolah</h6></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger fw-bold py-2 bg-danger bg-opacity-10" href="#" id="btnLogout"><i class="bi bi-power me-2"></i> Log Out</a></li>
                         </ul>
@@ -67,8 +70,9 @@
                 <div id="schoolInfoBar" class="d-none w-100 mt-2 flex-column text-start" style="font-size: 0.75rem; line-height: 1.25;">
                     <div class="mb-1 text-truncate"><i class="bi bi-broadcast text-info me-1"></i><span class="fw-bold text-dark">Live:</span> <span id="tutorJadwalHarian" class="text-dark">Mendeteksi...</span></div>
                     <div class="d-flex align-items-center text-truncate pe-1">
-                        <i class="bi bi-calendar2-day-fill text-danger me-1"></i><span class="fw-bold text-dark me-1">Day</span>
-                        <div id="headTimeline" class="d-inline-flex align-items-center me-1">...</div>
+                        <!-- v1.3: Icon diganti, format timeline disederhanakan -->
+                        <i class="bi bi-calendar-event-fill text-danger me-1"></i>
+                        <div id="headTimeline" class="d-inline-flex align-items-center me-1 fw-bold text-danger" style="font-size: 0.95rem; margin-top: -2px !important;">...</div>
                         <span class="text-secondary mx-1 fw-bold">|</span>
                         <i class="bi bi-geo-alt-fill text-danger me-1"></i><span id="headSekolah" class="fw-bold text-secondary text-uppercase text-truncate">Lokasi</span>
                     </div>
@@ -119,7 +123,9 @@
 
         const userVal = sessionStorage.getItem("loggedInUser"); if (!userVal) window.location.replace("index.html");
         const myName = sessionStorage.getItem("loggedInName"); const myRole = sessionStorage.getItem("userRole") || "mentor";
-        document.getElementById("userNameDisplay").innerText = "Login: " + userVal + " (" + myName + ")";
+        
+        // v1.3: Ngilangi teks "Login:"
+        document.getElementById("userNameDisplay").innerText = userVal + " (" + myName + ")";
         
         function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '<i class="bi bi-wifi text-success" title="Online"></i>' : '<i class="bi bi-wifi-off text-danger" title="Offline Mode"></i>'; } window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus();
         startClock('headClock', 'headDate'); 
@@ -146,7 +152,20 @@
             listenToSingleSchool(sid, (data) => {
                 if(!data) return;
                 rawMasterSiswa = data.masterSiswa || ""; 
-                document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub Pusat"; document.getElementById('headTimeline').innerHTML = generateTimelineHTML(data.totalHari, data.hariBerjalan);
+                document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub Pusat"; 
+                
+                // v1.3: Update judul dropdown sekolah
+                const dropSchool = document.getElementById('dropdownSchoolName'); 
+                if(dropSchool) dropSchool.innerText = data.namaSekolah || "Pilih Sekolah";
+
+                // v1.3: Logika format timeline ringkes ❶/⓫
+                const filledArr = ["❶","❷","❸","❹","❺","❻","❼","❽","❾","❿","⓫","⓬","⓭","⓮","⓯","⓰","⓱","⓲","⓳","⓴"];
+                const hBerjalan = parseInt(data.hariBerjalan) || 0;
+                const tHari = parseInt(data.totalHari) || 5;
+                const simbulBerjalan = (hBerjalan > 0 && hBerjalan <= 20) ? filledArr[hBerjalan - 1] : hBerjalan;
+                const simbulTotal = (tHari > 0 && tHari <= 20) ? filledArr[tHari - 1] : tHari;
+                document.getElementById('headTimeline').innerText = `${simbulBerjalan}/${simbulTotal}`;
+
                 document.getElementById('tutorBriefing').innerText = data.briefing || "-"; document.getElementById('tutorJadwal').innerText = data.jadwal || "-"; document.getElementById('tutorGoal').innerText = data.goal || "-";
                 document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(data.jadwal);
 
