@@ -1,6 +1,7 @@
 <!-- v1.1: Penambahan fitur Edit & Hapus User ing Tab Tutor -->
 <!-- v1.2: Penambahan UI Menu Histori Versi (Changelog) -->
 <!-- v1.3: Penambahan Checklist Mapping Mentor to School -->
+<!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) & Fix Checklist Mentor -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,6 +30,11 @@
         .msg-other { background-color: #fff; border: 1px solid #dee2e6; margin-right: auto; border-bottom-left-radius: 2px; }
         .del-chat-btn { cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 2px 5px; } .del-chat-btn:hover { opacity: 1; color: red; }
         #headTimeline > div { margin-top: 0 !important; } #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
+        
+        /* v1.5: Style kanggo scroll UI sekolah modern */
+        #modernSchoolSelect::-webkit-scrollbar { display: none; }
+        .school-pill { transition: all 0.2s ease-in-out; }
+        .school-pill:active { transform: scale(0.95); }
     </style>
 </head>
 <body style="background-color: #f1f5f9;">
@@ -53,13 +59,13 @@
                     </div>
                 </div>
 
-                <!-- BARIS 2: MASTER DROPDOWN HANDLE SCHOOL -->
-                <div class="w-100 bg-danger bg-opacity-10 p-2 rounded border border-danger border-opacity-50 d-flex align-items-center">
-                    <i class="bi bi-buildings-fill text-danger me-2 fs-5"></i>
-                    <select id="masterSchoolSelect" class="form-select form-select-sm fw-bold border-danger text-danger bg-white shadow-sm">
-                        <option value="">-- Pilih Handle School utk diedit --</option>
-                        <option value="NEW" class="fw-bold text-primary">+ BUAT SEKOLAH BARU</option>
-                    </select>
+                <!-- v1.5: UI MODERN SCHOOL SELECTOR (Ngganteni Dropdown Nyembul) -->
+                <div class="w-100 bg-white pt-2 rounded-top d-flex flex-column">
+                    <div class="text-xs fw-bold text-danger mb-1"><i class="bi bi-buildings-fill me-1"></i> PILIH SEKOLAH:</div>
+                    <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-2" style="gap: 8px; scrollbar-width: none;">
+                        <!-- Tombol Sekolah bakal muncul neng kene otomatis lewat JS -->
+                        <button class="btn btn-danger btn-sm rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW">+ BUAT SEKOLAH BARU</button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -84,6 +90,7 @@
                         <!-- TAB TUTOR -->
                         <div class="tab-pane fade show active" id="tab-tutor"><div class="card card-custom p-3 shadow-sm bg-white border-primary border-2 mb-3"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-fill-add me-2"></i> Kelola Tutor (Global)</h6><div class="row g-2 mb-2"><div class="col-4"><input type="text" id="newUser" class="form-control form-control-sm text-xs text-lowercase fw-bold" placeholder="username"></div><div class="col-4"><input type="text" id="newPin" class="form-control form-control-sm text-xs text-danger fw-bold" placeholder="PIN Angka"></div><div class="col-4"><input type="text" id="newName" class="form-control form-control-sm text-xs" placeholder="Julukan"></div></div><div class="row g-2 mb-3"><div class="col-6"><select id="newRole" class="form-select form-select-sm text-xs"><option value="mentor">Mentor</option><option value="direktur">Direktur</option><option value="admin">Admin</option></select></div><div class="col-6"><button id="btnAddUser" class="btn btn-sm btn-primary w-100 fw-bold">Tambah Akun</button></div></div><div class="table-responsive"><table class="table table-sm table-bordered text-xs align-middle text-center"><thead class="table-light"><tr><th>User</th><th>Nama</th><th>Role</th><th>PIN</th><th>Aksi</th></tr></thead><tbody id="listUsersTable"></tbody></table></div></div><div class="card card-custom p-3 shadow-sm bg-white"><h6 class="fw-bold text-dark mb-2"><i class="bi bi-trophy text-warning me-2"></i> Kinerja Tutor (Di Sekolah Yg Dipilih)</h6><div id="leaderboardTutor" class="space-y-2">Pilih sekolah di atas untuk melihat ranking...</div></div></div>
 
+                        <!-- TAB SETUP -->
                         <div class="tab-pane fade" id="tab-setup">
                             <div class="card card-custom p-3 shadow-sm bg-white mb-3 border-top border-warning border-3">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -109,10 +116,11 @@
                                     <label class="form-label fw-bold text-danger text-xs mb-0">GRAMMAR</label><textarea id="inputGrammar" class="form-control text-xs" rows="2"></textarea>
                                 </div>
                                 
-                                <!-- v1.3: CHECKLIST MENTOR YANG BERTUGAS -->
-                                <div class="p-2 border border-primary border-2 rounded bg-primary bg-opacity-10 mb-3">
+                                <!-- v1.5: CHECKLIST MENTOR YANG BERTUGAS DIJAMIN MUNCUL -->
+                                <div class="p-2 border border-primary border-2 rounded bg-primary bg-opacity-10 mb-3 shadow-sm">
                                     <h6 class="text-xs fw-bold text-primary mb-2 border-bottom border-primary pb-1"><i class="bi bi-people-fill"></i> 6. MENTOR YANG BERTUGAS</h6>
                                     <div id="setupMentorList" class="row g-2 text-xs ps-2">
+                                        <!-- Bakal otomatis diisi checkbox seko Firebase -->
                                         <span class="text-muted">Memuat daftar mentor aktif...</span>
                                     </div>
                                 </div>
@@ -140,21 +148,20 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- v1.3: Log Anyar Ditambahake -->
                                             <tr>
-                                                <td class="fw-bold text-center text-primary">v1.3</td>
+                                                <td class="fw-bold text-center text-primary">v1.5</td>
                                                 <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Penambahan fitur Mapping Mentor to School. Superuser saiki iso milih sapa wae mentor sing ditugasake ing sekolah tartamtu lewat menu Setup Sekolah.</td>
+                                                <td>Perombakan UI Dropdown Sekolah (anti-nyembul), diganti dadi Horizontal Scroll modern. Sinkronisasi render Checklist Mentor ben dijamin muncul.</td>
                                             </tr>
                                             <tr>
-                                                <td class="fw-bold text-center text-dark">v1.2</td>
+                                                <td class="fw-bold text-center">v1.4</td>
                                                 <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Penambahan UI tabel Histori Versi untuk melacak perubahan kode secara langsung di panel Superuser.</td>
+                                                <td>Implementasi auto-load & auto-kick ing halaman Mentor adhedhasar sistem Mapping Checklist.</td>
                                             </tr>
                                             <tr>
-                                                <td class="fw-bold text-center">v1.1</td>
+                                                <td class="fw-bold text-center">v1.3</td>
                                                 <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Penyempurnaan Tab Tutor: Penambahan fitur Edit Akun (Update form) dan Hapus Permanen akun via Firestore.</td>
+                                                <td>Penambahan fitur Checklist Mapping Mentor to School ing tab Setup Sekolah.</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -190,14 +197,15 @@
         import { collection, setDoc, doc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const actUser = sessionStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
-        document.getElementById("userNameDisplay").innerText = "Login: " + actUser + " (" + sessionStorage.getItem("loggedInName") + ")";
+        document.getElementById("userNameDisplay").innerText = actUser + " (" + sessionStorage.getItem("loggedInName") + ")";
 
         function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '<i class="bi bi-wifi text-success"></i>' : '<i class="bi bi-wifi-off text-danger"></i>'; }
         window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); startClock('headClock', 'headDate');
 
         let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = [];
         
-        // v1.3: Variabel nggo nyimpen sementara mentor sing wes ditugaske
+        let globalAllSchools = [];
+        let globalAllUsers = [];
         let currentAssignedMentors = []; 
         let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
 
@@ -209,19 +217,42 @@
             dataLengkap = [];
         }
 
+        // v1.5: FUNGSI RENDERING SEKOLAH MODERN (Ganti Dropdown)
+        function renderModernSchoolSelect() {
+            const container = document.getElementById("modernSchoolSelect");
+            if (!container) return;
+            
+            // Render tombol NEW
+            let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-danger' : 'btn-outline-danger'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW">+ SEKOLAH BARU</button>`;
+            
+            // Render tombol liyane
+            globalAllSchools.forEach(s => {
+                const isSelected = (currentSchoolId === s.id);
+                const btnClass = isSelected ? 'btn-primary shadow-sm' : 'btn-outline-secondary';
+                html += `<button class="btn btn-sm ${btnClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
+            });
+            
+            container.innerHTML = html;
+
+            // Pasang event click kanggo ganti onchange
+            document.querySelectorAll('.school-pill').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const val = e.target.getAttribute('data-value');
+                    handlePilihSekolah(val);
+                });
+            });
+        }
+
         listenToSchools((schools) => {
-            const select = document.getElementById("masterSchoolSelect"); const prev = select.value;
-            select.innerHTML = `<option value="">-- Pilih Handle School utk diedit --</option><option value="NEW" class="fw-bold text-primary">+ BUAT SEKOLAH BARU</option>`;
-            schools.forEach(s => { select.innerHTML += `<option value="${s.id}" class="fw-bold text-dark">${s.namaSekolah} (${s.id})</option>`; });
-            if (Array.from(select.options).some(o=>o.value===prev)) select.value = prev;
+            globalAllSchools = schools;
+            renderModernSchoolSelect();
         });
 
-        document.getElementById("masterSchoolSelect").onchange = (e) => {
-            const val = e.target.value;
-            
+        // v1.5: LOGIKA PAS SEKOLAH DIPILIH (Eks-onchange)
+        function handlePilihSekolah(val) {
             bersihkanListener();
 
-            if(!val) { 
+            if(val === "NEW") {
                 currentSchoolId = ""; 
                 document.getElementById("inputIdSchool").readOnly = false; document.getElementById("inputIdSchool").value = "";
                 document.getElementById("inputSekolah").value = ""; document.getElementById("inputTotalHari").value = 5; document.getElementById("inputHariKe").value = 0;
@@ -229,31 +260,23 @@
                 document.getElementById("inputGoal").value = ""; document.getElementById("inputMasterSiswa").value = ""; document.getElementById("inputVocab").value = "";
                 document.getElementById("inputSpeaking").value = ""; document.getElementById("inputGrammar").value = "";
                 
-                // v1.3: Resiki centangan mentor
                 currentAssignedMentors = [];
-                document.querySelectorAll('.check-mentor').forEach(cb => cb.checked = false);
-
-                document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-secondary small text-center">Pilih Handle School di atas terlebih dahulu.</div>`;
-                document.getElementById("chatBox").innerHTML = ""; document.getElementById("listTugasAdmin").innerHTML = "";
-                document.getElementById("leaderboardTutor").innerHTML = "Pilih sekolah di atas untuk melihat ranking...";
-                return; 
-            }
-            
-            if(val === "NEW") {
-                currentSchoolId = ""; document.getElementById("inputIdSchool").readOnly = false; document.getElementById("inputIdSchool").value = "";
-                document.getElementById("inputSekolah").value = ""; document.getElementById("inputTotalHari").value = 5; document.getElementById("inputHariKe").value = 0;
-                
-                // v1.3: Resiki centangan mentor kanggo sekolah anyar
-                currentAssignedMentors = [];
-                document.querySelectorAll('.check-mentor').forEach(cb => cb.checked = false);
+                renderMentorChecklist(); // Render ulang centangan ben kosong
 
                 document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-warning small text-center">Simpan Handle School terlebih dahulu.</div>`;
+                document.getElementById("chatBox").innerHTML = ""; document.getElementById("listTugasAdmin").innerHTML = "";
+                document.getElementById("leaderboardTutor").innerHTML = "Simpan sekolah dhisik nggo ndelok data.";
+                
+                renderModernSchoolSelect(); // Warnai tombol sing aktif
                 new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-setup"]')).show();
             } else {
-                currentSchoolId = val; document.getElementById("inputIdSchool").value = val; document.getElementById("inputIdSchool").readOnly = true;
+                currentSchoolId = val; 
+                document.getElementById("inputIdSchool").value = val; document.getElementById("inputIdSchool").readOnly = true;
+                
+                renderModernSchoolSelect(); // Warnai tombol sing aktif
                 muatDataSekolah(val);
             }
-        };
+        }
 
         function muatDataSekolah(sid) {
             unsubSchool = listenToSingleSchool(sid, (data) => {
@@ -262,11 +285,9 @@
                 document.getElementById('inputBriefing').value = data.briefing || ""; document.getElementById('inputJadwal').value = data.jadwal || ""; document.getElementById('inputGoal').value = data.goal || ""; document.getElementById('inputMasterSiswa').value = data.masterSiswa || "";
                 rawKurikulum = data.kurikulum || { vocab: [], speaking: [], grammar: [] }; document.getElementById('inputVocab').value = rawKurikulum.vocab ? rawKurikulum.vocab.join('\n') : ""; document.getElementById('inputSpeaking').value = rawKurikulum.speaking ? rawKurikulum.speaking.join('\n') : ""; document.getElementById('inputGrammar').value = rawKurikulum.grammar ? rawKurikulum.grammar.join('\n') : "";
                 
-                // v1.3: Centang kothak mentor adhedhasar data saka database
+                // v1.5: Set data mentor sing wes ketugas, langsung jaluk render ulang checklist-e!
                 currentAssignedMentors = data.assignedMentors || [];
-                document.querySelectorAll('.check-mentor').forEach(cb => {
-                    cb.checked = currentAssignedMentors.includes(cb.value);
-                });
+                renderMentorChecklist();
 
                 const arrKelas = (data.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!=="");
                 const sels = ['filterKelasSiswa', 'trackerKelas', 'filterKelasHistori', 'waTarget'];
@@ -297,7 +318,6 @@
             const sid = document.getElementById("inputIdSchool").value.toLowerCase().trim().replace(/\s+/g, ''); if(!sid) return alert("ID Handle tidak boleh kosong!");
             const getArr = (id) => document.getElementById(id).value.split('\n').map(i => i.trim()).filter(i => i !== "");
             
-            // v1.3: Ngumpulke sapa wae mentor sing dicentang
             const selectedMentors = Array.from(document.querySelectorAll('.check-mentor:checked')).map(c => c.value);
 
             try {
@@ -311,13 +331,13 @@
                     goal: document.getElementById('inputGoal').value, 
                     masterSiswa: document.getElementById('inputMasterSiswa').value, 
                     kurikulum: { vocab: getArr('inputVocab'), speaking: getArr('inputSpeaking'), grammar: getArr('inputGrammar') },
-                    assignedMentors: selectedMentors // v1.3: Data mentor dilebokake mrene
+                    assignedMentors: selectedMentors 
                 }); 
                 alert("Handle School Sukses Disimpan!"); 
-                document.getElementById("masterSchoolSelect").value = sid; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change'));
+                handlePilihSekolah(sid);
             } catch (e) { alert("Gagal update."); }
         };
-        document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); document.getElementById("masterSchoolSelect").value = ""; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change')); } };
+        document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); handlePilihSekolah("NEW"); } };
 
         function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { const dStr = d.waktu.toDate().toLocaleDateString('id-ID'); if(!daysMap.has(dStr)) daysMap.set(dStr, d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
         function renderListAdmin() {
@@ -352,26 +372,45 @@
             html2pdf().set({ margin: 0.3, filename: `AEC_Report_${currentSchoolId}_${fHari.replace(/\//g, "-")}.pdf`, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }}).from(printDiv).save();
         };
 
-        // --- BLOK MANAJEMEN USER ---
+        // v1.5: FUNGSI RENDER CHECKLIST MENTOR BEN DIJAMIN MUNCUL TERUS
+        function renderMentorChecklist() {
+            const setupMentorList = document.getElementById("setupMentorList");
+            if (!setupMentorList) return;
+            setupMentorList.innerHTML = "";
+            
+            const mentorsAktif = globalAllUsers.filter(u => u.status === 'aktif');
+            
+            if(mentorsAktif.length === 0) {
+                setupMentorList.innerHTML = "<span class='text-muted'>Belum ada akun mentor aktif...</span>";
+                return;
+            }
+
+            mentorsAktif.forEach(u => {
+                const isChecked = currentAssignedMentors.includes(u.id) ? "checked" : "";
+                setupMentorList.innerHTML += `
+                <div class="col-6 col-md-4">
+                    <div class="form-check border border-secondary border-opacity-25 p-1 rounded bg-white shadow-sm">
+                        <input class="form-check-input check-mentor ms-1 border-primary" type="checkbox" value="${u.id}" id="chk_${u.id}" ${isChecked}>
+                        <label class="form-check-label fw-bold ms-1" style="font-size:0.8rem; cursor:pointer;" for="chk_${u.id}">${u.julukan}</label>
+                    </div>
+                </div>`;
+            });
+        }
+
         onSnapshot(collection(db, "users"), (snap) => { 
+            globalAllUsers = []; // Reset global users
             const tbody = document.getElementById("listUsersTable"); 
             tbody.innerHTML = ""; 
             const chatTarget = document.getElementById("chatTarget"); 
             const prevTarget = chatTarget ? chatTarget.value : "GLOBAL"; 
             
-            // v1.3: Ngresiki wadah checkbox mentor ing tab Setup
-            const setupMentorList = document.getElementById("setupMentorList");
-            if (setupMentorList) setupMentorList.innerHTML = "";
-            let allUsersForChecklist = [];
-
             if(chatTarget) chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; 
             
             snap.forEach(d => { 
                 const ud = d.data(); 
                 const uid = d.id; 
                 
-                // Tambah data menyang array sementara nggo diproses dadi checkbox mengko
-                allUsersForChecklist.push({id: uid, ...ud});
+                globalAllUsers.push({id: uid, ...ud});
 
                 const btnStatus = ud.status === 'aktif' ? 
                     `<button class="btn btn-sm btn-outline-danger py-0 px-1" title="Nonaktifkan" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : 
@@ -389,28 +428,8 @@
             
             if(chatTarget) chatTarget.value = prevTarget; 
             
-            // v1.3: Nggambar Checkbox Mentor ing tab Setup
-            if (setupMentorList) {
-                allUsersForChecklist.forEach(u => {
-                    // Mung nampilake akun sing aktif
-                    if (u.status === 'aktif') {
-                        setupMentorList.innerHTML += `
-                        <div class="col-6 col-md-4">
-                            <div class="form-check border p-1 rounded bg-white">
-                                <input class="form-check-input check-mentor ms-1" type="checkbox" value="${u.id}" id="chk_${u.id}">
-                                <label class="form-check-label fw-bold ms-1" for="chk_${u.id}">${u.julukan}</label>
-                            </div>
-                        </div>`;
-                    }
-                });
-                
-                // Yen wis ana sekolah sing dipilih, langsung centang otomatis
-                if(currentAssignedMentors.length > 0) {
-                    document.querySelectorAll('.check-mentor').forEach(cb => {
-                        cb.checked = currentAssignedMentors.includes(cb.value);
-                    });
-                }
-            }
+            // Render ulang checklist saben ana data user anyar sing mlebu
+            renderMentorChecklist();
         });
 
         window.siapEditUser = function(uid, nama, role, pin) {
