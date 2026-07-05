@@ -1,3 +1,4 @@
+<!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) kanggo Direktur -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,6 +32,11 @@
         .msg-other { background-color: #fff; border: 1px solid #dee2e6; margin-right: auto; border-bottom-left-radius: 2px; }
         #headTimeline > div { margin-top: 0 !important; }
         #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
+        
+        /* v1.5: Style kanggo scroll UI sekolah modern */
+        #modernSchoolSelect::-webkit-scrollbar { display: none; }
+        .school-pill { transition: all 0.2s ease-in-out; }
+        .school-pill:active { transform: scale(0.95); }
     </style>
 </head>
 <body style="background-color: #f1f5f9;">
@@ -57,12 +63,13 @@
                     </div>
                 </div>
 
-                <!-- BARIS 2: MASTER DROPDOWN HANDLE SCHOOL -->
-                <div class="w-100 bg-warning bg-opacity-10 p-2 rounded border border-warning border-opacity-50 d-flex align-items-center">
-                    <i class="bi bi-buildings-fill text-warning me-2 fs-5"></i>
-                    <select id="schoolSelect" class="form-select form-select-sm fw-bold border-warning text-dark bg-white shadow-sm">
-                        <option value="">-- Pilih Handle School --</option>
-                    </select>
+                <!-- v1.5: UI MODERN SCHOOL SELECTOR (Ngganteni Dropdown Nyembul) -->
+                <div class="w-100 bg-white pt-2 rounded-top d-flex flex-column">
+                    <div class="text-xs fw-bold text-warning mb-1"><i class="bi bi-buildings-fill me-1 text-warning"></i> PILIH SEKOLAH PENGAMATAN:</div>
+                    <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-2" style="gap: 8px; scrollbar-width: none;">
+                        <!-- Tombol Sekolah bakal muncul neng kene otomatis lewat JS -->
+                        <span class="text-muted small ms-1">Memuat sekolah...</span>
+                    </div>
                 </div>
 
                 <!-- BARIS 3: INFO LIVE SEKOLAH (Hidden until selected) -->
@@ -122,21 +129,57 @@
         startClock('headClock', 'headDate'); 
         
         let currentSchoolId = ""; let rawKurikulum = { vocab: [], speaking: [], grammar: [] }; let dataLengkap = [];
+        let globalAllSchools = [];
+
+        // v1.5: FUNGSI RENDERING SEKOLAH MODERN (Ganti Dropdown Nyembul)
+        function renderModernSchoolSelect() {
+            const container = document.getElementById("modernSchoolSelect");
+            if (!container) return;
+            
+            let html = ``;
+            if (globalAllSchools.length === 0) {
+                html = `<span class="text-muted small ms-2">Belum ada sekolah aktif...</span>`;
+            } else {
+                globalAllSchools.forEach(s => {
+                    const isSelected = (currentSchoolId === s.id);
+                    // Tema Direktur nggunakake werna warning (kuning)
+                    const btnClass = isSelected ? 'btn-warning shadow-sm border-warning' : 'btn-outline-secondary';
+                    const textClass = isSelected ? 'text-dark' : '';
+                    html += `<button class="btn btn-sm ${btnClass} ${textClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
+                });
+            }
+            container.innerHTML = html;
+
+            // Pasang event click kanggo ganti onchange
+            document.querySelectorAll('.school-pill').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const val = e.target.getAttribute('data-value');
+                    handlePilihSekolah(val);
+                });
+            });
+        }
 
         // 1. INIT DROPDOWN SCHOOL
         listenToSchools((schools) => {
-            const select = document.getElementById("schoolSelect"); const prev = select.value;
-            select.innerHTML = `<option value="">-- Pilih Handle School --</option>`;
-            schools.forEach(s => { select.innerHTML += `<option value="${s.id}" class="fw-bold text-dark">${s.namaSekolah}</option>`; });
-            if (Array.from(select.options).some(o=>o.value===prev)) select.value = prev;
+            globalAllSchools = schools;
+            renderModernSchoolSelect();
         });
 
-        document.getElementById("schoolSelect").onchange = (e) => {
-            const val = e.target.value;
-            if(!val) { document.getElementById("mainContentArea").style.display = "none"; document.getElementById("schoolInfoBar").classList.add("d-none"); return; }
-            document.getElementById("mainContentArea").style.display = "block"; document.getElementById("schoolInfoBar").classList.remove("d-none");
-            currentSchoolId = val; muatDataSekolah(val);
-        };
+        // v1.5: LOGIKA PAS SEKOLAH DIPILIH (Eks-onchange)
+        function handlePilihSekolah(val) {
+            if(currentSchoolId === val) return; // Nek diklik sekolah sing padha, jarno wae
+            currentSchoolId = val;
+            renderModernSchoolSelect(); // Render maneh ben warnane ganti
+
+            if(!val) { 
+                document.getElementById("mainContentArea").style.display = "none"; 
+                document.getElementById("schoolInfoBar").classList.add("d-none"); 
+                return; 
+            }
+            document.getElementById("mainContentArea").style.display = "block"; 
+            document.getElementById("schoolInfoBar").classList.remove("d-none");
+            muatDataSekolah(val);
+        }
 
         // 2. LOAD DATA SCHOOL
         function muatDataSekolah(sid) {
