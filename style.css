@@ -1,0 +1,111 @@
+/* ==================================================
+   style.css - Desain Utama Portal Mentor Jatirogo
+   ================================================== */
+
+/* --- 1. Pengaturan Dasar (Body & Font) --- */
+body { 
+    background-color: #f0f2f5; 
+    font-family: system-ui, -apple-system, sans-serif; 
+}
+
+/* --- 2. Kustomisasi Kartu (Card) --- */
+.card-custom { 
+    border: none; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+}
+
+/* --- 3. Halaman Login (index.html) --- */
+.login-wrapper { 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px 0; 
+}
+
+.tracking-widest { 
+    letter-spacing: 0.3em; 
+}
+
+.digital-clock-login { 
+    font-size: 2.5rem; 
+    font-weight: 900; 
+    color: #0d6efd; 
+    letter-spacing: 2px; 
+}
+
+/* --- 4. Halaman Aplikasi (mentor.html & superuser.html) --- */
+.app-wrapper { 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.navbar-brand {
+    font-size: 1.25rem;
+}
+
+/* --- 5. Navigasi Menu (Tab Pills) --- */
+.nav-pills .nav-link { 
+    border-radius: 10px; 
+    color: #495057; 
+    font-weight: 500; 
+    margin-bottom: 5px; 
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: #e9ecef;
+}
+
+.nav-pills .nav-link.active { 
+    background-color: #0d6efd; 
+    color: white;
+    box-shadow: 0 2px 4px rgba(13,110,253,0.3); 
+}
+
+/* --- 6. Kotak Item Logbook --- */
+.logbook-item { 
+    border-left: 4px solid #0d6efd; 
+    background: #fff; 
+    padding: 12px; 
+    margin-bottom: 10px; 
+    border-radius: 6px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+}
+
+/* --- 7. Tampilan Jam di Dashboard --- */
+.digital-clock-dash {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* --- 8. Kotak Info & Catatan dari Superadmin --- */
+.info-box {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.info-box.warning {
+    background-color: #fef3c7;
+    border-left-color: #d97706;
+}
+
+.info-box.success {
+    background-color: #dcfce7;
+    border-left-color: #16a34a;
+}
+
+.info-box-title {
+    font-weight: bold;
+    color: #0f172a;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

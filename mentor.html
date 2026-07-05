@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Mentor - AEC Hub</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dynamic-menu { gap: 8px; }
+        .dynamic-menu .nav-link { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 16px; color: #64748b; display: flex; align-items: center; justify-content: flex-start; transition: background-color 0.2s; margin-bottom: 0; }
+        .dynamic-menu .nav-link i { font-size: 1.2rem; margin: 0; }
+        .dynamic-menu .nav-link .tab-label { display: inline-block; font-size: 0.85rem; font-weight: 700; margin-left: 10px; white-space: nowrap; }
+        .dynamic-menu .nav-link.active { background-color: #0d6efd; color: #fff; border-color: #0d6efd; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2); }
+        .dynamic-menu .nav-link.active i { color: #fff !important; }
+        @media (max-width: 767.98px) {
+            .dynamic-menu { flex-direction: row !important; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
+            .dynamic-menu::-webkit-scrollbar { display: none; }
+            .dynamic-menu .nav-item { flex: 0 0 auto; }
+            .dynamic-menu .nav-link { border-radius: 30px; padding: 8px 16px; justify-content: center; }
+            .dynamic-menu .nav-link .tab-label { display: none; }
+            .dynamic-menu .nav-link.active .tab-label { display: inline-block; }
+        }
+        .chat-box { max-height: 400px; overflow-y: auto; background-color: #f8f9fa; }
+        .msg-bubble { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; }
+        .msg-me { background-color: #d1e7dd; margin-left: auto; border-bottom-right-radius: 2px; }
+        .msg-other { background-color: #fff; border: 1px solid #dee2e6; margin-right: auto; border-bottom-left-radius: 2px; }
+        #headTimeline > div { margin-top: 0 !important; } #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="app-wrapper">
+        
+        <nav class="navbar navbar-expand bg-white sticky-top shadow-sm mb-3 border-bottom border-primary border-3" style="z-index: 1020; padding: 6px 0;">
+            <div class="container-fluid px-3 d-flex flex-column align-items-stretch">
+                <!-- BARIS 1: Header Atas -->
+                <div class="d-flex justify-content-between align-items-center w-100 mb-2">
+                    <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden" style="font-size: 0.75rem; line-height: 1.25;">
+                        <div class="d-flex align-items-center mb-1"><span id="netStatus" class="me-1"></span><span class="fw-bold text-primary" style="font-size: 0.85rem;">AREA TUTOR</span></div>
+                        <div class="mb-1 text-truncate"><span id="headClock" class="fw-bold text-dark font-monospace" style="font-size: 0.95rem; letter-spacing: 0.5px;">00:00:00</span><span class="text-secondary mx-1 fw-bold">|</span><span id="headDate" class="text-secondary fw-medium">Tanggal</span></div>
+                    </div>
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-light shadow-sm border-0 bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px;"><i class="bi bi-list text-primary" style="font-size: 1.5rem;"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width: 200px; border-radius: 12px;">
+                            <li><h6 class="dropdown-header text-dark fw-bold text-wrap" id="userNameDisplay">Login: Memuat...</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Roadmap dalam pengembangan!')"><i class="bi bi-signpost-split text-primary me-2"></i> Roadmap</a></li>
+                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Panduan segera hadir!')"><i class="bi bi-book-half text-success me-2"></i> Panduan</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger fw-bold py-2 bg-danger bg-opacity-10" href="#" id="btnLogout"><i class="bi bi-power me-2"></i> Log Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- BARIS 2: DROPDOWN HANDLE SCHOOL -->
+                <div class="w-100 bg-primary bg-opacity-10 p-2 rounded border border-primary border-opacity-50 d-flex align-items-center">
+                    <i class="bi bi-buildings-fill text-primary me-2 fs-5"></i>
+                    <select id="schoolSelect" class="form-select form-select-sm fw-bold border-primary text-primary bg-white shadow-sm">
+                        <option value="">-- Pilih Handle School (Tugas Hari Ini) --</option>
+                    </select>
+                </div>
+
+                <!-- BARIS 3: INFO LIVE SEKOLAH (Hidden until selected) -->
+                <div id="schoolInfoBar" class="d-none w-100 mt-2 flex-column text-start" style="font-size: 0.75rem; line-height: 1.25;">
+                    <div class="mb-1 text-truncate"><i class="bi bi-broadcast text-info me-1"></i><span class="fw-bold text-dark">Live:</span> <span id="tutorJadwalHarian" class="text-dark">Mendeteksi...</span></div>
+                    <div class="d-flex align-items-center text-truncate pe-1">
+                        <i class="bi bi-calendar2-day-fill text-danger me-1"></i><span class="fw-bold text-dark me-1">Day</span>
+                        <div id="headTimeline" class="d-inline-flex align-items-center me-1">...</div>
+                        <span class="text-secondary mx-1 fw-bold">|</span>
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i><span id="headSekolah" class="fw-bold text-secondary text-uppercase text-truncate">Lokasi</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- KONTEN UTAMA - DISEMBUNYIKAN SEBELUM MILIH SEKOLAH -->
+        <div class="container pb-5" id="mainContentArea" style="display: none;">
+            <div class="row">
+                <div class="col-12 col-md-3 mb-4">
+                    <div class="card card-custom p-2 shadow-sm border-0 bg-transparent">
+                        <ul class="nav nav-pills flex-column dynamic-menu" id="menuTabs">
+                            <li class="nav-item"><button class="nav-link active" id="tab-beranda" data-bs-toggle="pill" data-bs-target="#beranda" title="Info AEC"><i class="bi bi-house-door text-primary"></i><span class="tab-label">Info AEC</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-logbook" data-bs-toggle="pill" data-bs-target="#logbook" title="Isi Logbook"><i class="bi bi-pencil-square text-success"></i><span class="tab-label">Logbook</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-rekap" data-bs-toggle="pill" data-bs-target="#rekap" title="History Kelas"><i class="bi bi-clock-history text-secondary"></i><span class="tab-label">History</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-diskusi" data-bs-toggle="pill" data-bs-target="#diskusi" title="Ruang Diskusi"><i class="bi bi-chat-dots-fill text-danger"></i><span class="tab-label">Diskusi</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-tugaswa" data-bs-toggle="pill" data-bs-target="#tugaswa" title="Tugas WA"><i class="bi bi-whatsapp text-success"></i><span class="tab-label">Tugas WA</span></button></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-9">
+                    <div class="tab-content h-100">
+                        <div class="tab-pane fade show active" id="beranda">
+                            <div class="row g-3">
+                                <div class="col-12"><div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-50 rounded-3 shadow-sm h-100"><h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> BRIEFING & NOTIFIKASI DIREKTUR</h6><p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p></div></div>
+                                <div class="col-12 col-md-6"><div class="p-3 bg-success bg-opacity-10 border border-success border-opacity-50 rounded-3 shadow-sm h-100"><h6 class="fw-bold text-success mb-2 text-xs"><i class="bi bi-bullseye"></i> GOAL HARIAN KITA</h6><p id="tutorGoal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p></div></div>
+                                <div class="col-12 col-md-6"><div class="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-50 rounded-3 shadow-sm h-100"><h6 class="fw-bold text-primary mb-2 text-xs"><i class="bi bi-calendar-week"></i> JADWAL FULL GLOBAL</h6><p id="tutorJadwal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p></div></div>
+                            </div>
+                        </div>
+
+                        <!-- LOGBOOK -->
+                        <div class="tab-pane fade" id="logbook"><div class="card card-custom p-4 shadow-sm border-top border-primary border-4"><h5 class="fw-bold mb-3 border-bottom pb-2">Formulir Logbook Sesi</h5><input type="hidden" id="editDocId" value=""><div class="row mb-3"><div class="col-12 col-md-6 mb-3 mb-md-0"><label class="form-label fw-bold text-secondary small">PILIH KELAS</label><div id="btnGroupKelas" class="d-flex flex-wrap gap-2">Memuat kelas...</div><input type="hidden" id="inputKelas" value=""></div><div class="col-12 col-md-6"><label class="form-label fw-bold text-secondary small">JAM SESI</label><div class="btn-group w-100" role="group"><input type="radio" class="btn-check" name="jamSesi" id="j1" value="Jam 1" checked><label class="btn btn-outline-primary fw-bold" for="j1">1</label><input type="radio" class="btn-check" name="jamSesi" id="j2" value="Jam 2"><label class="btn btn-outline-primary fw-bold" for="j2">2</label><input type="radio" class="btn-check" name="jamSesi" id="j3" value="Jam 3"><label class="btn btn-outline-primary fw-bold" for="j3">3</label><input type="radio" class="btn-check" name="jamSesi" id="j4" value="Jam 4"><label class="btn btn-outline-primary fw-bold" for="j4">4</label></div></div></div><div class="mb-3"><label class="form-label fw-bold text-secondary small">MATERI KURIKULUM (Centang yang diajarkan saja)</label><div class="bg-light p-3 rounded-3 border"><div class="mb-3"><h6 class="text-xs fw-bold text-primary mb-1 border-bottom pb-1">A. VOCABULARY MORNING</h6><div id="boxVocab" class="ps-2"><span class="text-muted text-xs">Kosong...</span></div></div><div class="mb-3"><h6 class="text-xs fw-bold text-success mb-1 border-bottom pb-1">B. SPEAKING</h6><div id="boxSpeaking" class="ps-2"><span class="text-muted text-xs">Kosong...</span></div></div><div><h6 class="text-xs fw-bold text-danger mb-1 border-bottom pb-1">C. GRAMMAR</h6><div id="boxGrammar" class="ps-2"><span class="text-muted text-xs">Kosong...</span></div></div></div></div><div class="mb-3" id="areaSiswa" style="display: none;"><label class="form-label fw-bold text-danger small">ABSENSI & PENILAIAN</label><div class="table-responsive bg-light p-2 rounded border"><table class="table table-sm table-bordered mb-0 align-middle text-xs"><thead class="table-secondary text-center"><tr><th style="width:25px;">No.</th><th>Nama Siswa</th><th style="width: 70px;">Abs</th><th style="width: 70px;">Nilai</th><th>Catatan Mentor</th></tr></thead><tbody id="tabelSiswaBody"></tbody></table></div><p class="text-muted mt-1" style="font-size: 0.65rem;">*Ketik <b>h</b> (Hadir), <b>s</b> (Sakit), <b>i</b> (Izin), <b>a</b> (Alpha).</p></div><div class="mb-3"><label class="form-label fw-bold text-primary small">CLASS NOTE (Laporan / Kendala Kelas)</label><textarea id="notesSiswa" class="form-control bg-light border" rows="2" placeholder="Tuliskan kendala atau catatan umum kelas ini..."></textarea></div><div class="mb-3"><label class="form-label fw-bold text-success small">TUGAS SISWA (PR / Estafet ke Sesi Berikutnya)</label><textarea id="notesTugasSiswa" class="form-control bg-success bg-opacity-10 border-success border-opacity-50" rows="2" placeholder="Tulis tugas estafet / PR untuk siswa..."></textarea></div><button id="btnSave" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm mt-2"><i class="bi bi-send-check me-2"></i> SIMPAN LOGBOOK SESI</button><button id="btnBatalEdit" class="btn btn-secondary w-100 fw-bold mt-2 d-none">Batal Edit</button></div></div>
+                        <div class="tab-pane fade" id="rekap"><div class="card card-custom p-4 shadow-sm"><h5 class="fw-bold text-primary mb-3">History Harian Sekolah Ini</h5><div class="row g-2 mb-3"><div class="col-6"><select id="filterHari" class="form-select form-select-sm bg-light fw-bold text-danger"><option value="SEMUA">Memuat...</option></select></div><div class="col-6"><select id="filterKelas" class="form-select form-select-sm bg-light fw-bold text-secondary"></select></div></div><div id="logbookList" class="overflow-auto pe-2" style="max-height: 500px;"></div></div></div>
+                        <div class="tab-pane fade h-100" id="diskusi"><div class="card card-custom p-3 shadow-sm border-top border-danger border-4 h-100 d-flex flex-column bg-white"><h5 class="fw-bold text-danger mb-1"><i class="bi bi-chat-dots me-2"></i> Ruang Diskusi & Japri</h5><div id="chatBox" class="chat-box flex-grow-1 p-3 rounded border mb-3 d-flex flex-column gap-2" style="min-height: 300px;"></div><div class="input-group"><select id="chatTarget" class="form-select" style="max-width: 140px; font-weight: bold; font-size: 0.8rem;"><option value="GLOBAL">Grup Semua</option></select><input type="text" id="inputChat" class="form-control text-sm" placeholder="Ketik pesan/balasan..."><button class="btn btn-danger fw-bold px-4" id="btnSendChat"><i class="bi bi-send-fill"></i></button></div></div></div>
+                        <div class="tab-pane fade" id="tugaswa"><div class="card card-custom p-4 shadow-sm border-top border-success border-4"><h5 class="fw-bold text-success mb-2"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h5><ul class="nav nav-tabs mb-3 text-xs" role="tablist"><li class="nav-item"><button class="nav-link active fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#wa-harian"><i class="bi bi-calendar2-day text-success"></i> Tugas Harian (Hari Ini)</button></li><li class="nav-item"><button class="nav-link fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#wa-history"><i class="bi bi-archive text-secondary"></i> History Tugas</button></li></ul><div class="tab-content"><div class="tab-pane fade show active" id="wa-harian"><select id="filterWA" class="form-select bg-light fw-bold text-dark border-success mb-3"></select><div id="listTugasWAHarian" class="space-y-3">Memuat instruksi hari ini...</div></div><div class="tab-pane fade" id="wa-history"><div id="listTugasWAHistory" class="space-y-3">Memuat semua history...</div></div></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { db, startClock, listenToSchools, listenToSingleSchool, sendLogbook, listenToLogbooks, updateLogbook, listenToTugasWA, generateTimelineHTML, getActiveSchedule, listenToChats, sendGlobalChat, sendJapri } from './script.js?v=14';
+        import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const userVal = sessionStorage.getItem("loggedInUser"); if (!userVal) window.location.replace("index.html");
+        const myName = sessionStorage.getItem("loggedInName"); const myRole = sessionStorage.getItem("userRole") || "mentor";
+        document.getElementById("userNameDisplay").innerText = "Login: " + userVal + " (" + myName + ")";
+        
+        function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '<i class="bi bi-wifi text-success" title="Online"></i>' : '<i class="bi bi-wifi-off text-danger" title="Offline Mode"></i>'; } window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus();
+        startClock('headClock', 'headDate'); 
+        
+        let currentSchoolId = ""; let rawMasterSiswa = ""; let currentHariValue = "SEMUA"; let masterLogData = []; let masterTugasWA = [];
+
+        // 1. INIT DROPDOWN SCHOOL
+        listenToSchools((schools) => {
+            const select = document.getElementById("schoolSelect"); const prev = select.value;
+            select.innerHTML = `<option value="">-- Pilih Handle School (Tugas Hari Ini) --</option>`;
+            schools.forEach(s => { select.innerHTML += `<option value="${s.id}" class="fw-bold text-dark">${s.namaSekolah}</option>`; });
+            if (Array.from(select.options).some(o=>o.value===prev)) select.value = prev;
+        });
+
+        document.getElementById("schoolSelect").onchange = (e) => {
+            const val = e.target.value;
+            if(!val) { document.getElementById("mainContentArea").style.display = "none"; document.getElementById("schoolInfoBar").classList.add("d-none"); return; }
+            document.getElementById("mainContentArea").style.display = "block"; document.getElementById("schoolInfoBar").classList.remove("d-none");
+            currentSchoolId = val; muatDataSekolah(val);
+        };
+
+        // 2. LOAD DATA SCHOOL
+        function muatDataSekolah(sid) {
+            listenToSingleSchool(sid, (data) => {
+                if(!data) return;
+                rawMasterSiswa = data.masterSiswa || ""; 
+                document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub Pusat"; document.getElementById('headTimeline').innerHTML = generateTimelineHTML(data.totalHari, data.hariBerjalan);
+                document.getElementById('tutorBriefing').innerText = data.briefing || "-"; document.getElementById('tutorJadwal').innerText = data.jadwal || "-"; document.getElementById('tutorGoal').innerText = data.goal || "-";
+                document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(data.jadwal);
+
+                const arrKelas = (data.masterKelas || "Kelas A").split(',').map(k=>k.trim()).filter(k=>k!==""); const boxKelas = document.getElementById("btnGroupKelas"); boxKelas.innerHTML = "";
+                arrKelas.forEach((kls, idx) => { boxKelas.innerHTML += `<input type="radio" class="btn-check class-radio" name="pilihKelas" id="kls_${idx}" value="${kls}"><label class="btn btn-outline-primary fw-bold text-xs" for="kls_${idx}">${kls}</label>`; });
+                
+                document.querySelectorAll('.class-radio').forEach(radio => { radio.addEventListener('change', (e) => {
+                    const kls = e.target.value; document.getElementById("inputKelas").value = kls; const area = document.getElementById('areaSiswa'); const tbody = document.getElementById('tabelSiswaBody'); tbody.innerHTML = "";
+                    if(!kls) { area.style.display = 'none'; return; } area.style.display = 'block'; const lines = rawMasterSiswa.split('\n'); let foundSiswa = [];
+                    lines.forEach(line => { if(line.includes(':') && line.startsWith(kls)) foundSiswa = line.split(':')[1].split(',').map(s => s.trim()).filter(s => s !== ""); });
+                    if(foundSiswa.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Belum ada siswa.</td></tr>`; } 
+                    else { foundSiswa.forEach((nama, i) => { tbody.innerHTML += `<tr class="baris-siswa" data-nama="${nama}"><td class="text-center fw-bold">${i+1}</td><td class="fw-bold">${nama}</td><td><select class="form-select form-select-sm sel-hadir fw-bold text-center px-1"><option value="h">h</option><option value="i">i</option><option value="s">s</option><option value="a">a</option></select></td><td><input type="text" class="form-control form-control-sm in-nilai text-center px-1" placeholder="..."></td><td><input type="text" class="form-control form-control-sm in-catatan" placeholder="Catatan..."></td></tr>`; }); }
+                }); });
+
+                const fHistori = document.getElementById("filterKelas"); const fWA = document.getElementById("filterWA"); let prevHist = fHistori.value; let prevWA = fWA.value; fHistori.innerHTML = `<option value="SEMUA">Semua Kelas</option>`; fWA.innerHTML = `<option value="SEMUA">Lihat Semua Tugas WA</option><option value="GLOBAL (Semua Ruang)">GLOBAL (Semua Ruang)</option>`;
+                arrKelas.forEach(k => { fHistori.innerHTML += `<option value="${k}">${k}</option>`; fWA.innerHTML += `<option value="${k}">Khusus ${k}</option>`; }); if(Array.from(fHistori.options).some(o=>o.value===prevHist)) fHistori.value = prevHist; if(Array.from(fWA.options).some(o=>o.value===prevWA)) fWA.value = prevWA;
+                
+                const kur = data.kurikulum || { vocab: [], speaking: [], grammar: [] }; 
+                const renderChecklist = (targetDivId, arrayMateri, className) => { const box = document.getElementById(targetDivId); box.innerHTML = ""; if(!arrayMateri || arrayMateri.length === 0) { box.innerHTML = '<span class="text-muted text-xs">Kosong.</span>'; return; } arrayMateri.forEach((m, i) => { box.innerHTML += `<div class="form-check mb-1"><input class="form-check-input ${className}" type="checkbox" value="${m}" id="${targetDivId}_${i}"><label class="form-check-label text-xs fw-bold text-dark" for="${targetDivId}_${i}">${m}</label></div>`; }); };
+                renderChecklist("boxVocab", kur.vocab, "check-vocab"); renderChecklist("boxSpeaking", kur.speaking, "check-speaking"); renderChecklist("boxGrammar", kur.grammar, "check-grammar");
+            });
+
+            // LOAD LOGBOOKS, CHATS, TUGAS WA
+            listenToLogbooks(sid, (logData) => { masterLogData = logData; ekstrakHari(); renderLogbookList(); });
+            listenToChats(sid, (chats) => {
+                const box = document.getElementById("chatBox"); box.innerHTML = ""; 
+                chats.forEach(c => { 
+                    if (c.type === 'global' || (c.type === 'private' && (c.sender === myName || c.receiver === myName))) {
+                        const isMe = c.sender === myName; const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..'; 
+                        let nameColor = isMe ? 'text-success' : 'text-primary'; let roleBadge = ""; if(c.role === "admin") { nameColor = 'text-danger'; roleBadge = '<i class="bi bi-shield-lock-fill ms-1"></i>'; } else if(c.role === "direktur") { nameColor = 'text-warning'; roleBadge = '<i class="bi bi-star-fill ms-1"></i>'; } 
+                        const badgeJapri = c.type === 'private' ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">JAPRI</span>` : '';
+                        box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'} shadow-sm"><div class="fw-bold text-xs ${nameColor}">${c.sender} ${roleBadge} <span class="fw-normal text-muted ms-1" style="font-size:0.6rem;">${time}</span> ${badgeJapri}</div><div class="mt-1">${c.message}</div></div>`; 
+                    }
+                }); box.scrollTop = box.scrollHeight; 
+            });
+            listenToTugasWA(sid, (data) => { masterTugasWA = data; renderTugasWA(); });
+        }
+        setInterval(() => { const globalJadwal = document.getElementById('tutorJadwal').innerText; document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(globalJadwal); }, 60000);
+
+        onSnapshot(collection(db, "users"), (snap) => { const chatTarget = document.getElementById("chatTarget"); const prevTarget = chatTarget.value; chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; snap.forEach(d => { const ud = d.data(); if(ud.julukan !== myName) { chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: ${ud.julukan}</option>`; } }); chatTarget.value = prevTarget; });
+
+        document.getElementById("btnSendChat").onclick = async () => { if(!currentSchoolId) return alert("Pilih sekolah!"); const msg = document.getElementById("inputChat").value.trim(); const target = document.getElementById("chatTarget").value; if(!msg) return; if (target === "GLOBAL") { await sendGlobalChat(currentSchoolId, myName, msg, myRole); } else { await sendJapri(currentSchoolId, myName, target, msg, myRole); } document.getElementById("inputChat").value = ""; }; document.getElementById("inputChat").addEventListener("keypress", function(e) { if (e.key === "Enter") { e.preventDefault(); document.getElementById("btnSendChat").click(); } });
+
+        document.getElementById('filterKelas').onchange = () => renderLogbookList(); document.getElementById('filterHari').onchange = () => renderLogbookList(); document.getElementById("filterWA").onchange = () => renderTugasWA();
+        
+        function ekstrakHari() { const daysMap = new Map(); masterLogData.forEach(d => { if(d.waktu) { const dStr = d.waktu.toDate().toLocaleDateString('id-ID'); if(!daysMap.has(dStr)) daysMap.set(dStr, d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua History</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; if(sortedDays.length > 0) currentHariValue = sortedDays[sortedDays.length-1][0]; }
+        function renderLogbookList() {
+            const list = document.getElementById("logbookList"); const fKls = document.getElementById("filterKelas").value; const fHari = document.getElementById("filterHari").value; list.innerHTML = ""; let dt = masterLogData; if (fHari !== "SEMUA") dt = dt.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari); if (fKls !== "SEMUA") dt = dt.filter(d => d.kelas === fKls); if (dt.length === 0) { list.innerHTML = `<div class="alert text-center border-0 mt-4">Belum ada history.</div>`; return; }
+            dt.forEach((d, i) => { const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : 'Pending...'; const pendingBadge = d.isPending ? `<span class="badge bg-danger ms-2" title="Menunggu Sinyal"><i class="bi bi-hourglass-split"></i> Offline</span>` : `<span class="badge bg-success ms-2"><i class="bi bi-cloud-check"></i></span>`; let tb = ""; if (d.dataSiswa && d.dataSiswa.length > 0) { tb = `<table class="table table-bordered text-xs mt-2 mb-0 text-center"><tr class="bg-light"><th style="width:25px;">No.</th><th>Nama Siswa</th><th>Abs</th><th>Nilai</th></tr>`; d.dataSiswa.forEach((s, idx) => { let ikon = s.kehadiran === 'h' ? '✔' : (s.kehadiran === 'a' ? '✖' : s.kehadiran.toUpperCase()); tb += `<tr><td>${idx+1}</td><td class="text-start">${s.nama}</td><td class="text-uppercase fw-bold">${ikon}</td><td class="fw-bold">${s.nilai || '-'}</td></tr>`; }); tb += `</table>`; } let displayJam = (d.jamKe || "").replace('Jam ', 'Jam ke-'); let displayMateri = d.materi && d.materi.length > 0 ? d.materi.join(', ') : '-'; list.innerHTML += `<div class="p-3 bg-white border rounded-3 mb-3 shadow-sm"><div class="d-flex justify-content-between border-bottom pb-1 mb-2"><span class="fw-bold text-primary"><i class="bi bi-person-fill"></i> ${d.nama}</span><span class="text-muted text-xs">${w} ${pendingBadge}</span></div><div><span class="badge bg-primary me-1">${d.kelas}</span><span class="badge bg-dark">${displayJam}</span></div><div class="text-xs fw-bold mt-2 text-dark">📖 Materi: <span class="fw-normal">${displayMateri}</span></div><div class="text-xs mt-2 text-danger">📝 <b>Class Note:</b><br><span class="text-dark">${d.laporanSiswa || '-'}</span></div><div class="text-xs mt-2 text-success">🎯 <b>Tugas Siswa:</b><br><span class="text-dark">${d.tugasSiswa || '-'}</span></div><button class="btn btn-sm btn-outline-secondary w-100 mt-2 text-xs fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col_${i}">Lihat Rapor ▼</button><div class="collapse" id="col_${i}">${tb}</div>${d.mentorId === userVal ? `<button class="btn btn-sm btn-warning mt-2 w-100 fw-bold" onclick='window.editPersonal(${JSON.stringify(d).replace(/'/g, "\\'")})'>Edit Sesi Saya</button>` : ''}</div>`; });
+        }
+        window.editPersonal = function(data) { document.getElementById("editDocId").value = data.id; const radioKls = document.querySelector(`input[name="pilihKelas"][value="${data.kelas}"]`); if(radioKls) { radioKls.checked = true; radioKls.dispatchEvent(new Event('change')); } setTimeout(() => { document.querySelectorAll('input[name="jamSesi"]').forEach(r => r.checked = r.value === data.jamKe); const groups = data.materiGroup || { vocab:[], speaking:[], grammar:[] }; document.querySelectorAll('.check-vocab').forEach(cb => cb.checked = (groups.vocab || []).includes(cb.value)); document.querySelectorAll('.check-speaking').forEach(cb => cb.checked = (groups.speaking || []).includes(cb.value)); document.querySelectorAll('.check-grammar').forEach(cb => cb.checked = (groups.grammar || []).includes(cb.value)); document.getElementById("notesSiswa").value = data.laporanSiswa || ""; document.getElementById("notesTugasSiswa").value = data.tugasSiswa || ""; document.querySelectorAll('.baris-siswa').forEach(b => { const cari = (data.dataSiswa || []).find(s => s.nama === b.dataset.nama); if(cari) { b.querySelector('.sel-hadir').value = cari.kehadiran; b.querySelector('.in-nilai').value = cari.nilai; b.querySelector('.in-catatan').value = cari.catatan; } }); document.getElementById("btnSave").innerHTML = 'SIMPAN PERUBAHAN'; document.getElementById("btnBatalEdit").classList.remove("d-none"); new bootstrap.Tab(document.getElementById('tab-logbook')).show(); }, 300); }
+        document.getElementById("btnBatalEdit").onclick = () => { document.getElementById("editDocId").value = ""; document.querySelectorAll('input[name="pilihKelas"]').forEach(r=>r.checked=false); document.getElementById("inputKelas").value = ""; document.getElementById('areaSiswa').style.display='none'; document.getElementById("btnSave").innerHTML = '<i class="bi bi-send-check me-2"></i> SIMPAN LOGBOOK SESI'; document.getElementById("btnBatalEdit").classList.add("d-none"); };
+
+        document.getElementById("btnSave").onclick = async () => {
+            if(!currentSchoolId) return alert("Pilih sekolah dulu!");
+            const kls = document.getElementById("inputKelas").value; if(!kls) return alert("Pilih Kelas (Centang salah satu)!");
+            const jam = document.querySelector('input[name="jamSesi"]:checked').value;
+            const vChecked = Array.from(document.querySelectorAll('.check-vocab:checked')).map(c => c.value); const sChecked = Array.from(document.querySelectorAll('.check-speaking:checked')).map(c => c.value); const gChecked = Array.from(document.querySelectorAll('.check-grammar:checked')).map(c => c.value); const materiGroup = { vocab: vChecked, speaking: sChecked, grammar: gChecked }; const flatMateri = [...vChecked, ...sChecked, ...gChecked];
+            const not = document.getElementById("notesSiswa").value; const tg = document.getElementById("notesTugasSiswa").value; const edId = document.getElementById("editDocId").value;
+            let arraySiswa = []; document.querySelectorAll('.baris-siswa').forEach(b => { arraySiswa.push({ nama: b.dataset.nama, kehadiran: b.querySelector('.sel-hadir').value, nilai: b.querySelector('.in-nilai').value, catatan: b.querySelector('.in-catatan').value }); });
+            try { document.getElementById("btnSave").disabled = true; if (edId) { await updateLogbook(edId, { kelas: kls, jamKe: jam, materiGroup: materiGroup, materi: flatMateri, laporanSiswa: not, dataSiswa: arraySiswa, tugasSiswa: tg }); } else { await sendLogbook(currentSchoolId, userVal, myName, kls, jam, materiGroup, flatMateri, not, "", arraySiswa, tg); } alert(navigator.onLine ? "Sip, Data Sukses Terkirim!" : "Mode Offline: Data aman tersimpan di HP!"); document.getElementById("btnBatalEdit").click(); document.getElementById("btnSave").disabled = false; new bootstrap.Tab(document.getElementById('tab-rekap')).show(); } catch (error) { alert("Error database!"); document.getElementById("btnSave").disabled = false; }
+        };
+
+        function renderTugasWA() { const listHariIni = document.getElementById("listTugasWAHarian"); const listSemua = document.getElementById("listTugasWAHistory"); const fil = document.getElementById("filterWA").value; listHariIni.innerHTML = ""; listSemua.innerHTML = ""; let dt = masterTugasWA; if(fil !== "SEMUA") dt = dt.filter(d => d.targetKelas === fil); let htmlSemua = ""; let htmlHarian = ""; dt.forEach((d, i) => { const w = d.waktu ? d.waktu.toDate().toLocaleDateString('id-ID', { dateStyle: 'long'}) : 'Baru Saja'; let imgTag = d.linkGambar ? `<img src="${d.linkGambar}" class="img-fluid rounded mb-2 border w-100" style="max-height: 200px; object-fit: cover;">` : ''; let itemHtml = `<div class="p-3 bg-white border border-success border-opacity-50 rounded-3 shadow-sm mb-3"><div class="d-flex justify-content-between mb-2"><span class="badge bg-success">${d.targetKelas}</span><span class="text-xs text-muted">${w}</span></div>${imgTag}<div class="p-2 bg-light rounded text-sm mb-2 font-monospace" id="txtWA_${i}" style="white-space: pre-line;">${d.instruksi}</div><button class="btn btn-outline-success btn-sm w-100 fw-bold" onclick="copyWA('txtWA_${i}')"><i class="bi bi-copy me-1"></i> Salin Instruksi</button></div>`; htmlSemua += itemHtml; if(d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === currentHariValue) htmlHarian += itemHtml; }); listSemua.innerHTML = htmlSemua || `<div class="alert text-center border-0 text-muted">Belum ada history tugas WA.</div>`; listHariIni.innerHTML = htmlHarian || `<div class="alert text-center border-0 text-muted">Belum ada tugas WA untuk hari ini. Silakan cek tab History.</div>`; } window.copyWA = function(idDiv) { const txt = document.getElementById(idDiv).innerText; navigator.clipboard.writeText(txt).then(() => { alert("Disalin!"); }).catch(err => { alert("Gagal."); }); }
+        document.getElementById("btnLogout").onclick = () => { sessionStorage.clear(); window.location.replace("index.html"); };
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "AEC Super Creative Hub",
+  "short_name": "AEC Hub",
+  "description": "Sistem Manajemen Edukasi by Jagat Kreatif",
+  "start_url": "/special-mentor/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "https://caksup.github.io/special-mentor/aec_hub.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
