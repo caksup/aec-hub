@@ -1,6 +1,5 @@
-<!-- v3.0-WA-Super: Massive Overhaul Overview, Import Excel, WA Broadcast, Gudang Materi, Tab Icons Adaptive -->
-<!-- v3.1-WA-Super: Hotfix Bug Data Tutor Ilang -->
-<!-- v3.2-WA-Super: Fitur Modal Arsip Sekolah di Tab History Logbook -->
+<!-- v3.2-WA-Super: Fitur Modal Arsip Sekolah -->
+<!-- v4.0-WA-Ultimate: Centralized UI, WA Bottom Nav, lan LocalStorage (Anti-Crot) -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,60 +14,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <style>
-        :root {
-            --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; 
-            --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff;
-            --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; 
-                --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21;
-                --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32;
-            }
-            body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; }
-            .bg-white, .bg-light, .modal-content { background-color: var(--wa-card-bg) !important; }
-            .text-dark { color: var(--wa-text-main) !important; }
-            .text-muted { color: var(--wa-text-muted) !important; }
-            .border, .border-bottom, .border-top, .border-start, .border-end { border-color: var(--wa-border) !important; }
-            .form-control, .form-select, .input-group-text, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
-            .card { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; }
-            .dropdown-menu { background-color: var(--wa-card-bg); border-color: var(--wa-border); }
-            .dropdown-item { color: var(--wa-text-main); }
-            .dropdown-item:hover { background-color: var(--wa-input-bg); color: var(--wa-text-main); }
-            .dropdown-header { color: #00a884 !important; }
-            .table-light, .table-secondary, thead { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; }
-            .table td, .table th { border-color: var(--wa-border); color: var(--wa-text-main); background-color: transparent !important; }
-            .text-wa { color: #00a884 !important; } .text-primary { color: #53bdeb !important; } .text-success { color: #00a884 !important; } .text-danger { color: #f15c6d !important; } .text-warning { color: #ffd02c !important; } .text-info { color: #53bdeb !important; } .text-secondary { color: var(--wa-text-muted) !important; }
-        }
-
-        body { background-color: var(--wa-bg); color: var(--wa-text-main); transition: all 0.3s; }
-        .bg-wa { background-color: var(--wa-primary) !important; color: white; transition: all 0.3s; }
-        .text-wa { color: var(--wa-primary) !important; }
-        .btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } 
-        .btn-wa:hover { background-color: #075E54; color: white; }
-        
-        .wa-tabs { background-color: var(--wa-primary); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; border-bottom: none; transition: all 0.3s; }
-        .wa-tabs::-webkit-scrollbar { display: none; }
-        .wa-tabs .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); border: none; border-radius: 0; padding: 10px 15px; white-space: nowrap; transition: 0.2s; border-bottom: 3px solid transparent; }
-        .wa-tabs .nav-link i { font-size: 1.3rem; margin-bottom: 0; transition: 0.2s; }
-        .wa-tabs .nav-link .tab-label { display: none; font-size: 0.65rem; margin-top: 2px; font-weight: bold; }
-        .wa-tabs .nav-link.active { color: white; border-bottom-color: white; background: transparent; }
-        .wa-tabs .nav-link.active .tab-label { display: block; }
-        .wa-tabs .nav-link.active i { transform: scale(1.1); color: white; }
-
-        .chat-box { max-height: 450px; overflow-y: auto; background-color: var(--wa-bg); }
-        .msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); position: relative; color: var(--wa-text-main); transition: background-color 0.3s; }
-        .msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
-        .msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
-        .del-chat-btn { cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 2px 5px; } .del-chat-btn:hover { opacity: 1; color: red; }
-
-        .card-custom { border-radius: 12px; background-color: var(--wa-card-bg); box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--wa-border); transition: background-color 0.3s; }
-        #modernSchoolSelect::-webkit-scrollbar { display: none; }
-        .school-pill { transition: all 0.2s ease-in-out; } .school-pill:active { transform: scale(0.95); } .cursor-pointer { cursor: pointer; }
-    </style>
 </head>
 <body>
     <div class="app-wrapper">
@@ -86,28 +31,22 @@
                 
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-end d-none d-sm-block" style="line-height: 1;"><div id="headClock" class="fw-bold text-white font-monospace text-xs">00:00</div></div>
+                    
                     <div class="dropdown">
                         <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 8px;">
-                            <li><h6 class="dropdown-header text-wa fw-bold">Super Menu</h6></li>
-                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Roadmap dalam pengembangan!')"><i class="bi bi-signpost-split me-2"></i> Roadmap</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
+                            <li><h6 class="dropdown-header text-wa fw-bold text-xs">PENGATURAN GLOBAL</h6></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTema"><i class="bi bi-palette-fill me-2 text-secondary"></i> Tema Tampilan</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalRoadmap"><i class="bi bi-signpost-split-fill me-2 text-info"></i> Roadmap Program</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalPanduan"><i class="bi bi-book-half me-2 text-success"></i> Buku Panduan</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTentang"><i class="bi bi-info-circle-fill me-2 text-primary"></i> Tentang Aplikasi</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalLapor"><i class="bi bi-headset me-2 text-warning"></i> Lapor Admin</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger fw-bold py-2" href="#" id="btnLogout"><i class="bi bi-box-arrow-right me-2"></i> Keluar</a></li>
+                            <li><a class="dropdown-item text-danger fw-bold py-2 rounded bg-danger bg-opacity-10 text-center mt-2" href="#" id="btnLogout"><i class="bi bi-power me-1"></i> LOGOUT</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-
-            <ul class="nav nav-tabs wa-tabs w-100 px-2" id="adminTabs" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview"><i class="bi bi-grid-1x2-fill"></i><span class="tab-label">OVERVIEW</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tutor"><i class="bi bi-person-badge"></i><span class="tab-label">TUTOR</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-setup"><i class="bi bi-gear-fill"></i><span class="tab-label">SETUP</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-siswa"><i class="bi bi-mortarboard"></i><span class="tab-label">SISWA</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-diskusi"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tugas"><i class="bi bi-whatsapp"></i><span class="tab-label">WA</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-gudang"><i class="bi bi-box-seam-fill"></i><span class="tab-label">MATERI</span></button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-versi"><i class="bi bi-journal-code"></i><span class="tab-label">LOG</span></button></li>
-            </ul>
         </nav>
 
         <div class="container pb-5 pt-3" id="mainContentArea">
@@ -146,7 +85,6 @@
                                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                                     <h6 class="fw-bold text-wa mb-0"><i class="bi bi-journal-text me-1"></i> Logbook Harian</h6>
                                     <div>
-                                        <!-- v3.2: Tombol Arsip saiki wis nyambung fungsi -->
                                         <button class="btn btn-outline-danger btn-sm fw-bold rounded-pill py-0 px-2 me-1" onclick="window.bukaModalArsip()"><i class="bi bi-archive-fill"></i> Arsip</button>
                                         <button id="btnExportPDF" class="btn btn-danger btn-sm fw-bold rounded-pill py-0 px-2"><i class="bi bi-file-pdf-fill"></i> PDF</button>
                                     </div>
@@ -319,6 +257,7 @@
                 <div class="tab-pane fade" id="tab-gudang">
                     <div class="card card-custom p-3 bg-white">
                         <h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi (Cloud)</h6>
+                        
                         <div class="bg-light p-3 rounded border mb-3">
                             <label class="form-label text-xs fw-bold text-dark mb-1">Tambah Materi Baru</label>
                             <input type="text" id="materiJudul" class="form-control form-control-sm mb-2" placeholder="Judul Materi (Cth: PPT Vocab Day 1)">
@@ -326,52 +265,45 @@
                             <input type="text" id="materiLink" class="form-control form-control-sm mb-2" placeholder="Link Google Drive / Canva">
                             <button class="btn btn-primary btn-sm w-100 fw-bold rounded-pill" id="btnSaveMateri"><i class="bi bi-cloud-arrow-up"></i> Upload Data</button>
                         </div>
+                        
                         <div id="listGudangMateri" class="overflow-auto" style="max-height: 300px;">
                             <div class="text-center text-muted small">Memuat gudang materi...</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB VERSI LOG -->
-                <div class="tab-pane fade" id="tab-versi">
-                    <div class="card card-custom p-3 bg-white">
-                        <h6 class="fw-bold text-wa mb-3"><i class="bi bi-journal-code me-2"></i> Histori Sistem</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered text-xs align-middle">
-                                <thead class="table-light text-center">
-                                    <tr><th style="width: 15%;">Versi</th><th style="width: 25%;">Tanggal</th><th>Perubahan</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td class="fw-bold text-center text-wa">v3.2-WA</td><td class="text-center text-muted">05 Juli 2026</td><td>Penambahan Fitur Modal View Arsip Logbook.</td></tr>
-                                    <tr><td class="fw-bold text-center text-wa">v3.1-WA</td><td class="text-center text-muted">05 Juli 2026</td><td>HOTFIX Bug Data Mentor Ilang.</td></tr>
-                                    <tr><td class="fw-bold text-center text-dark">v3.0-WA</td><td class="text-center text-muted">05 Juli 2026</td><td>Tab Menu dadi icon adaptif, Import Excel Siswa, Master Practice Class, Tombol Broadcast WA, Gudang Materi.</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
+
+        <!-- WA BOTTOM NAVIGATION BARU (Adaptive Icons) -->
+        <nav class="wa-bottom-nav" id="adminTabs" role="tablist" style="overflow-x: auto; justify-content: flex-start; gap: 5px; padding-left: 10px; padding-right: 10px;">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview"><i class="bi bi-grid-1x2-fill"></i><span class="tab-label">OVERVIEW</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tutor"><i class="bi bi-person-badge"></i><span class="tab-label">TUTOR</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-setup"><i class="bi bi-gear-fill"></i><span class="tab-label">SETUP</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-siswa"><i class="bi bi-mortarboard"></i><span class="tab-label">SISWA</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-diskusi"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tugas"><i class="bi bi-whatsapp"></i><span class="tab-label">WA</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-gudang"><i class="bi bi-box-seam-fill"></i><span class="tab-label">MATERI</span></button>
+        </nav>
+
     </div>
 
-    <!-- MODAL ARSIP SEKOLAH (v3.2) -->
-    <div class="modal fade" id="modalArsipSekolah" tabindex="-1" aria-labelledby="modalArsipLabel" aria-hidden="true">
+    <!-- MODAL ARSIP SEKOLAH (v3.2) - Khusus Admin tetep nang kene -->
+    <div class="modal fade" id="modalArsipSekolah" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title fs-6 fw-bold" id="modalArsipLabel"><i class="bi bi-archive-fill me-2"></i> Arsip Sekolah & Logbook</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fs-6 fw-bold"><i class="bi bi-archive-fill me-2"></i> Arsip Sekolah & Logbook</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-3">
-                    <div class="alert alert-warning text-xs border-0 py-2"><i class="bi bi-info-circle-fill me-1"></i> Data di bawah ini adalah sekolah yang disembunyikan (diarsipkan). Anda dapat melihat logbook lamanya.</div>
+                <div class="modal-body p-3 bg-light">
+                    <div class="alert alert-warning text-xs border-0 py-2 shadow-sm"><i class="bi bi-info-circle-fill me-1"></i> Data di bawah ini adalah sekolah yang disembunyikan (diarsipkan).</div>
                     
                     <div id="listArsipSekolah" class="list-group mb-3" style="max-height: 250px; overflow-y: auto;">
                         <div class="text-center small text-muted">Mencari data arsip...</div>
                     </div>
 
-                    <!-- Area Tampil Logbook Arsip -->
-                    <div id="areaLogbookArsip" class="d-none border rounded p-2 bg-light">
+                    <div id="areaLogbookArsip" class="d-none border rounded p-2 bg-white shadow-sm">
                         <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-1">
                             <h6 class="fw-bold text-dark text-xs mb-0" id="judulArsipLogbook">Logbook: -</h6>
                             <button class="btn btn-sm btn-outline-secondary py-0 px-2 text-xs rounded-pill" onclick="document.getElementById('areaLogbookArsip').classList.add('d-none');"><i class="bi bi-x-circle"></i> Tutup</button>
@@ -379,7 +311,7 @@
                         <div id="kontenLogbookArsip" class="overflow-auto" style="max-height: 300px; font-size: 0.75rem;"></div>
                     </div>
                 </div>
-                <div class="modal-footer p-2">
+                <div class="modal-footer p-2 border-0">
                     <button type="button" class="btn btn-secondary btn-sm rounded-pill fw-bold" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
@@ -388,14 +320,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, deleteChat } from './script.js?v=14.4';
-        
-        // Tambahan getDocs lan query nggo njupuk data Arsip Sekolah
+        import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, deleteChat, initGlobalUI } from './script.js?v=4.0';
         import { collection, setDoc, doc, onSnapshot, deleteDoc, addDoc, getDocs, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const actUser = sessionStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
-        
-        document.getElementById("userNameDisplay").innerText = sessionStorage.getItem("loggedInName");
+        // Manggil UI Global (Suntik modal, Tema, lan Logout soko localStorage)
+        initGlobalUI();
+
+        const actUser = localStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
+        document.getElementById("userNameDisplay").innerText = localStorage.getItem("loggedInName");
         document.getElementById("identitasMenu").innerText = "ID: " + actUser;
 
         function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '' : '<i class="bi bi-wifi-off text-warning me-1"></i>'; }
@@ -417,25 +349,16 @@
 
         function renderOverview() {
             const container = document.getElementById("overviewCardsContainer");
-            if (!container) return;
-            container.innerHTML = "";
-
-            if (globalAllSchools.length === 0) {
-                container.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border shadow-sm text-muted">Belum ada sekolah yang aktif...</div></div>`;
-                return;
-            }
+            if (!container) return; container.innerHTML = "";
+            if (globalAllSchools.length === 0) { container.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border shadow-sm text-muted">Belum ada sekolah yang aktif...</div></div>`; return; }
 
             globalAllSchools.forEach(s => {
                 const hBerjalan = s.hariBerjalan || 0; const tHari = s.totalHari || 0;
                 const jmlTutor = (s.assignedMentors && Array.isArray(s.assignedMentors)) ? s.assignedMentors.length : 0;
                 let jmlSiswa = 0;
                 if (s.masterSiswa) {
-                    const lines = s.masterSiswa.split('\n');
-                    lines.forEach(line => {
-                        if(line.includes(':')) {
-                            const namaArr = line.split(':')[1].split(',').map(n => n.trim()).filter(n => n !== "");
-                            jmlSiswa += namaArr.length;
-                        }
+                    s.masterSiswa.split('\n').forEach(line => {
+                        if(line.includes(':')) { jmlSiswa += line.split(':')[1].split(',').map(n => n.trim()).filter(n => n !== "").length; }
                     });
                 }
 
@@ -465,15 +388,11 @@
         window.langsungKeSekolah = function(id) { handlePilihSekolah(id); }
 
         function renderModernSchoolSelect() {
-            const container = document.getElementById("modernSchoolSelect");
-            if (!container) return;
-            
+            const container = document.getElementById("modernSchoolSelect"); if (!container) return;
             let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-danger' : 'btn-outline-secondary'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="">OVERVIEW GLOBAL</button>`;
             html += `<button class="btn btn-sm ${currentSchoolId === 'NEW' ? 'btn-wa border-0 shadow-sm' : 'btn-outline-wa'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW" style="color:var(--wa-primary); border: 1px solid var(--wa-primary);">+ BUAT BARU</button>`;
-            
             globalAllSchools.forEach(s => {
-                const isSelected = (currentSchoolId === s.id);
-                const btnClass = isSelected ? 'btn-wa border-0 shadow-sm' : 'btn-outline-secondary';
+                const btnClass = (currentSchoolId === s.id) ? 'btn-wa border-0 shadow-sm' : 'btn-outline-secondary';
                 html += `<button class="btn btn-sm ${btnClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
             });
             container.innerHTML = html;
@@ -491,7 +410,6 @@
                 document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-secondary small text-center bg-transparent border">Pilih Handle School di atas terlebih dahulu.</div>`;
                 document.getElementById("chatBox").innerHTML = ""; document.getElementById("listTugasWAHarian").innerHTML = "Pilih sekolah dulu"; document.getElementById("listTugasWAHistory").innerHTML = "Pilih sekolah dulu";
                 document.getElementById("leaderboardTutor").innerHTML = "Simpan sekolah dhisik nggo ndelok data.";
-                
                 renderModernSchoolSelect(); 
                 new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-overview"]')).show();
                 new bootstrap.Tab(document.querySelector('button[data-bs-target="#sub-cards"]')).show();
@@ -502,16 +420,13 @@
                 document.getElementById("inputMasterKelas").value = ""; document.getElementById("inputBriefing").value = ""; document.getElementById("inputJadwal").value = "";
                 document.getElementById("inputGoal").value = ""; document.getElementById("inputMasterSiswa").value = ""; document.getElementById("inputVocab").value = "";
                 document.getElementById("inputSpeaking").value = ""; document.getElementById("inputGrammar").value = ""; document.getElementById("inputPractice").value = "";
-                
                 currentAssignedMentors = []; renderMentorChecklist(); 
                 document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-warning small text-center">Simpan Handle School terlebih dahulu.</div>`;
-                
                 renderModernSchoolSelect(); 
                 new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-setup"]')).show();
             } else {
                 currentSchoolId = val; 
                 document.getElementById("inputIdSchool").value = val; document.getElementById("inputIdSchool").readOnly = true;
-                
                 renderModernSchoolSelect(); 
                 new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-overview"]')).show();
                 new bootstrap.Tab(document.querySelector('button[data-bs-target="#sub-logbook"]')).show();
@@ -524,7 +439,6 @@
             const fileInput = document.getElementById('excelSiswa');
             const file = fileInput.files[0];
             if(!file) return alert("Pilih file excel (.xlsx/.xls) dhisik!");
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -532,24 +446,16 @@
                     const workbook = XLSX.read(data, {type: 'array'});
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                    
                     let grouped = {};
                     jsonData.forEach(row => {
-                        let kls = row['Kelas'];
-                        let nama = row['Nama'];
-                        if(kls && nama) {
-                            if(!grouped[kls]) grouped[kls] = [];
-                            grouped[kls].push(nama);
-                        }
+                        let kls = row['Kelas']; let nama = row['Nama'];
+                        if(kls && nama) { if(!grouped[kls]) grouped[kls] = []; grouped[kls].push(nama); }
                     });
-                    
                     let output = [];
                     for(let k in grouped) { output.push(`${k}: ${grouped[k].join(', ')}`); }
                     document.getElementById('inputMasterSiswa').value = output.join('\n');
                     alert("Berhasil import data siswa!");
-                } catch(error) {
-                    alert("Gagal membaca Excel. Pastikan format kolom: Kelas | No | Nama");
-                }
+                } catch(error) { alert("Gagal membaca Excel. Pastikan format kolom: Kelas | No | Nama"); }
             };
             reader.readAsArrayBuffer(file);
         });
@@ -584,7 +490,7 @@
                 const box = document.getElementById("chatBox"); box.innerHTML = ""; 
                 chats.forEach(c => {
                     if (c.type === 'global') {
-                        const isMe = c.sender === sessionStorage.getItem("loggedInName"); const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..'; 
+                        const isMe = c.sender === localStorage.getItem("loggedInName"); const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..'; 
                         let nameColor = isMe ? 'text-wa' : 'text-primary'; 
                         let roleBadge = ""; if(c.role === "admin") { nameColor = 'text-danger'; roleBadge = '<i class="bi bi-shield-lock-fill ms-1"></i>'; } else if(c.role === "direktur") { nameColor = 'text-warning'; roleBadge = '<i class="bi bi-star-fill ms-1 text-dark"></i>'; } 
                         
@@ -621,7 +527,7 @@
         
         document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && currentSchoolId !== 'NEW' && confirm("Yakin arsipkan sekolah ini?")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); handlePilihSekolah(""); } };
 
-        function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { const dStr = d.waktu.toDate().toLocaleDateString('id-ID'); if(!daysMap.has(dStr)) daysMap.set(dStr, d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
+        function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { daysMap.set(d.waktu.toDate().toLocaleDateString('id-ID'), d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
         
         function renderListAdmin() {
             const container = document.getElementById("adminLogbookList"); container.innerHTML = ""; const fHari = document.getElementById("filterHari").value; const fKelas = document.getElementById("filterKelasHistori").value;
@@ -679,7 +585,7 @@
         document.getElementById("btnSendChat").onclick = async () => { 
             if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu!"); 
             const msg = document.getElementById("inputChat").value.trim(); if(!msg) return; 
-            await sendGlobalChat(currentSchoolId, sessionStorage.getItem("loggedInName"), msg, "admin"); 
+            await sendGlobalChat(currentSchoolId, localStorage.getItem("loggedInName"), msg, "admin"); 
             document.getElementById("inputChat").value = ""; 
         }; 
         document.getElementById("inputChat").addEventListener("keypress", function(e) { if (e.key === "Enter") { e.preventDefault(); document.getElementById("btnSendChat").click(); } });
@@ -806,16 +712,12 @@
             document.getElementById("areaLogbookArsip").classList.add("d-none");
             
             try {
-                // Ambil semua sekolah dari database
                 const allSchoolsSnap = await getDocs(collection(db, "schools"));
                 const activeIds = globalAllSchools.map(s => s.id);
                 let archivedSchools = [];
                 
                 allSchoolsSnap.forEach(d => {
-                    // Cek nek ID sekolah kasebut ora ana neng daftar sekolah aktif
-                    if(!activeIds.includes(d.id)) {
-                        archivedSchools.push({id: d.id, ...d.data()});
-                    }
+                    if(!activeIds.includes(d.id)) { archivedSchools.push({id: d.id, ...d.data()}); }
                 });
                 
                 if(archivedSchools.length === 0) {
@@ -827,20 +729,13 @@
                 archivedSchools.forEach(s => {
                     htmlList += `
                     <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center bg-white border mb-1 rounded">
-                        <div>
-                            <div class="fw-bold text-dark text-sm">${s.namaSekolah || s.id}</div>
-                            <div class="text-muted" style="font-size:0.65rem;">ID: ${s.id}</div>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-wa rounded-pill py-0 px-3 fw-bold" onclick="window.lihatLogbookArsip('${s.id}', '${s.namaSekolah}')">Lihat History</button>
-                        </div>
+                        <div><div class="fw-bold text-dark text-sm">${s.namaSekolah || s.id}</div><div class="text-muted" style="font-size:0.65rem;">ID: ${s.id}</div></div>
+                        <div><button class="btn btn-sm btn-wa rounded-pill py-0 px-3 fw-bold" onclick="window.lihatLogbookArsip('${s.id}', '${s.namaSekolah}')">Lihat History</button></div>
                     </div>`;
                 });
                 listContainer.innerHTML = htmlList;
                 
-            } catch (error) {
-                listContainer.innerHTML = '<div class="alert alert-danger text-center small">Gagal memuat arsip.</div>';
-            }
+            } catch (error) { listContainer.innerHTML = '<div class="alert alert-danger text-center small">Gagal memuat arsip.</div>'; }
         };
 
         window.lihatLogbookArsip = async function(schoolId, schoolName) {
@@ -855,14 +750,9 @@
                 const logsSnap = await getDocs(collection(db, "schools", schoolId, "logbooks"));
                 let arrLogs = [];
                 logsSnap.forEach(d => arrLogs.push({id: d.id, ...d.data()}));
-                
-                // Sortir logbook paling anyar ndhuwur
                 arrLogs.sort((a,b) => b.waktu - a.waktu);
                 
-                if(arrLogs.length === 0) {
-                    konten.innerHTML = '<div class="text-center text-muted mt-2">Tidak ada logbook di sekolah ini.</div>';
-                    return;
-                }
+                if(arrLogs.length === 0) { konten.innerHTML = '<div class="text-center text-muted mt-2">Tidak ada logbook di sekolah ini.</div>'; return; }
                 
                 let htmlLogs = '';
                 arrLogs.forEach(d => {
@@ -870,25 +760,16 @@
                     let displayJam = (d.jamKe || "").replace('Jam ', 'Sesi '); let displayMateri = d.materi && d.materi.length > 0 ? d.materi.join(', ') : '-';
                     
                     htmlLogs += `
-                    <div class="p-2 border rounded mb-2 bg-white">
-                        <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                            <span class="fw-bold text-wa">${d.nama.toUpperCase()}</span>
-                            <span class="text-muted" style="font-size:0.65rem;">${w}</span>
-                        </div>
-                        <div class="mb-1">
-                            <span class="badge bg-wa rounded-pill">${d.kelas}</span> <span class="badge bg-dark rounded-pill">${displayJam}</span>
-                        </div>
-                        <div>📖 <span class="fw-bold">Materi:</span> ${displayMateri}</div>
+                    <div class="p-2 border rounded mb-2 bg-white shadow-sm">
+                        <div class="d-flex justify-content-between mb-1 border-bottom pb-1"><span class="fw-bold text-wa">${d.nama.toUpperCase()}</span><span class="text-muted" style="font-size:0.65rem;">${w}</span></div>
+                        <div class="mb-1"><span class="badge bg-wa rounded-pill">${d.kelas}</span> <span class="badge bg-dark rounded-pill">${displayJam}</span></div>
+                        <div class="text-dark">📖 <span class="fw-bold">Materi:</span> ${displayMateri}</div>
                     </div>`;
                 });
                 konten.innerHTML = htmlLogs;
                 
-            } catch (error) {
-                konten.innerHTML = '<div class="text-danger text-center">Gagal memuat logbook.</div>';
-            }
+            } catch (error) { konten.innerHTML = '<div class="text-danger text-center">Gagal memuat logbook.</div>'; }
         };
-
-        document.getElementById("btnLogout").onclick = () => { sessionStorage.clear(); window.location.replace("index.html"); };
     </script>
 </body>
 </html>
