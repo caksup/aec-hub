@@ -1,5 +1,6 @@
 <!-- v1.1: Penambahan fitur Edit & Hapus User ing Tab Tutor -->
 <!-- v1.2: Penambahan UI Menu Histori Versi (Changelog) -->
+<!-- v1.3: Penambahan Checklist Mapping Mentor to School -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,7 +14,6 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* v1.1: Styling tetep utuh */
         .dynamic-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 8px; border-bottom: none; padding-bottom: 5px; }
         .dynamic-tabs::-webkit-scrollbar { display: none; }
         .dynamic-tabs .nav-item { flex: 0 0 auto; }
@@ -76,7 +76,6 @@
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-diskusi" title="Ruang Diskusi"><i class="bi bi-chat-dots"></i><span class="tab-label">Diskusi</span></button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-kurikulum" title="Tracker Materi"><i class="bi bi-bar-chart-fill"></i><span class="tab-label">Tracker</span></button></li>
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-tugas" title="Tugas WA"><i class="bi bi-whatsapp"></i><span class="tab-label">WA</span></button></li>
-                        <!-- v1.2: Tambahan Tab Versi -->
                         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-versi" title="Histori Versi"><i class="bi bi-journal-code"></i><span class="tab-label">Versi Log</span></button></li>
                     </ul>
 
@@ -109,6 +108,15 @@
                                     <label class="form-label fw-bold text-success text-xs mb-0">SPEAKING</label><textarea id="inputSpeaking" class="form-control text-xs mb-1" rows="2"></textarea>
                                     <label class="form-label fw-bold text-danger text-xs mb-0">GRAMMAR</label><textarea id="inputGrammar" class="form-control text-xs" rows="2"></textarea>
                                 </div>
+                                
+                                <!-- v1.3: CHECKLIST MENTOR YANG BERTUGAS -->
+                                <div class="p-2 border border-primary border-2 rounded bg-primary bg-opacity-10 mb-3">
+                                    <h6 class="text-xs fw-bold text-primary mb-2 border-bottom border-primary pb-1"><i class="bi bi-people-fill"></i> 6. MENTOR YANG BERTUGAS</h6>
+                                    <div id="setupMentorList" class="row g-2 text-xs ps-2">
+                                        <span class="text-muted">Memuat daftar mentor aktif...</span>
+                                    </div>
+                                </div>
+
                                 <button id="btnSaveSchool" class="btn btn-primary w-100 fw-bold shadow-sm py-2"><i class="bi bi-cloud-upload-fill me-2"></i> SIMPAN HANDLE SCHOOL INI</button>
                             </div>
                         </div>
@@ -118,7 +126,7 @@
                         <div class="tab-pane fade" id="tab-kurikulum"><div class="card card-custom p-3 shadow-sm bg-white border-warning border-2"><h6 class="fw-bold text-warning mb-2"><i class="bi bi-clipboard-data me-2"></i> Tracker Otomatis</h6><select id="trackerKelas" class="form-select form-select-sm border-warning fw-bold mb-3"></select><div id="areaTracker" class="overflow-auto pe-1" style="max-height: 380px;">Memuat pencapaian...</div></div></div>
                         <div class="tab-pane fade" id="tab-tugas"><div class="card card-custom p-3 shadow-sm bg-white border-success border-2"><h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Template Tugas WA (Sekolah Ini)</h6><div class="mb-2"><select id="waTarget" class="form-select form-select-sm border-success"></select></div><div class="mb-2"><input type="text" id="waGambar" class="form-control form-control-sm bg-light" placeholder="URL Gambar (Opsional)..."></div><div class="mb-3"><textarea id="waInstruksi" class="form-control bg-light text-sm" rows="3" placeholder="Instruksi Tugas WA..."></textarea></div><button id="btnKirimTugasWA" class="btn btn-success btn-sm w-100 fw-bold shadow-sm py-2">Buat Template WA</button><hr class="my-3"><div id="listTugasAdmin" style="max-height: 200px; overflow-y: auto;"></div></div></div>
                         
-                        <!-- v1.2: KONTEN TAB VERSI LOG -->
+                        <!-- TAB VERSI LOG -->
                         <div class="tab-pane fade" id="tab-versi">
                             <div class="card card-custom p-3 shadow-sm bg-white border-secondary border-2">
                                 <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-journal-code me-2"></i> Histori Pembaruan Sistem (Changelog)</h6>
@@ -132,8 +140,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <!-- v1.3: Log Anyar Ditambahake -->
                                             <tr>
-                                                <td class="fw-bold text-center text-primary">v1.2</td>
+                                                <td class="fw-bold text-center text-primary">v1.3</td>
+                                                <td class="text-center text-muted">05 Juli 2026</td>
+                                                <td>Penambahan fitur Mapping Mentor to School. Superuser saiki iso milih sapa wae mentor sing ditugasake ing sekolah tartamtu lewat menu Setup Sekolah.</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-center text-dark">v1.2</td>
                                                 <td class="text-center text-muted">05 Juli 2026</td>
                                                 <td>Penambahan UI tabel Histori Versi untuk melacak perubahan kode secara langsung di panel Superuser.</td>
                                             </tr>
@@ -141,11 +155,6 @@
                                                 <td class="fw-bold text-center">v1.1</td>
                                                 <td class="text-center text-muted">05 Juli 2026</td>
                                                 <td>Penyempurnaan Tab Tutor: Penambahan fitur Edit Akun (Update form) dan Hapus Permanen akun via Firestore.</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold text-center">v1.0</td>
-                                                <td class="text-center text-muted">04 Juli 2026</td>
-                                                <td>Peluncuran fitur God Mode (Superuser), manajemen Multi-School, dan sistem monitoring global.</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -178,8 +187,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, sendTugasWA, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, sendJapri, deleteChat } from './script.js?v=14.1';
-        
-        // v1.1: Penambahan fungsi deleteDoc ing import Firebase
         import { collection, setDoc, doc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const actUser = sessionStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
@@ -190,6 +197,8 @@
 
         let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = [];
         
+        // v1.3: Variabel nggo nyimpen sementara mentor sing wes ditugaske
+        let currentAssignedMentors = []; 
         let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
 
         function bersihkanListener() {
@@ -219,6 +228,11 @@
                 document.getElementById("inputMasterKelas").value = ""; document.getElementById("inputBriefing").value = ""; document.getElementById("inputJadwal").value = "";
                 document.getElementById("inputGoal").value = ""; document.getElementById("inputMasterSiswa").value = ""; document.getElementById("inputVocab").value = "";
                 document.getElementById("inputSpeaking").value = ""; document.getElementById("inputGrammar").value = "";
+                
+                // v1.3: Resiki centangan mentor
+                currentAssignedMentors = [];
+                document.querySelectorAll('.check-mentor').forEach(cb => cb.checked = false);
+
                 document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-secondary small text-center">Pilih Handle School di atas terlebih dahulu.</div>`;
                 document.getElementById("chatBox").innerHTML = ""; document.getElementById("listTugasAdmin").innerHTML = "";
                 document.getElementById("leaderboardTutor").innerHTML = "Pilih sekolah di atas untuk melihat ranking...";
@@ -228,6 +242,11 @@
             if(val === "NEW") {
                 currentSchoolId = ""; document.getElementById("inputIdSchool").readOnly = false; document.getElementById("inputIdSchool").value = "";
                 document.getElementById("inputSekolah").value = ""; document.getElementById("inputTotalHari").value = 5; document.getElementById("inputHariKe").value = 0;
+                
+                // v1.3: Resiki centangan mentor kanggo sekolah anyar
+                currentAssignedMentors = [];
+                document.querySelectorAll('.check-mentor').forEach(cb => cb.checked = false);
+
                 document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-warning small text-center">Simpan Handle School terlebih dahulu.</div>`;
                 new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-setup"]')).show();
             } else {
@@ -243,6 +262,12 @@
                 document.getElementById('inputBriefing').value = data.briefing || ""; document.getElementById('inputJadwal').value = data.jadwal || ""; document.getElementById('inputGoal').value = data.goal || ""; document.getElementById('inputMasterSiswa').value = data.masterSiswa || "";
                 rawKurikulum = data.kurikulum || { vocab: [], speaking: [], grammar: [] }; document.getElementById('inputVocab').value = rawKurikulum.vocab ? rawKurikulum.vocab.join('\n') : ""; document.getElementById('inputSpeaking').value = rawKurikulum.speaking ? rawKurikulum.speaking.join('\n') : ""; document.getElementById('inputGrammar').value = rawKurikulum.grammar ? rawKurikulum.grammar.join('\n') : "";
                 
+                // v1.3: Centang kothak mentor adhedhasar data saka database
+                currentAssignedMentors = data.assignedMentors || [];
+                document.querySelectorAll('.check-mentor').forEach(cb => {
+                    cb.checked = currentAssignedMentors.includes(cb.value);
+                });
+
                 const arrKelas = (data.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!=="");
                 const sels = ['filterKelasSiswa', 'trackerKelas', 'filterKelasHistori', 'waTarget'];
                 sels.forEach(id => { const el = document.getElementById(id); if(!el) return; el.innerHTML = ""; if(id==='waTarget') el.innerHTML+=`<option value="GLOBAL (Semua Ruang)">GLOBAL</option>`; else el.innerHTML+=`<option value="SEMUA">Semua Kelas</option>`; arrKelas.forEach(k => el.innerHTML+=`<option value="${k}">${k}</option>`); });
@@ -271,10 +296,25 @@
         document.getElementById("btnSaveSchool").onclick = async () => {
             const sid = document.getElementById("inputIdSchool").value.toLowerCase().trim().replace(/\s+/g, ''); if(!sid) return alert("ID Handle tidak boleh kosong!");
             const getArr = (id) => document.getElementById(id).value.split('\n').map(i => i.trim()).filter(i => i !== "");
+            
+            // v1.3: Ngumpulke sapa wae mentor sing dicentang
+            const selectedMentors = Array.from(document.querySelectorAll('.check-mentor:checked')).map(c => c.value);
+
             try {
                 await saveSchool(sid, { 
-                    namaSekolah: document.getElementById('inputSekolah').value, totalHari: parseInt(document.getElementById('inputTotalHari').value) || 5, hariBerjalan: parseInt(document.getElementById('inputHariKe').value) || 0, masterKelas: document.getElementById('inputMasterKelas').value, jadwal: document.getElementById('inputJadwal').value, briefing: document.getElementById('inputBriefing').value, goal: document.getElementById('inputGoal').value, masterSiswa: document.getElementById('inputMasterSiswa').value, kurikulum: { vocab: getArr('inputVocab'), speaking: getArr('inputSpeaking'), grammar: getArr('inputGrammar') }
-                }); alert("Handle School Sukses Disimpan!"); document.getElementById("masterSchoolSelect").value = sid; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change'));
+                    namaSekolah: document.getElementById('inputSekolah').value, 
+                    totalHari: parseInt(document.getElementById('inputTotalHari').value) || 5, 
+                    hariBerjalan: parseInt(document.getElementById('inputHariKe').value) || 0, 
+                    masterKelas: document.getElementById('inputMasterKelas').value, 
+                    jadwal: document.getElementById('inputJadwal').value, 
+                    briefing: document.getElementById('inputBriefing').value, 
+                    goal: document.getElementById('inputGoal').value, 
+                    masterSiswa: document.getElementById('inputMasterSiswa').value, 
+                    kurikulum: { vocab: getArr('inputVocab'), speaking: getArr('inputSpeaking'), grammar: getArr('inputGrammar') },
+                    assignedMentors: selectedMentors // v1.3: Data mentor dilebokake mrene
+                }); 
+                alert("Handle School Sukses Disimpan!"); 
+                document.getElementById("masterSchoolSelect").value = sid; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change'));
             } catch (e) { alert("Gagal update."); }
         };
         document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); document.getElementById("masterSchoolSelect").value = ""; document.getElementById("masterSchoolSelect").dispatchEvent(new Event('change')); } };
@@ -312,25 +352,31 @@
             html2pdf().set({ margin: 0.3, filename: `AEC_Report_${currentSchoolId}_${fHari.replace(/\//g, "-")}.pdf`, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }}).from(printDiv).save();
         };
 
-        // --- MULAI BLOK MANAJEMEN USER (Update v1.1) ---
-        // v1.1: Pembaruan logika onSnapshot supaya tabel nampilke tombol Edit lan Hapus
+        // --- BLOK MANAJEMEN USER ---
         onSnapshot(collection(db, "users"), (snap) => { 
             const tbody = document.getElementById("listUsersTable"); 
             tbody.innerHTML = ""; 
             const chatTarget = document.getElementById("chatTarget"); 
             const prevTarget = chatTarget ? chatTarget.value : "GLOBAL"; 
             
+            // v1.3: Ngresiki wadah checkbox mentor ing tab Setup
+            const setupMentorList = document.getElementById("setupMentorList");
+            if (setupMentorList) setupMentorList.innerHTML = "";
+            let allUsersForChecklist = [];
+
             if(chatTarget) chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; 
             
             snap.forEach(d => { 
                 const ud = d.data(); 
                 const uid = d.id; 
                 
+                // Tambah data menyang array sementara nggo diproses dadi checkbox mengko
+                allUsersForChecklist.push({id: uid, ...ud});
+
                 const btnStatus = ud.status === 'aktif' ? 
                     `<button class="btn btn-sm btn-outline-danger py-0 px-1" title="Nonaktifkan" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : 
                     `<button class="btn btn-sm btn-outline-success py-0 px-1" title="Aktifkan" onclick="window.toggleUser('${uid}', 'aktif')"><i class="bi bi-person-check"></i></button>`; 
                 
-                // v1.1: Tombol anyar dinggo edit lan hapus
                 const btnEdit = `<button class="btn btn-sm btn-outline-warning py-0 px-1 ms-1" title="Edit Akun" onclick="window.siapEditUser('${uid}', '${ud.julukan}', '${ud.role}', '${ud.pin}')"><i class="bi bi-pencil"></i></button>`;
                 const btnHapus = `<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1" title="Hapus Permanen" onclick="window.hapusUserPermanen('${uid}')"><i class="bi bi-trash"></i></button>`;
 
@@ -342,9 +388,31 @@
             }); 
             
             if(chatTarget) chatTarget.value = prevTarget; 
+            
+            // v1.3: Nggambar Checkbox Mentor ing tab Setup
+            if (setupMentorList) {
+                allUsersForChecklist.forEach(u => {
+                    // Mung nampilake akun sing aktif
+                    if (u.status === 'aktif') {
+                        setupMentorList.innerHTML += `
+                        <div class="col-6 col-md-4">
+                            <div class="form-check border p-1 rounded bg-white">
+                                <input class="form-check-input check-mentor ms-1" type="checkbox" value="${u.id}" id="chk_${u.id}">
+                                <label class="form-check-label fw-bold ms-1" for="chk_${u.id}">${u.julukan}</label>
+                            </div>
+                        </div>`;
+                    }
+                });
+                
+                // Yen wis ana sekolah sing dipilih, langsung centang otomatis
+                if(currentAssignedMentors.length > 0) {
+                    document.querySelectorAll('.check-mentor').forEach(cb => {
+                        cb.checked = currentAssignedMentors.includes(cb.value);
+                    });
+                }
+            }
         });
 
-        // v1.1: Fungsi kanggo njupuk data sing arep diedit mlebu form
         window.siapEditUser = function(uid, nama, role, pin) {
             document.getElementById("newUser").value = uid;
             document.getElementById("newUser").readOnly = true; 
@@ -368,7 +436,6 @@
             }
         };
 
-        // v1.1: Fungsi kanggo mbatalake mode edit lan ngosongake form
         window.batalEditUser = function() {
             document.getElementById("newUser").value = "";
             document.getElementById("newUser").readOnly = false; 
@@ -385,7 +452,6 @@
             }
         };
 
-        // v1.1: Fungsi kanggo mbusak data user saka Firebase kanthi permanen
         window.hapusUserPermanen = async function(uid) {
             if(confirm(`Tenanan arep mbusak permanen akun: ${uid}?`)) {
                 await deleteDoc(doc(db, "users", uid));
@@ -393,7 +459,6 @@
             }
         };
 
-        // v1.1: Modifikasi fungsi simpan supaya bisa kanggo tambah anyar lan update data
         document.getElementById("btnAddUser").onclick = async () => { 
             const u = document.getElementById("newUser").value.toLowerCase().trim(); 
             const p = document.getElementById("newPin").value; 
