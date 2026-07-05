@@ -1,8 +1,5 @@
-<!-- v1.1: Penambahan fitur Edit & Hapus User ing Tab Tutor -->
-<!-- v1.2: Penambahan UI Menu Histori Versi (Changelog) -->
-<!-- v1.3: Penambahan Checklist Mapping Mentor to School -->
-<!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) & Fix Checklist Mentor -->
-<!-- v1.6: Penambahan Tab Overview (Cardview) dadi Landing Page Default -->
+<!-- v1.6: Penambahan Tab Overview (Cardview) -->
+<!-- v2.0-WA: Adaptive WhatsApp Theme & Horizontal Swipe Tabs kanggo Admin -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,215 +7,335 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Pengendali VIP - AEC Hub</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#128C7E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        .dynamic-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 8px; border-bottom: none; padding-bottom: 5px; }
-        .dynamic-tabs::-webkit-scrollbar { display: none; }
-        .dynamic-tabs .nav-item { flex: 0 0 auto; }
-        .dynamic-tabs .nav-link { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 30px; padding: 8px 16px; color: #64748b; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
-        .dynamic-tabs .nav-link i { font-size: 1.2rem; margin: 0; }
-        .dynamic-tabs .nav-link .tab-label { display: none; font-size: 0.8rem; font-weight: 700; margin-left: 8px; white-space: nowrap; }
-        .dynamic-tabs .nav-link.active { background-color: #0d6efd; color: #fff; border-color: #0d6efd; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2); }
-        .dynamic-tabs .nav-link.active i { color: #fff !important; }
-        .dynamic-tabs .nav-link.active .tab-label { display: block; }
-        .chat-box { max-height: 300px; overflow-y: auto; background-color: #f8f9fa; }
-        .msg-bubble { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 0.8rem; position: relative; }
-        .msg-me { background-color: #d1e7dd; margin-left: auto; border-bottom-right-radius: 2px; }
-        .msg-other { background-color: #fff; border: 1px solid #dee2e6; margin-right: auto; border-bottom-left-radius: 2px; }
+        /* TEMA WA CUSTOM (LIGHT MODE - DEFAULT) */
+        :root {
+            --wa-primary: #128C7E;
+            --wa-dark: #075E54;
+            --wa-bg: #efeae2; 
+            --wa-bubble-me: #dcf8c6;
+            --wa-bubble-other: #ffffff;
+            --wa-card-bg: #ffffff;
+            --wa-text-main: #212529;
+            --wa-text-muted: #6c757d;
+            --wa-input-bg: #f8f9fa;
+            --wa-border: #dee2e6;
+        }
+
+        /* TEMA WA CUSTOM (DARK MODE OTOMATIS) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --wa-primary: #1f2c34; 
+                --wa-dark: #111b21;
+                --wa-bg: #0b141a; 
+                --wa-bubble-me: #005c4b; 
+                --wa-bubble-other: #202c33; 
+                --wa-card-bg: #111b21;
+                --wa-text-main: #e9edef;
+                --wa-text-muted: #8696a0;
+                --wa-input-bg: #2a3942;
+                --wa-border: #222d32;
+            }
+            body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; }
+            .bg-white, .bg-light { background-color: var(--wa-card-bg) !important; }
+            .text-dark { color: var(--wa-text-main) !important; }
+            .text-muted { color: var(--wa-text-muted) !important; }
+            .border, .border-bottom, .border-top, .border-start, .border-end { border-color: var(--wa-border) !important; }
+            .form-control, .form-select, .input-group-text, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
+            .card { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; }
+            .dropdown-menu { background-color: var(--wa-card-bg); border-color: var(--wa-border); }
+            .dropdown-item { color: var(--wa-text-main); }
+            .dropdown-item:hover { background-color: var(--wa-input-bg); color: var(--wa-text-main); }
+            .dropdown-header { color: #00a884 !important; }
+            .table-light, .table-secondary, thead { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; }
+            .table td, .table th { border-color: var(--wa-border); color: var(--wa-text-main); background-color: transparent !important; }
+            .text-wa { color: #00a884 !important; }
+            .text-primary { color: #53bdeb !important; }
+            .text-success { color: #00a884 !important; }
+            .text-danger { color: #f15c6d !important; }
+            .text-warning { color: #ffd02c !important; }
+            .text-info { color: #53bdeb !important; }
+            .text-secondary { color: var(--wa-text-muted) !important; }
+        }
+
+        /* GENERAL STYLES */
+        body { background-color: var(--wa-bg); color: var(--wa-text-main); transition: all 0.3s; }
+        .bg-wa { background-color: var(--wa-primary) !important; color: white; transition: all 0.3s; }
+        .text-wa { color: var(--wa-primary) !important; }
+        .btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } 
+        .btn-wa:hover { background-color: #075E54; color: white; }
+        
+        /* WA TABS STYLE (Geser) */
+        .wa-tabs { background-color: var(--wa-primary); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; border-bottom: none; transition: all 0.3s; }
+        .wa-tabs::-webkit-scrollbar { display: none; }
+        .wa-tabs .nav-link { color: rgba(255,255,255,0.7); border: none; border-radius: 0; padding: 12px 15px; font-weight: bold; font-size: 0.85rem; white-space: nowrap; transition: 0.2s; }
+        .wa-tabs .nav-link.active { color: white; background: transparent; border-bottom: 3px solid white; }
+
+        /* CHAT BUBBLES */
+        .chat-box { max-height: 450px; overflow-y: auto; background-color: var(--wa-bg); }
+        .msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); position: relative; color: var(--wa-text-main); transition: background-color 0.3s; }
+        .msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
+        .msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
         .del-chat-btn { cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 2px 5px; } .del-chat-btn:hover { opacity: 1; color: red; }
-        #headTimeline > div { margin-top: 0 !important; } #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
+
+        .card-custom { border-radius: 12px; background-color: var(--wa-card-bg); box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--wa-border); transition: background-color 0.3s; }
         
         #modernSchoolSelect::-webkit-scrollbar { display: none; }
         .school-pill { transition: all 0.2s ease-in-out; }
         .school-pill:active { transform: scale(0.95); }
     </style>
 </head>
-<body style="background-color: #f1f5f9;">
+<body>
     <div class="app-wrapper">
         
-        <nav class="navbar navbar-expand bg-white sticky-top shadow-sm mb-3 border-bottom border-danger border-3" style="z-index: 1020; padding: 6px 0;">
-            <div class="container-fluid px-3 d-flex flex-column align-items-stretch">
-                <div class="d-flex justify-content-between align-items-center w-100 mb-2">
-                    <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden" style="font-size: 0.75rem; line-height: 1.25;">
-                        <div class="d-flex align-items-center mb-1"><span id="netStatus" class="me-1"></span><span class="fw-bold text-danger" style="font-size: 0.85rem;"><i class="bi bi-shield-fill-check me-1"></i> ADMIN GOD MODE</span></div>
-                        <div class="mb-1 text-truncate"><span id="headClock" class="fw-bold text-dark font-monospace" style="font-size: 0.95rem; letter-spacing: 0.5px;">00:00:00</span><span class="text-secondary mx-1 fw-bold">|</span><span id="headDate" class="text-secondary fw-medium">Tanggal</span></div>
+        <!-- HEADER WA STYLE (Admin Edition) -->
+        <nav class="navbar bg-wa sticky-top shadow-sm p-0" style="z-index: 1020;">
+            <div class="container-fluid px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                <!-- Kiri: Profil & Jeneng -->
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-shield-fill-check fs-2 me-2 text-white"></i>
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                        <span class="fw-bold text-white" style="font-size: 1.1rem;" id="userNameDisplay">Memuat...</span>
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.8);"><span id="netStatus"></span> <span id="identitasMenu">God Mode Admin</span></span>
                     </div>
-                    <div class="dropdown ms-2">
-                        <button class="btn btn-light shadow-sm border-0 bg-white" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 4px 8px;"><i class="bi bi-list text-danger" style="font-size: 1.5rem;"></i></button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width: 200px; border-radius: 12px;">
-                            <li><h6 class="dropdown-header text-dark fw-bold text-wrap" id="userNameDisplay">Login: Memuat...</h6></li>
+                </div>
+                
+                <!-- Kanan: Icon WA & Titik Telu (Menu) -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-sm-block" style="line-height: 1;">
+                        <div id="headClock" class="fw-bold text-white font-monospace text-xs">00:00</div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 8px;">
+                            <li><h6 class="dropdown-header text-wa fw-bold">Super Menu</h6></li>
+                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Roadmap dalam pengembangan!')"><i class="bi bi-signpost-split me-2"></i> Roadmap</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item fw-medium py-2" href="#" onclick="alert('Fitur Roadmap dalam pengembangan!')"><i class="bi bi-signpost-split text-primary me-2"></i> Roadmap</a></li>
-                            <li><a class="dropdown-item text-danger fw-bold py-2 bg-danger bg-opacity-10" href="#" id="btnLogout"><i class="bi bi-power me-2"></i> Log Out</a></li>
+                            <li><a class="dropdown-item text-danger fw-bold py-2" href="#" id="btnLogout"><i class="bi bi-box-arrow-right me-2"></i> Keluar</a></li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="w-100 bg-white pt-2 rounded-top d-flex flex-column">
-                    <div class="text-xs fw-bold text-danger mb-1"><i class="bi bi-buildings-fill me-1"></i> PILIH SEKOLAH (UNTUK DIEDIT):</div>
-                    <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-2" style="gap: 8px; scrollbar-width: none;">
-                        <button class="btn btn-danger btn-sm rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW">+ BUAT SEKOLAH BARU</button>
-                    </div>
-                </div>
             </div>
+
+            <!-- TABS WA (Geser Horizontal Super Lengkap) -->
+            <ul class="nav nav-tabs wa-tabs w-100 px-2" id="adminTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview"><i class="bi bi-grid-1x2-fill me-1"></i> OVERVIEW</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tutor"><i class="bi bi-person-badge me-1"></i> TUTOR</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-setup"><i class="bi bi-gear-fill me-1"></i> SETUP</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-siswa"><i class="bi bi-mortarboard me-1"></i> SISWA</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-diskusi"><i class="bi bi-chat-fill me-1"></i> CHAT</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kurikulum"><i class="bi bi-bar-chart-fill me-1"></i> TRACKER</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tugas"><i class="bi bi-whatsapp me-1"></i> WA</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-versi"><i class="bi bi-journal-code me-1"></i> LOG</button></li>
+            </ul>
         </nav>
 
-        <div class="container pb-5" id="mainContentArea">
-            <div class="row">
-                <div class="col-12 col-lg-7 mb-4">
+        <div class="container pb-5 pt-3" id="mainContentArea">
+            
+            <!-- Pilihan Sekolah -->
+            <div class="w-100 bg-white p-2 rounded-3 shadow-sm border mb-3 d-flex flex-column">
+                <div class="text-xs fw-bold text-wa mb-2"><i class="bi bi-buildings-fill me-1"></i> PILIH SEKOLAH (EDIT DATA):</div>
+                <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-1" style="gap: 8px; scrollbar-width: none;">
+                    <button class="btn btn-wa btn-sm rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW">+ BUAT BARU</button>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT Siji Kolom Full -->
+            <div class="tab-content h-100">
+                
+                <!-- TAB OVERVIEW -->
+                <div class="tab-pane fade show active" id="tab-overview">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold text-wa mb-0"><i class="bi bi-rocket-takeoff-fill me-2"></i> Overview Sekolah Aktif</h6>
+                    </div>
+                    <div class="row g-3" id="overviewCardsContainer">
+                        <div class="col-12"><div class="alert alert-light text-center small border shadow-sm">Memuat data sekolah...</div></div>
+                    </div>
                     
-                    <ul class="nav nav-pills mb-3 shadow-sm bg-white rounded p-2 dynamic-tabs" id="adminTabs" role="tablist">
-                        <!-- v1.6: Tab Overview disisipke ning ngarep dewe dadi aktif -->
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-overview" title="Overview Sekolah"><i class="bi bi-grid-1x2-fill"></i><span class="tab-label">Overview</span></button></li>
-                        
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-tutor" title="Manajemen Tutor"><i class="bi bi-person-badge"></i><span class="tab-label">Tutor (Global)</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-setup" title="Setup Sekolah"><i class="bi bi-gear-fill"></i><span class="tab-label">Setup Sekolah</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-siswa" title="Data Siswa"><i class="bi bi-mortarboard"></i><span class="tab-label">Siswa</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-diskusi" title="Ruang Diskusi"><i class="bi bi-chat-dots"></i><span class="tab-label">Diskusi</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-kurikulum" title="Tracker Materi"><i class="bi bi-bar-chart-fill"></i><span class="tab-label">Tracker</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-tugas" title="Tugas WA"><i class="bi bi-whatsapp"></i><span class="tab-label">WA</span></button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-versi" title="Histori Versi"><i class="bi bi-journal-code"></i><span class="tab-label">Versi Log</span></button></li>
-                    </ul>
+                    <!-- Area Tampil Logbook Global Neng Ngisor Overview -->
+                    <div class="card card-custom p-3 mt-4 bg-white shadow-sm">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-server me-1"></i> Logbook Sekolah</h6>
+                            <button id="btnExportPDF" class="btn btn-danger btn-sm fw-bold rounded-pill"><i class="bi bi-file-pdf-fill"></i> Cetak PDF</button>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6"><select id="filterHari" class="form-select form-select-sm fw-bold text-danger border-0 bg-light rounded-pill"><option value="SEMUA">Semua Data</option></select></div>
+                            <div class="col-6"><select id="filterKelasHistori" class="form-select form-select-sm fw-bold text-secondary border-0 bg-light rounded-pill"></select></div>
+                        </div>
+                        <div id="adminLogbookList" class="overflow-auto pe-1" style="max-height: 400px;">
+                            <div class="alert alert-secondary small text-center bg-transparent border">Pilih Handle School di atas terlebih dahulu.</div>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="tab-content h-100">
+                <!-- TAB TUTOR -->
+                <div class="tab-pane fade" id="tab-tutor">
+                    <div class="card card-custom p-3 bg-white mb-3">
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-fill-add me-2"></i> Kelola Tutor (Global)</h6>
+                        <div class="row g-2 mb-2">
+                            <div class="col-4"><input type="text" id="newUser" class="form-control form-control-sm text-xs text-lowercase fw-bold" placeholder="username"></div>
+                            <div class="col-4"><input type="text" id="newPin" class="form-control form-control-sm text-xs text-danger fw-bold" placeholder="PIN Angka"></div>
+                            <div class="col-4"><input type="text" id="newName" class="form-control form-control-sm text-xs" placeholder="Julukan"></div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6"><select id="newRole" class="form-select form-select-sm text-xs"><option value="mentor">Mentor</option><option value="direktur">Direktur</option><option value="admin">Admin</option></select></div>
+                            <div class="col-6"><button id="btnAddUser" class="btn btn-sm btn-primary w-100 fw-bold rounded-pill">Tambah Akun</button></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered text-xs align-middle text-center mb-0">
+                                <thead class="table-light"><tr><th>User</th><th>Nama</th><th>Role</th><th>PIN</th><th>Aksi</th></tr></thead>
+                                <tbody id="listUsersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card card-custom p-3 bg-white">
+                        <h6 class="fw-bold text-wa mb-2"><i class="bi bi-trophy-fill me-2"></i> Kinerja Tutor (Di Sekolah Aktif)</h6>
+                        <div id="leaderboardTutor" class="space-y-2">Pilih sekolah di atas untuk melihat ranking...</div>
+                    </div>
+                </div>
+
+                <!-- TAB SETUP SEKOLAH -->
+                <div class="tab-pane fade" id="tab-setup">
+                    <div class="card card-custom p-3 bg-white border-top border-warning border-4 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-broadcast text-wa me-2"></i> Setup Spesifik</h6>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" id="btnArsipSekolah"><i class="bi bi-archive"></i> Arsipkan</button>
+                        </div>
+                        <div class="row g-2 mb-3 p-3 border border-warning rounded bg-warning bg-opacity-10">
+                            <div class="col-12"><label class="form-label fw-bold text-danger text-xs mb-0">ID HANDLE (Otomatis, dilarang spasi)</label><input type="text" id="inputIdSchool" class="form-control form-control-sm font-monospace border-warning" placeholder="contoh: sdn1jatirogo"></div>
+                            <div class="col-12"><label class="form-label fw-bold text-danger text-xs mb-0">NAMA SEKOLAH / LOKASI</label><input type="text" id="inputSekolah" class="form-control form-control-sm fw-bold border-warning"></div>
+                            <div class="col-6"><label class="form-label fw-bold text-danger text-xs mb-0">TOTAL HARI KURSUS</label><input type="number" id="inputTotalHari" class="form-control form-control-sm fw-bold border-warning text-center"></div>
+                            <div class="col-6"><label class="form-label fw-bold text-danger text-xs mb-0">HARI SAAT INI</label><input type="number" id="inputHariKe" class="form-control form-control-sm fw-bold border-warning text-center"></div>
+                            <div class="col-12 mt-2"><label class="form-label fw-bold text-danger text-xs mb-0">DAFTAR KELAS (Pisahkan dgn koma)</label><input type="text" id="inputMasterKelas" class="form-control form-control-sm fw-bold border-danger text-danger" placeholder="Cth: Kelas A, Kelas B"></div>
+                        </div>
+                        <div class="mb-2"><label class="form-label fw-bold text-info text-xs mb-0">1. NOTIF / BRIEFING DIREKTUR</label><textarea id="inputBriefing" class="form-control bg-light text-xs" rows="2"></textarea></div>
+                        <div class="mb-2"><label class="form-label fw-bold text-primary text-xs mb-0">2. JADWAL FULL GLOBAL</label><textarea id="inputJadwal" class="form-control bg-light text-xs" rows="3"></textarea></div>
+                        <div class="mb-2"><label class="form-label fw-bold text-success text-xs mb-0">3. GOAL HARIAN</label><textarea id="inputGoal" class="form-control bg-light text-xs" rows="2"></textarea></div>
+                        <div class="mb-3"><label class="form-label fw-bold text-danger text-xs mb-0">4. DATA SISWA (Cth: Kelas A: Budi, Andi)</label><textarea id="inputMasterSiswa" class="form-control bg-light text-xs border-danger border-opacity-25" rows="2"></textarea></div>
                         
-                        <!-- v1.6: KONTEN TAB OVERVIEW -->
-                        <div class="tab-pane fade show active" id="tab-overview">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold text-primary mb-0"><i class="bi bi-rocket-takeoff-fill me-2"></i> Overview Sekolah Aktif Oye!</h6>
-                            </div>
-                            <div class="row g-3" id="overviewCardsContainer">
-                                <div class="col-12"><div class="alert alert-light text-center small border shadow-sm">Memuat data sekolah...</div></div>
+                        <div class="p-2 border rounded bg-light mb-3">
+                            <h6 class="text-xs fw-bold text-dark mb-2 border-bottom pb-1">5. MASTER MATERI KURIKULUM</h6>
+                            <label class="form-label fw-bold text-primary text-xs mb-0">VOCABULARY</label><textarea id="inputVocab" class="form-control text-xs mb-1" rows="2"></textarea>
+                            <label class="form-label fw-bold text-success text-xs mb-0">SPEAKING</label><textarea id="inputSpeaking" class="form-control text-xs mb-1" rows="2"></textarea>
+                            <label class="form-label fw-bold text-danger text-xs mb-0">GRAMMAR</label><textarea id="inputGrammar" class="form-control text-xs" rows="2"></textarea>
+                        </div>
+                        
+                        <!-- CHECKLIST MENTOR YANG BERTUGAS -->
+                        <div class="p-2 border border-primary border-2 rounded mb-3 shadow-sm">
+                            <h6 class="text-xs fw-bold text-primary mb-2 border-bottom border-primary pb-1"><i class="bi bi-people-fill"></i> 6. MENTOR YANG BERTUGAS</h6>
+                            <div id="setupMentorList" class="row g-2 text-xs ps-2">
+                                <span class="text-muted">Memuat daftar mentor aktif...</span>
                             </div>
                         </div>
 
-                        <!-- TAB TUTOR (Ora show active maneh) -->
-                        <div class="tab-pane fade" id="tab-tutor"><div class="card card-custom p-3 shadow-sm bg-white border-primary border-2 mb-3"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-fill-add me-2"></i> Kelola Tutor (Global)</h6><div class="row g-2 mb-2"><div class="col-4"><input type="text" id="newUser" class="form-control form-control-sm text-xs text-lowercase fw-bold" placeholder="username"></div><div class="col-4"><input type="text" id="newPin" class="form-control form-control-sm text-xs text-danger fw-bold" placeholder="PIN Angka"></div><div class="col-4"><input type="text" id="newName" class="form-control form-control-sm text-xs" placeholder="Julukan"></div></div><div class="row g-2 mb-3"><div class="col-6"><select id="newRole" class="form-select form-select-sm text-xs"><option value="mentor">Mentor</option><option value="direktur">Direktur</option><option value="admin">Admin</option></select></div><div class="col-6"><button id="btnAddUser" class="btn btn-sm btn-primary w-100 fw-bold">Tambah Akun</button></div></div><div class="table-responsive"><table class="table table-sm table-bordered text-xs align-middle text-center"><thead class="table-light"><tr><th>User</th><th>Nama</th><th>Role</th><th>PIN</th><th>Aksi</th></tr></thead><tbody id="listUsersTable"></tbody></table></div></div><div class="card card-custom p-3 shadow-sm bg-white"><h6 class="fw-bold text-dark mb-2"><i class="bi bi-trophy text-warning me-2"></i> Kinerja Tutor (Di Sekolah Yg Dipilih)</h6><div id="leaderboardTutor" class="space-y-2">Pilih sekolah di atas untuk melihat ranking...</div></div></div>
+                        <button id="btnSaveSchool" class="btn btn-wa w-100 fw-bold shadow-sm py-2 rounded-pill"><i class="bi bi-cloud-upload-fill me-2"></i> SIMPAN HANDLE SCHOOL INI</button>
+                    </div>
+                </div>
 
-                        <!-- TAB SETUP -->
-                        <div class="tab-pane fade" id="tab-setup">
-                            <div class="card card-custom p-3 shadow-sm bg-white mb-3 border-top border-warning border-3">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-broadcast text-danger me-2"></i> Pengaturan Sekolah Spesifik</h6>
-                                    <button class="btn btn-sm btn-outline-danger" id="btnArsipSekolah"><i class="bi bi-archive"></i> Arsipkan</button>
-                                </div>
-                                <div class="row g-2 mb-3 p-2 border border-warning rounded bg-warning bg-opacity-10">
-                                    <div class="col-12"><label class="form-label fw-bold text-danger text-xs mb-0">ID HANDLE (Otomatis, dilarang spasi)</label><input type="text" id="inputIdSchool" class="form-control form-control-sm font-monospace border-warning" placeholder="contoh: sdn1jatirogo"></div>
-                                    <div class="col-12"><label class="form-label fw-bold text-danger text-xs mb-0">NAMA SEKOLAH / LOKASI</label><input type="text" id="inputSekolah" class="form-control form-control-sm fw-bold border-warning"></div>
-                                    <div class="col-6"><label class="form-label fw-bold text-danger text-xs mb-0">TOTAL HARI KURSUS</label><input type="number" id="inputTotalHari" class="form-control form-control-sm fw-bold border-warning text-center"></div>
-                                    <div class="col-6"><label class="form-label fw-bold text-danger text-xs mb-0">HARI SAAT INI</label><input type="number" id="inputHariKe" class="form-control form-control-sm fw-bold border-warning text-center"></div>
-                                    <div class="col-12 mt-2"><label class="form-label fw-bold text-danger text-xs mb-0">DAFTAR KELAS (Pisahkan dgn koma)</label><input type="text" id="inputMasterKelas" class="form-control form-control-sm fw-bold border-danger text-danger" placeholder="Cth: Kelas A, Kelas B, Kelas C"></div>
-                                </div>
-                                <div class="mb-2"><label class="form-label fw-bold text-info text-xs mb-0">1. NOTIF / BRIEFING DIREKTUR</label><textarea id="inputBriefing" class="form-control bg-light text-xs border-info" rows="2"></textarea></div>
-                                <div class="mb-2"><label class="form-label fw-bold text-primary text-xs mb-0">2. JADWAL FULL GLOBAL</label><textarea id="inputJadwal" class="form-control bg-light text-xs" rows="3" placeholder="Contoh:&#10;1 Vocabulary (07.00 - 08.00)"></textarea></div>
-                                <div class="mb-2"><label class="form-label fw-bold text-success text-xs mb-0">3. GOAL HARIAN</label><textarea id="inputGoal" class="form-control bg-light text-xs" rows="2"></textarea></div>
-                                <div class="mb-3"><label class="form-label fw-bold text-danger text-xs mb-0">4. DATA SISWA (Cth: Kelas A: Budi, Andi)</label><textarea id="inputMasterSiswa" class="form-control bg-light text-xs border-danger border-opacity-25" rows="2"></textarea></div>
-                                
-                                <div class="p-2 border rounded bg-light mb-3">
-                                    <h6 class="text-xs fw-bold text-dark mb-2 border-bottom pb-1">5. MASTER MATERI KURIKULUM</h6>
-                                    <label class="form-label fw-bold text-primary text-xs mb-0">VOCABULARY</label><textarea id="inputVocab" class="form-control text-xs mb-1" rows="2"></textarea>
-                                    <label class="form-label fw-bold text-success text-xs mb-0">SPEAKING</label><textarea id="inputSpeaking" class="form-control text-xs mb-1" rows="2"></textarea>
-                                    <label class="form-label fw-bold text-danger text-xs mb-0">GRAMMAR</label><textarea id="inputGrammar" class="form-control text-xs" rows="2"></textarea>
-                                </div>
-                                
-                                <div class="p-2 border border-primary border-2 rounded bg-primary bg-opacity-10 mb-3 shadow-sm">
-                                    <h6 class="text-xs fw-bold text-primary mb-2 border-bottom border-primary pb-1"><i class="bi bi-people-fill"></i> 6. MENTOR YANG BERTUGAS</h6>
-                                    <div id="setupMentorList" class="row g-2 text-xs ps-2">
-                                        <span class="text-muted">Memuat daftar mentor aktif...</span>
-                                    </div>
-                                </div>
-
-                                <button id="btnSaveSchool" class="btn btn-primary w-100 fw-bold shadow-sm py-2"><i class="bi bi-cloud-upload-fill me-2"></i> SIMPAN HANDLE SCHOOL INI</button>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="tab-siswa"><div class="card card-custom p-3 shadow-sm bg-white border-success border-2"><h6 class="fw-bold text-success mb-2"><i class="bi bi-mortarboard-fill me-2"></i> Rapor Siswa & Leaderboard</h6><select id="filterKelasSiswa" class="form-select form-select-sm fw-bold border-success mb-3"></select><ul class="nav nav-pills mb-3 text-xs" id="siswaTabs" role="tablist"><li class="nav-item"><button class="nav-link active py-1" data-bs-toggle="pill" data-bs-target="#sub-absen">Rekap Absen & Nilai</button></li><li class="nav-item"><button class="nav-link py-1 text-warning bg-warning bg-opacity-10" data-bs-toggle="pill" data-bs-target="#sub-top10"><i class="bi bi-star-fill"></i> Top 10 Kelas</button></li></ul><div class="tab-content"><div class="tab-pane fade show active" id="sub-absen"><div class="table-responsive" style="max-height: 400px; overflow-y: auto;"><table class="table table-sm table-bordered text-xs align-middle text-center mb-0"><thead class="table-success sticky-top"><tr><th style="width: 30px;">No</th><th>Nama Siswa</th><th>✔</th><th>✖</th><th>S</th><th>I</th><th>Total Poin/A</th></tr></thead><tbody id="tabelRekapSiswa"></tbody></table></div></div><div class="tab-pane fade" id="sub-top10"><div id="listTop10" class="space-y-2">Memuat peringkat...</div></div></div></div></div>
-                        <div class="tab-pane fade" id="tab-diskusi"><div class="card card-custom p-3 shadow-sm bg-white border-danger border-2 h-100 d-flex flex-column"><h6 class="fw-bold text-danger mb-2"><i class="bi bi-chat-dots-fill me-2"></i> Ruang Diskusi & Japri</h6><div id="chatBox" class="chat-box flex-grow-1 p-2 rounded border mb-2 d-flex flex-column gap-2"></div><div class="input-group"><select id="chatTarget" class="form-select form-select-sm" style="max-width: 120px; font-size: 0.75rem; font-weight: bold;"><option value="GLOBAL">Grup Semua</option></select><input type="text" id="inputChat" class="form-control form-control-sm text-sm" placeholder="Ketik pesan/japri..."><button class="btn btn-danger btn-sm fw-bold" id="btnSendChat"><i class="bi bi-send"></i></button></div></div></div>
-                        <div class="tab-pane fade" id="tab-kurikulum"><div class="card card-custom p-3 shadow-sm bg-white border-warning border-2"><h6 class="fw-bold text-warning mb-2"><i class="bi bi-clipboard-data me-2"></i> Tracker Otomatis</h6><select id="trackerKelas" class="form-select form-select-sm border-warning fw-bold mb-3"></select><div id="areaTracker" class="overflow-auto pe-1" style="max-height: 380px;">Memuat pencapaian...</div></div></div>
-                        <div class="tab-pane fade" id="tab-tugas"><div class="card card-custom p-3 shadow-sm bg-white border-success border-2"><h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Template Tugas WA (Sekolah Ini)</h6><div class="mb-2"><select id="waTarget" class="form-select form-select-sm border-success"></select></div><div class="mb-2"><input type="text" id="waGambar" class="form-control form-control-sm bg-light" placeholder="URL Gambar (Opsional)..."></div><div class="mb-3"><textarea id="waInstruksi" class="form-control bg-light text-sm" rows="3" placeholder="Instruksi Tugas WA..."></textarea></div><button id="btnKirimTugasWA" class="btn btn-success btn-sm w-100 fw-bold shadow-sm py-2">Buat Template WA</button><hr class="my-3"><div id="listTugasAdmin" style="max-height: 200px; overflow-y: auto;"></div></div></div>
-                        
-                        <!-- TAB VERSI LOG -->
-                        <div class="tab-pane fade" id="tab-versi">
-                            <div class="card card-custom p-3 shadow-sm bg-white border-secondary border-2">
-                                <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-journal-code me-2"></i> Histori Pembaruan Sistem (Changelog)</h6>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered text-xs align-middle">
-                                        <thead class="table-light text-center">
-                                            <tr>
-                                                <th style="width: 15%;">Versi</th>
-                                                <th style="width: 25%;">Tanggal</th>
-                                                <th>Keterangan Perubahan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="fw-bold text-center text-primary">v1.6</td>
-                                                <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Penambahan Tab Overview dadi landing default. Nampilake Cardview statistik kabeh sekolah (Hari, Jml Siswa, Jml Tutor).</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold text-center text-dark">v1.5</td>
-                                                <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Perombakan UI Dropdown Sekolah (anti-nyembul), diganti dadi Horizontal Scroll modern. Sinkronisasi render Checklist Mentor ben dijamin muncul.</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold text-center">v1.4</td>
-                                                <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Implementasi auto-load & auto-kick ing halaman Mentor adhedhasar sistem Mapping Checklist.</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="fw-bold text-center">v1.3</td>
-                                                <td class="text-center text-muted">05 Juli 2026</td>
-                                                <td>Penambahan fitur Checklist Mapping Mentor to School ing tab Setup Sekolah.</td>
-                                            </tr>
-                                        </tbody>
+                <!-- TAB SISWA -->
+                <div class="tab-pane fade" id="tab-siswa">
+                    <div class="card card-custom p-3 bg-white border-success border-2">
+                        <h6 class="fw-bold text-success mb-2"><i class="bi bi-mortarboard-fill me-2"></i> Rapor Siswa & Leaderboard</h6>
+                        <select id="filterKelasSiswa" class="form-select form-select-sm fw-bold border-success mb-3 rounded-pill"></select>
+                        <ul class="nav nav-pills mb-3 text-xs" id="siswaTabs" role="tablist">
+                            <li class="nav-item flex-fill"><button class="nav-link w-100 active py-1 rounded-pill" data-bs-toggle="pill" data-bs-target="#sub-absen">Rekap Absen & Nilai</button></li>
+                            <li class="nav-item flex-fill"><button class="nav-link w-100 py-1 text-warning bg-warning bg-opacity-10 rounded-pill ms-1" data-bs-toggle="pill" data-bs-target="#sub-top10"><i class="bi bi-star-fill"></i> Top 10 Kelas</button></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="sub-absen">
+                                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table table-sm table-bordered text-xs align-middle text-center mb-0">
+                                        <thead class="table-success sticky-top"><tr><th style="width: 30px;">No</th><th>Nama Siswa</th><th>✔</th><th>✖</th><th>S</th><th>I</th><th>Total Poin/A</th></tr></thead>
+                                        <tbody id="tabelRekapSiswa"></tbody>
                                     </table>
                                 </div>
                             </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-lg-5">
-                    <div class="card card-custom p-3 shadow-sm bg-white h-100">
-                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                            <h6 class="fw-bold text-primary mb-0"><i class="bi bi-server me-1"></i> Logbook Sekolah</h6>
-                            <button id="btnExportPDF" class="btn btn-danger btn-sm fw-bold"><i class="bi bi-file-earmark-excel-fill"></i> Cetak PDF (Tabel)</button>
-                        </div>
-                        <div class="row g-2 mb-3">
-                            <div class="col-6"><select id="filterHari" class="form-select form-select-sm border-2 fw-bold text-danger text-xs"><option value="SEMUA">Semua Data</option></select></div>
-                            <div class="col-6"><select id="filterKelasHistori" class="form-select form-select-sm border-2 fw-bold text-secondary text-xs"></select></div>
-                        </div>
-                        <div id="adminLogbookList" class="overflow-auto pe-1" style="max-height: 520px;">
-                            <div class="alert alert-secondary small text-center">Pilih Handle School di atas terlebih dahulu.</div>
+                            <div class="tab-pane fade" id="sub-top10"><div id="listTop10" class="space-y-2">Memuat peringkat...</div></div>
                         </div>
                     </div>
                 </div>
+
+                <!-- TAB DISKUSI -->
+                <div class="tab-pane fade h-100" id="tab-diskusi">
+                    <div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none">
+                        <div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div>
+                        <div class="input-group bg-white p-2 rounded-bottom shadow-sm border">
+                            <select id="chatTarget" class="form-select form-select-sm border-0 bg-light me-1 rounded-pill" style="max-width: 100px; font-weight: bold; font-size: 0.75rem;"><option value="GLOBAL">Grup</option></select>
+                            <input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan / pengumuman...">
+                            <button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB KURIKULUM TRACKER -->
+                <div class="tab-pane fade" id="tab-kurikulum">
+                    <div class="card card-custom p-3 bg-white border-warning border-2">
+                        <h6 class="fw-bold text-warning mb-2"><i class="bi bi-clipboard-data me-2"></i> Tracker Otomatis</h6>
+                        <select id="trackerKelas" class="form-select form-select-sm border-warning fw-bold mb-3 rounded-pill"></select>
+                        <div id="areaTracker" class="overflow-auto pe-1" style="max-height: 380px;">Memuat pencapaian...</div>
+                    </div>
+                </div>
+
+                <!-- TAB TUGAS WA -->
+                <div class="tab-pane fade" id="tab-tugas">
+                    <div class="card card-custom p-3 bg-white border-success border-2">
+                        <h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Template Tugas WA (Sekolah Ini)</h6>
+                        <div class="mb-2"><select id="waTarget" class="form-select form-select-sm border-success"></select></div>
+                        <div class="mb-2"><input type="text" id="waGambar" class="form-control form-control-sm bg-light" placeholder="URL Gambar (Opsional)..."></div>
+                        <div class="mb-3"><textarea id="waInstruksi" class="form-control bg-light text-sm" rows="3" placeholder="Instruksi Tugas WA..."></textarea></div>
+                        <button id="btnKirimTugasWA" class="btn btn-success btn-sm w-100 fw-bold shadow-sm py-2 rounded-pill">Buat Template WA</button>
+                        <hr class="my-3">
+                        <div id="listTugasAdmin" style="max-height: 200px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+                
+                <!-- TAB VERSI LOG -->
+                <div class="tab-pane fade" id="tab-versi">
+                    <div class="card card-custom p-3 shadow-sm bg-white border-wa border-2">
+                        <h6 class="fw-bold text-wa mb-3"><i class="bi bi-journal-code me-2"></i> Histori Pembaruan Sistem</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered text-xs align-middle">
+                                <thead class="table-light text-center">
+                                    <tr><th style="width: 15%;">Versi</th><th style="width: 25%;">Tanggal</th><th>Keterangan Perubahan</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="fw-bold text-center text-wa">v2.0-WA</td><td class="text-center text-muted">05 Juli 2026</td><td>Perombakan Total UI menjadi Tema WhatsApp Adaptive (Mendukung Dark Mode). Merapikan menu menjadi Swipe Tabs.</td></tr>
+                                    <tr><td class="fw-bold text-center">v1.6</td><td class="text-center text-muted">05 Juli 2026</td><td>Penambahan Tab Overview dadi landing default. Nampilake Cardview statistik kabeh sekolah.</td></tr>
+                                    <tr><td class="fw-bold text-center">v1.5</td><td class="text-center text-muted">05 Juli 2026</td><td>Perombakan UI Dropdown Sekolah dadi Horizontal Scroll modern. Sinkronisasi render Checklist Mentor ben dijamin muncul.</td></tr>
+                                    <tr><td class="fw-bold text-center">v1.4</td><td class="text-center text-muted">05 Juli 2026</td><td>Implementasi auto-load & auto-kick ing halaman Mentor adhedhasar sistem Mapping Checklist.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, sendTugasWA, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, sendJapri, deleteChat } from './script.js?v=14.1';
+        import { db, startClock, listenToSchools, listenToSingleSchool, saveSchool, archiveSchool, listenToLogbooks, deleteLogbook, sendTugasWA, listenToTugasWA, deleteTugasWA, listenToChats, sendGlobalChat, sendJapri, deleteChat } from './script.js?v=14.2';
         import { collection, setDoc, doc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const actUser = sessionStorage.getItem("loggedInUser"); if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
-        document.getElementById("userNameDisplay").innerText = actUser + " (" + sessionStorage.getItem("loggedInName") + ")";
+        
+        document.getElementById("userNameDisplay").innerText = sessionStorage.getItem("loggedInName");
+        document.getElementById("identitasMenu").innerText = "God Mode | ID: " + actUser;
 
-        function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '<i class="bi bi-wifi text-success"></i>' : '<i class="bi bi-wifi-off text-danger"></i>'; }
-        window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); startClock('headClock', 'headDate');
+        function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '' : '<i class="bi bi-wifi-off text-warning me-1"></i>'; }
+        window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); 
+        
+        setInterval(() => { const now = new Date(); document.getElementById('headClock').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); }, 1000);
 
         let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = [];
-        
-        let globalAllSchools = [];
-        let globalAllUsers = [];
-        let currentAssignedMentors = []; 
+        let globalAllSchools = []; let globalAllUsers = []; let currentAssignedMentors = []; 
         let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
 
         function bersihkanListener() {
@@ -229,26 +346,20 @@
             dataLengkap = [];
         }
 
-        // v1.6: FUNGSI RENDER OVERVIEW CARDS
         function renderOverview() {
             const container = document.getElementById("overviewCardsContainer");
             if (!container) return;
             container.innerHTML = "";
 
             if (globalAllSchools.length === 0) {
-                container.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border shadow-sm">Belum ada sekolah yang aktif. Tambahkan lewat Setup Sekolah.</div></div>`;
+                container.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border shadow-sm text-muted">Belum ada sekolah yang aktif...</div></div>`;
                 return;
             }
 
             globalAllSchools.forEach(s => {
-                // Ngitung Hari
                 const hBerjalan = s.hariBerjalan || 0;
                 const tHari = s.totalHari || 0;
-
-                // Ngitung Tutor (dijupuk saka array assignedMentors)
                 const jmlTutor = (s.assignedMentors && Array.isArray(s.assignedMentors)) ? s.assignedMentors.length : 0;
-
-                // Ngitung Siswa (dijupuk saka masterSiswa kanthi format 'Kelas: Nama, Nama')
                 let jmlSiswa = 0;
                 if (s.masterSiswa) {
                     const lines = s.masterSiswa.split('\n');
@@ -260,23 +371,22 @@
                     });
                 }
 
-                // Desain Cardview sing oye
                 container.innerHTML += `
                 <div class="col-12 col-md-6 col-lg-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white" style="border-left: 4px solid #0d6efd !important;">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white" style="border-left: 4px solid var(--wa-primary) !important;">
                         <div class="card-body p-3">
-                            <h6 class="fw-bold text-dark mb-3 text-truncate" title="${s.namaSekolah}"><i class="bi bi-building-check text-primary me-2"></i>${s.namaSekolah}</h6>
+                            <h6 class="fw-bold text-dark mb-3 text-truncate" title="${s.namaSekolah}"><i class="bi bi-building-check text-wa me-2"></i>${s.namaSekolah}</h6>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary text-xs fw-bold"><i class="bi bi-calendar-event me-1"></i> Hari ke:</span>
-                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2 py-1">${hBerjalan} / ${tHari}</span>
+                                <span class="badge bg-wa text-white fw-bold px-2 py-1 rounded-pill">${hBerjalan} / ${tHari}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary text-xs fw-bold"><i class="bi bi-mortarboard me-1"></i> Jumlah Siswa:</span>
-                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1">${jmlSiswa} Peserta</span>
+                                <span class="badge bg-light text-dark fw-bold px-2 py-1 rounded-pill border">${jmlSiswa} Peserta</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-secondary text-xs fw-bold"><i class="bi bi-person-video3 me-1"></i> Tutor Bertugas:</span>
-                                <span class="badge bg-warning bg-opacity-10 text-warning text-dark fw-bold px-2 py-1">${jmlTutor} Tutor</span>
+                                <span class="badge bg-light text-dark fw-bold px-2 py-1 rounded-pill border">${jmlTutor} Tutor</span>
                             </div>
                         </div>
                     </div>
@@ -288,11 +398,12 @@
             const container = document.getElementById("modernSchoolSelect");
             if (!container) return;
             
-            let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-danger' : 'btn-outline-danger'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW">+ SEKOLAH BARU</button>`;
+            let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-danger' : 'btn-outline-secondary'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="">OVERVIEW GLOBAL</button>`;
+            html += `<button class="btn btn-sm ${currentSchoolId === 'NEW' ? 'btn-wa border-0 shadow-sm' : 'btn-outline-wa'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="NEW" style="color:var(--wa-primary); border: 1px solid var(--wa-primary);">+ BUAT BARU</button>`;
             
             globalAllSchools.forEach(s => {
                 const isSelected = (currentSchoolId === s.id);
-                const btnClass = isSelected ? 'btn-primary shadow-sm' : 'btn-outline-secondary';
+                const btnClass = isSelected ? 'btn-wa border-0 shadow-sm' : 'btn-outline-secondary';
                 html += `<button class="btn btn-sm ${btnClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
             });
             
@@ -309,14 +420,22 @@
         listenToSchools((schools) => {
             globalAllSchools = schools;
             renderModernSchoolSelect();
-            renderOverview(); // v1.6: Jalanake render overview pas data sekolah mlebu
+            renderOverview(); 
         });
 
         function handlePilihSekolah(val) {
             bersihkanListener();
 
-            if(val === "NEW") {
-                currentSchoolId = ""; 
+            if(!val) {
+                currentSchoolId = "";
+                document.getElementById("adminLogbookList").innerHTML = `<div class="alert alert-secondary small text-center bg-transparent border">Pilih Handle School di atas terlebih dahulu.</div>`;
+                document.getElementById("chatBox").innerHTML = ""; document.getElementById("listTugasAdmin").innerHTML = "";
+                document.getElementById("leaderboardTutor").innerHTML = "Simpan sekolah dhisik nggo ndelok data.";
+                
+                renderModernSchoolSelect(); 
+                new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-overview"]')).show();
+            } else if(val === "NEW") {
+                currentSchoolId = "NEW"; 
                 document.getElementById("inputIdSchool").readOnly = false; document.getElementById("inputIdSchool").value = "";
                 document.getElementById("inputSekolah").value = ""; document.getElementById("inputTotalHari").value = 5; document.getElementById("inputHariKe").value = 0;
                 document.getElementById("inputMasterKelas").value = ""; document.getElementById("inputBriefing").value = ""; document.getElementById("inputJadwal").value = "";
@@ -337,8 +456,6 @@
                 document.getElementById("inputIdSchool").value = val; document.getElementById("inputIdSchool").readOnly = true;
                 
                 renderModernSchoolSelect(); 
-                
-                // v1.6: Yen ngedit sekolah, pindah menyang tab Setup ben langsung iso ngedit
                 new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-setup"]')).show();
                 muatDataSekolah(val);
             }
@@ -368,14 +485,17 @@
                     if (c.type === 'global' || (c.type === 'private' && (c.sender === myName || c.receiver === "admin" || c.receiver === myName))) {
                         const isMe = c.sender === myName; const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..'; 
                         const badge = c.type === 'private' ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">JAPRI</span>` : '';
-                        box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'} shadow-sm"><div class="d-flex justify-content-between align-items-start"><div class="fw-bold text-xs ${isMe ? 'text-success' : 'text-primary'}">${c.sender} <span class="fw-normal text-muted" style="font-size:0.6rem;">${time}</span>${badge}</div><i class="bi bi-trash del-chat-btn ms-2" onclick="window.hapusPesan('${c.id}')"></i></div><div>${c.message}</div></div>`;
+                        let nameColor = isMe ? 'text-wa' : 'text-primary'; 
+                        let roleBadge = ""; if(c.role === "admin") { nameColor = 'text-danger'; roleBadge = '<i class="bi bi-shield-lock-fill ms-1"></i>'; } else if(c.role === "direktur") { nameColor = 'text-warning'; roleBadge = '<i class="bi bi-star-fill ms-1 text-dark"></i>'; } 
+                        
+                        box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'} mb-2"><div class="d-flex justify-content-between align-items-start"><div class="fw-bold text-xs ${nameColor}">${c.sender} ${roleBadge} ${badge}</div><i class="bi bi-trash del-chat-btn ms-2" onclick="window.hapusPesan('${c.id}')"></i></div><div style="word-wrap: break-word;" class="mt-1">${c.message}</div><div class="text-end text-muted mt-1" style="font-size: 0.6rem;">${time} ${isMe ? '<i class="bi bi-check2-all text-info ms-1"></i>' : ''}</div></div>`;
                     }
                 }); box.scrollTop = box.scrollHeight;
             });
 
             unsubWA = listenToTugasWA(sid, (tugas) => {
                 const list = document.getElementById("listTugasAdmin"); list.innerHTML = "";
-                tugas.forEach(d => { const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', {dateStyle:'short', timeStyle:'short'}) : '-'; list.innerHTML += `<div class="p-2 border rounded bg-light mb-2"><div class="d-flex justify-content-between"><span class="badge bg-success mb-1">${d.targetKelas}</span><span class="text-xs text-muted">${w}</span></div><p class="text-xs mb-1 text-truncate">${d.instruksi}</p><button class="btn btn-xs btn-outline-danger w-100" onclick="aksidminHapusTugas('${d.id}')">Hapus Template</button></div>`; });
+                tugas.forEach(d => { const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', {dateStyle:'short', timeStyle:'short'}) : '-'; list.innerHTML += `<div class="p-2 border rounded bg-light mb-2"><div class="d-flex justify-content-between"><span class="badge bg-wa rounded-pill mb-1">${d.targetKelas}</span><span class="text-xs text-muted">${w}</span></div><p class="text-xs mb-1 text-truncate text-dark">${d.instruksi}</p><button class="btn btn-xs btn-outline-danger w-100 rounded-pill" onclick="aksidminHapusTugas('${d.id}')">Hapus Template</button></div>`; });
             });
         }
 
@@ -402,29 +522,29 @@
                 handlePilihSekolah(sid);
             } catch (e) { alert("Gagal update."); }
         };
-        document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); handlePilihSekolah("NEW"); } };
+        document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && currentSchoolId !== 'NEW' && confirm("Yakin arsipkan sekolah ini? (Akan hilang dari daftar)")) { await archiveSchool(currentSchoolId); alert("Diarsipkan!"); handlePilihSekolah(""); } };
 
         function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { const dStr = d.waktu.toDate().toLocaleDateString('id-ID'); if(!daysMap.has(dStr)) daysMap.set(dStr, d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
         function renderListAdmin() {
             const container = document.getElementById("adminLogbookList"); container.innerHTML = ""; const fHari = document.getElementById("filterHari").value; const fKelas = document.getElementById("filterKelasHistori").value;
             let dataTampil = dataLengkap; if (fHari !== "SEMUA") dataTampil = dataTampil.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari); if (fKelas !== "SEMUA") dataTampil = dataTampil.filter(d => d.kelas === fKelas);
-            if(dataTampil.length === 0) { container.innerHTML = `<div class="alert alert-secondary text-center small">Kosong.</div>`; return; }
+            if(dataTampil.length === 0) { container.innerHTML = `<div class="alert alert-secondary text-center small bg-transparent border">Kosong.</div>`; return; }
             dataTampil.forEach(d => {
                 const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', {dateStyle:'short', timeStyle:'short'}) : '-'; 
                 let txtNilai = d.dataSiswa && d.dataSiswa.length > 0 ? d.dataSiswa.map(s => { let ikon = s.kehadiran === 'h' ? '✔' : (s.kehadiran === 'a' ? '✖' : s.kehadiran.toUpperCase()); return `<b>${s.nama}</b>(${ikon}, ${s.nilai||'-'})`; }).join(' | ') : 'Belum ada data';
-                let displayJam = (d.jamKe || "").replace('Jam ', 'Jam ke-'); let displayMateri = d.materi && d.materi.length > 0 ? d.materi.join(', ') : '-';
-                container.innerHTML += `<div class="p-2 bg-light rounded-3 border mb-2 shadow-sm text-xs"><div class="d-flex justify-content-between border-bottom pb-1 mb-1"><span class="fw-bold text-primary">${d.nama.toUpperCase()}</span><span class="text-muted">${w}</span></div><div class="mb-1"><span class="badge bg-primary me-1">${d.kelas}</span><span class="badge bg-dark">${displayJam}</span></div><div class="mb-1">✔ Materi: <b>${displayMateri}</b></div><div class="mb-1 mt-2 text-danger">📝 <b>Class Note:</b><br><span class="text-dark">${d.laporanSiswa || '-'}</span></div><div class="mb-1 text-success">🎯 <b>Tugas Siswa:</b><br><span class="text-dark">${d.tugasSiswa || '-'}</span></div><div class="p-1 mt-2 bg-warning bg-opacity-10 border border-warning mb-1">📊 <b>Rapor Siswa:</b> <br> ${txtNilai}</div><div class="text-end"><button class="btn btn-xs btn-outline-danger py-0" onclick="window.aksidminHapus('${d.id}')"><i class="bi bi-trash"></i></button></div></div>`;
+                let displayJam = (d.jamKe || "").replace('Jam ', 'Sesi '); let displayMateri = d.materi && d.materi.length > 0 ? d.materi.join(', ') : '-';
+                container.innerHTML += `<div class="p-3 bg-white rounded-3 border mb-2 shadow-sm text-xs"><div class="d-flex justify-content-between border-bottom pb-1 mb-2"><span class="fw-bold text-wa"><i class="bi bi-person-fill"></i> ${d.nama.toUpperCase()}</span><span class="text-muted" style="font-size:0.7rem;">${w}</span></div><div class="mb-1"><span class="badge bg-wa me-1 rounded-pill">${d.kelas}</span><span class="badge bg-dark rounded-pill">${displayJam}</span></div><div class="mb-1 mt-2 text-dark">📖 Materi: <b>${displayMateri}</b></div><div class="mb-1 mt-2 text-danger">📝 <b>Note:</b><br><span class="text-dark">${d.laporanSiswa || '-'}</span></div><div class="mb-1 text-success">🎯 <b>Tugas:</b><br><span class="text-dark">${d.tugasSiswa || '-'}</span></div><div class="p-2 mt-2 bg-light border rounded mb-2">📊 <b>Rapor:</b> <br><span class="text-dark">${txtNilai}</span></div><div class="text-end"><button class="btn btn-xs btn-outline-danger py-0 rounded-pill px-3" onclick="window.aksidminHapus('${d.id}')"><i class="bi bi-trash"></i> Hapus</button></div></div>`;
             });
         }
         window.aksidminHapus = async function(id) { if (confirm(`Hapus permanen sesi ini?`)) await deleteLogbook(id); };
         window.hapusPesan = async function(cid) { if(confirm("Hapus pesan ini dari ruang diskusi?")) await deleteChat(cid); };
         window.aksidminHapusTugas = async function(id) { if (confirm(`Hapus template tugas ini?`)) await deleteTugasWA(id); };
 
-        document.getElementById("btnSendChat").onclick = async () => { if(!currentSchoolId) return alert("Pilih sekolah dulu!"); const msg = document.getElementById("inputChat").value.trim(); const target = document.getElementById("chatTarget").value; if(!msg) return; if (target === "GLOBAL") { await sendGlobalChat(currentSchoolId, sessionStorage.getItem("loggedInName"), msg, "admin"); } else { await sendJapri(currentSchoolId, sessionStorage.getItem("loggedInName"), target, msg, "admin"); } document.getElementById("inputChat").value = ""; };
-        document.getElementById("btnKirimTugasWA").onclick = async () => { if(!currentSchoolId) return alert("Pilih sekolah dulu!"); const t = document.getElementById("waTarget").value; const g = document.getElementById("waGambar").value; const i = document.getElementById("waInstruksi").value; if(!i) return alert("Instruksi wajib!"); await sendTugasWA(currentSchoolId, t, g, i); alert("Tugas WA Dibuat!"); document.getElementById("waInstruksi").value = ""; document.getElementById("waGambar").value = ""; };
+        document.getElementById("btnSendChat").onclick = async () => { if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu!"); const msg = document.getElementById("inputChat").value.trim(); const target = document.getElementById("chatTarget").value; if(!msg) return; if (target === "GLOBAL") { await sendGlobalChat(currentSchoolId, sessionStorage.getItem("loggedInName"), msg, "admin"); } else { await sendJapri(currentSchoolId, sessionStorage.getItem("loggedInName"), target, msg, "admin"); } document.getElementById("inputChat").value = ""; };
+        document.getElementById("btnKirimTugasWA").onclick = async () => { if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu!"); const t = document.getElementById("waTarget").value; const g = document.getElementById("waGambar").value; const i = document.getElementById("waInstruksi").value; if(!i) return alert("Instruksi wajib!"); await sendTugasWA(currentSchoolId, t, g, i); alert("Tugas WA Dibuat!"); document.getElementById("waInstruksi").value = ""; document.getElementById("waGambar").value = ""; };
         
         document.getElementById("btnExportPDF").onclick = () => {
-            if(!currentSchoolId) return alert("Pilih sekolah dulu di bagian atas!");
+            if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu di bagian atas!");
             const fHari = document.getElementById("filterHari").value; let dataTampil = dataLengkap; if (fHari !== "SEMUA") dataTampil = dataTampil.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari);
             const printDiv = document.createElement("div"); printDiv.style.fontFamily = "Arial, sans-serif"; printDiv.style.padding = "20px";
             let htmlString = `<h3 style="text-align:center; font-family: Arial, sans-serif; margin-bottom: 20px;">LAPORAN LOGBOOK MENTOR<br><small style="font-size:12px; font-weight:normal;">Sekolah: ${document.getElementById('inputSekolah').value} | Filter: ${fHari}</small></h3>`;
@@ -443,7 +563,6 @@
             setupMentorList.innerHTML = "";
             
             const mentorsAktif = globalAllUsers.filter(u => u.status === 'aktif');
-            
             if(mentorsAktif.length === 0) {
                 setupMentorList.innerHTML = "<span class='text-muted'>Belum ada akun mentor aktif...</span>";
                 return;
@@ -453,9 +572,9 @@
                 const isChecked = currentAssignedMentors.includes(u.id) ? "checked" : "";
                 setupMentorList.innerHTML += `
                 <div class="col-6 col-md-4">
-                    <div class="form-check border border-secondary border-opacity-25 p-1 rounded bg-white shadow-sm">
-                        <input class="form-check-input check-mentor ms-1 border-primary" type="checkbox" value="${u.id}" id="chk_${u.id}" ${isChecked}>
-                        <label class="form-check-label fw-bold ms-1" style="font-size:0.8rem; cursor:pointer;" for="chk_${u.id}">${u.julukan}</label>
+                    <div class="form-check border p-1 rounded bg-light shadow-sm">
+                        <input class="form-check-input check-mentor ms-1" type="checkbox" value="${u.id}" id="chk_${u.id}" ${isChecked}>
+                        <label class="form-check-label fw-bold ms-1 text-dark" style="font-size:0.8rem; cursor:pointer;" for="chk_${u.id}">${u.julukan}</label>
                     </div>
                 </div>`;
             });
@@ -473,97 +592,55 @@
             snap.forEach(d => { 
                 const ud = d.data(); 
                 const uid = d.id; 
-                
                 globalAllUsers.push({id: uid, ...ud});
 
                 const btnStatus = ud.status === 'aktif' ? 
-                    `<button class="btn btn-sm btn-outline-danger py-0 px-1" title="Nonaktifkan" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : 
-                    `<button class="btn btn-sm btn-outline-success py-0 px-1" title="Aktifkan" onclick="window.toggleUser('${uid}', 'aktif')"><i class="bi bi-person-check"></i></button>`; 
+                    `<button class="btn btn-sm btn-outline-danger py-0 px-1 rounded-pill" title="Nonaktifkan" onclick="window.toggleUser('${uid}', 'nonaktif')"><i class="bi bi-person-dash"></i></button>` : 
+                    `<button class="btn btn-sm btn-outline-success py-0 px-1 rounded-pill" title="Aktifkan" onclick="window.toggleUser('${uid}', 'aktif')"><i class="bi bi-person-check"></i></button>`; 
                 
-                const btnEdit = `<button class="btn btn-sm btn-outline-warning py-0 px-1 ms-1" title="Edit Akun" onclick="window.siapEditUser('${uid}', '${ud.julukan}', '${ud.role}', '${ud.pin}')"><i class="bi bi-pencil"></i></button>`;
-                const btnHapus = `<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1" title="Hapus Permanen" onclick="window.hapusUserPermanen('${uid}')"><i class="bi bi-trash"></i></button>`;
+                const btnEdit = `<button class="btn btn-sm btn-outline-warning py-0 px-1 ms-1 rounded-pill" title="Edit Akun" onclick="window.siapEditUser('${uid}', '${ud.julukan}', '${ud.role}', '${ud.pin}')"><i class="bi bi-pencil"></i></button>`;
+                const btnHapus = `<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1 rounded-pill" title="Hapus Permanen" onclick="window.hapusUserPermanen('${uid}')"><i class="bi bi-trash"></i></button>`;
 
-                tbody.innerHTML += `<tr><td class="fw-bold text-primary">${uid}</td><td>${ud.julukan}</td><td class="text-uppercase" style="font-size:0.6rem;">${ud.role}</td><td class="font-monospace text-danger fw-bold">${ud.pin}</td><td>${btnStatus}${btnEdit}${btnHapus}</td></tr>`; 
+                tbody.innerHTML += `<tr><td class="fw-bold text-wa">${uid}</td><td class="text-dark">${ud.julukan}</td><td class="text-uppercase text-dark" style="font-size:0.6rem;">${ud.role}</td><td class="font-monospace text-danger fw-bold">${ud.pin}</td><td>${btnStatus}${btnEdit}${btnHapus}</td></tr>`; 
                 
                 if(chatTarget && ud.julukan !== sessionStorage.getItem("loggedInName")) { 
-                    chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: ${ud.julukan}</option>`; 
+                    chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: @${ud.julukan}</option>`; 
                 } 
             }); 
             
             if(chatTarget) chatTarget.value = prevTarget; 
-            
             renderMentorChecklist();
         });
 
         window.siapEditUser = function(uid, nama, role, pin) {
-            document.getElementById("newUser").value = uid;
-            document.getElementById("newUser").readOnly = true; 
-            document.getElementById("newPin").value = pin;
-            document.getElementById("newName").value = nama;
-            document.getElementById("newRole").value = role;
-            
-            const btn = document.getElementById("btnAddUser");
-            btn.innerText = "Update Akun";
-            btn.classList.replace("btn-primary", "btn-warning");
-
-            if(!document.getElementById("btnBatalEditUser")) {
-                const btnBatal = document.createElement("button");
-                btnBatal.id = "btnBatalEditUser";
-                btnBatal.className = "btn btn-sm btn-secondary w-100 mt-2 fw-bold";
-                btnBatal.innerText = "Batal Edit";
-                btnBatal.onclick = window.batalEditUser;
-                btn.parentNode.appendChild(btnBatal);
-            } else {
-                document.getElementById("btnBatalEditUser").style.display = "block";
-            }
+            document.getElementById("newUser").value = uid; document.getElementById("newUser").readOnly = true; 
+            document.getElementById("newPin").value = pin; document.getElementById("newName").value = nama; document.getElementById("newRole").value = role;
+            const btn = document.getElementById("btnAddUser"); btn.innerText = "Update Akun"; btn.classList.replace("btn-primary", "btn-warning");
+            if(!document.getElementById("btnBatalEditUser")) { const btnBatal = document.createElement("button"); btnBatal.id = "btnBatalEditUser"; btnBatal.className = "btn btn-sm btn-secondary w-100 mt-2 fw-bold rounded-pill"; btnBatal.innerText = "Batal Edit"; btnBatal.onclick = window.batalEditUser; btn.parentNode.appendChild(btnBatal); } else { document.getElementById("btnBatalEditUser").style.display = "block"; }
         };
 
         window.batalEditUser = function() {
-            document.getElementById("newUser").value = "";
-            document.getElementById("newUser").readOnly = false; 
-            document.getElementById("newPin").value = "";
-            document.getElementById("newName").value = "";
-            document.getElementById("newRole").value = "mentor";
-            
-            const btn = document.getElementById("btnAddUser");
-            btn.innerText = "Tambah Akun";
-            btn.classList.replace("btn-warning", "btn-primary");
-            
-            if(document.getElementById("btnBatalEditUser")) {
-                document.getElementById("btnBatalEditUser").style.display = "none";
-            }
+            document.getElementById("newUser").value = ""; document.getElementById("newUser").readOnly = false; 
+            document.getElementById("newPin").value = ""; document.getElementById("newName").value = ""; document.getElementById("newRole").value = "mentor";
+            const btn = document.getElementById("btnAddUser"); btn.innerText = "Tambah Akun"; btn.classList.replace("btn-warning", "btn-primary");
+            if(document.getElementById("btnBatalEditUser")) document.getElementById("btnBatalEditUser").style.display = "none";
         };
 
-        window.hapusUserPermanen = async function(uid) {
-            if(confirm(`Tenanan arep mbusak permanen akun: ${uid}?`)) {
-                await deleteDoc(doc(db, "users", uid));
-                alert("Akun kasil dibusak!");
-            }
-        };
+        window.hapusUserPermanen = async function(uid) { if(confirm(`Tenanan arep mbusak permanen akun: ${uid}?`)) { await deleteDoc(doc(db, "users", uid)); alert("Akun kasil dibusak!"); } };
 
         document.getElementById("btnAddUser").onclick = async () => { 
-            const u = document.getElementById("newUser").value.toLowerCase().trim(); 
-            const p = document.getElementById("newPin").value; 
-            const n = document.getElementById("newName").value; 
-            const r = document.getElementById("newRole").value; 
-            
+            const u = document.getElementById("newUser").value.toLowerCase().trim(); const p = document.getElementById("newPin").value; const n = document.getElementById("newName").value; const r = document.getElementById("newRole").value; 
             if(!u || !p || !n) return alert("Isi form dhisik!"); 
-            
-            await setDoc(doc(db, "users", u), { pin: p, julukan: n, role: r, status: "aktif" }, { merge: true }); 
-            alert("Data Akun Kasil Disimpen!"); 
-            
-            window.batalEditUser();
+            await setDoc(doc(db, "users", u), { pin: p, julukan: n, role: r, status: "aktif" }, { merge: true }); alert("Data Akun Kasil Disimpen!"); window.batalEditUser();
         }; 
 
-        window.toggleUser = async function(uid, setStatus) { 
-            await setDoc(doc(db, "users", uid), { status: setStatus }, {merge: true}); 
-        };
+        window.toggleUser = async function(uid, setStatus) { await setDoc(doc(db, "users", uid), { status: setStatus }, {merge: true}); };
 
         document.getElementById('filterHari').onchange = () => renderListAdmin(); document.getElementById('filterKelasHistori').onchange = () => renderListAdmin(); document.getElementById('trackerKelas').onchange = () => renderTracker(); document.getElementById('filterKelasSiswa').onchange = () => kalkulasiDataSiswa();
         
-        function renderTracker() { const area = document.getElementById("areaTracker"); const kelasAktif = document.getElementById("trackerKelas").value; if(!rawKurikulum || Object.keys(rawKurikulum).length === 0) { area.innerHTML = "<div class='small text-muted'>Kosong.</div>"; return; } let materiSelesai = new Set(); dataLengkap.forEach(log => { if (log.kelas === kelasAktif && log.materi) { log.materi.forEach(m => materiSelesai.add(m)); } }); const renderBlok = (judul, arrayMateri, warna) => { if(!arrayMateri || arrayMateri.length === 0) return ''; let listHtml = ""; arrayMateri.forEach(mat => { const isDone = materiSelesai.has(mat); const icon = isDone ? `<i class="bi bi-check-circle-fill text-${warna}"></i>` : `<i class="bi bi-circle text-secondary opacity-50"></i>`; const bg = isDone ? `bg-${warna} bg-opacity-10 border-${warna}` : 'bg-white text-muted'; listHtml += `<div class="d-flex justify-content-between align-items-center p-2 mb-1 border rounded text-xs ${bg}"><span class="${isDone ? 'fw-bold' : ''}">${mat}</span> <span>${icon}</span></div>`; }); return `<div class="mb-3"><h6 class="text-xs fw-bold text-${warna} mb-1 border-bottom pb-1">${judul}</h6>${listHtml}</div>`; }; area.innerHTML = renderBlok("VOCABULARY", rawKurikulum.vocab, "primary") + renderBlok("SPEAKING", rawKurikulum.speaking, "success") + renderBlok("GRAMMAR", rawKurikulum.grammar, "danger"); }
-        function kalkulasiDataSiswa() { const kls = document.getElementById("filterKelasSiswa").value; let rekap = {}; dataLengkap.forEach(log => { if(log.kelas === kls && log.dataSiswa) { log.dataSiswa.forEach(s => { if(!rekap[s.nama]) rekap[s.nama] = { h:0, a:0, s:0, i:0, poin:0 }; if(s.kehadiran === 'h') rekap[s.nama].h++; else if(s.kehadiran === 'a') rekap[s.nama].a++; else if(s.kehadiran === 's') rekap[s.nama].s++; else if(s.kehadiran === 'i') rekap[s.nama].i++; let nStr = (s.nilai || "").toString().toLowerCase().trim(); if(nStr === 'a' || nStr === 'a+') rekap[s.nama].poin += 90; else if(parseInt(nStr) > 0) rekap[s.nama].poin += parseInt(nStr); }); } }); const tBody = document.getElementById("tabelRekapSiswa"); tBody.innerHTML = ""; let arrSiswa = Object.keys(rekap).sort(); arrSiswa.forEach((nm, idx) => { const r = rekap[nm]; tBody.innerHTML += `<tr><td>${idx+1}</td><td class="text-start fw-bold">${nm}</td><td>${r.h}</td><td>${r.a}</td><td>${r.s}</td><td>${r.i}</td><td class="fw-bold text-success">${r.poin}</td></tr>`; }); const listTop = document.getElementById("listTop10"); listTop.innerHTML = ""; let arrPeringkat = Object.entries(rekap).map(([nama, data]) => ({ nama, poin: data.poin })).sort((a,b) => b.poin - a.poin).slice(0, 10); if(arrPeringkat.length === 0) { listTop.innerHTML = "<div class='text-muted small'>Belum ada data.</div>"; return; } arrPeringkat.forEach((item, idx) => { let badge = idx === 0 ? "bg-warning" : (idx === 1 ? "bg-secondary" : "bg-primary"); listTop.innerHTML += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1 bg-light text-sm"><div class="fw-bold"><span class="badge ${badge} me-2">#${idx+1}</span> ${item.nama}</div><div class="fw-bold text-success">${item.poin} Pts</div></div>`; }); }
-        function kalkulasiKinerjaMentor() { let rekapMentor = {}; dataLengkap.forEach(log => { if(!rekapMentor[log.nama]) rekapMentor[log.nama] = 0; rekapMentor[log.nama]++; }); const board = document.getElementById("leaderboardTutor"); board.innerHTML = ""; let arrMentor = Object.entries(rekapMentor).map(([nama, count]) => ({nama, count})).sort((a,b) => b.count - a.count); arrMentor.forEach((m, idx) => { let med = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : "🏅"); board.innerHTML += `<div class="d-flex justify-content-between p-2 border rounded mb-1 bg-white shadow-sm text-sm"><div class="fw-bold">${med} ${m.nama}</div><div class="badge bg-primary">${m.count} Logbook</div></div>`; }); }
+        function renderTracker() { const area = document.getElementById("areaTracker"); const kelasAktif = document.getElementById("trackerKelas").value; if(!rawKurikulum || Object.keys(rawKurikulum).length === 0) { area.innerHTML = "<div class='small text-muted'>Kosong.</div>"; return; } let materiSelesai = new Set(); dataLengkap.forEach(log => { if (log.kelas === kelasAktif && log.materi) { log.materi.forEach(m => materiSelesai.add(m)); } }); const renderBlok = (judul, arrayMateri, warna) => { if(!arrayMateri || arrayMateri.length === 0) return ''; let listHtml = ""; arrayMateri.forEach(mat => { const isDone = materiSelesai.has(mat); const icon = isDone ? `<i class="bi bi-check-circle-fill text-${warna}"></i>` : `<i class="bi bi-circle text-secondary opacity-50"></i>`; const bg = isDone ? `bg-${warna} bg-opacity-10 border-${warna}` : 'bg-transparent text-muted border'; listHtml += `<div class="d-flex justify-content-between align-items-center p-2 mb-1 rounded text-xs ${bg}"><span class="${isDone ? 'fw-bold' : ''}">${mat}</span> <span>${icon}</span></div>`; }); return `<div class="mb-3"><h6 class="text-xs fw-bold text-${warna} mb-1 border-bottom pb-1">${judul}</h6>${listHtml}</div>`; }; area.innerHTML = renderBlok("VOCABULARY", rawKurikulum.vocab, "primary") + renderBlok("SPEAKING", rawKurikulum.speaking, "success") + renderBlok("GRAMMAR", rawKurikulum.grammar, "danger"); }
+        function kalkulasiDataSiswa() { const kls = document.getElementById("filterKelasSiswa").value; let rekap = {}; dataLengkap.forEach(log => { if(log.kelas === kls && log.dataSiswa) { log.dataSiswa.forEach(s => { if(!rekap[s.nama]) rekap[s.nama] = { h:0, a:0, s:0, i:0, poin:0 }; if(s.kehadiran === 'h') rekap[s.nama].h++; else if(s.kehadiran === 'a') rekap[s.nama].a++; else if(s.kehadiran === 's') rekap[s.nama].s++; else if(s.kehadiran === 'i') rekap[s.nama].i++; let nStr = (s.nilai || "").toString().toLowerCase().trim(); if(nStr === 'a' || nStr === 'a+') rekap[s.nama].poin += 90; else if(parseInt(nStr) > 0) rekap[s.nama].poin += parseInt(nStr); }); } }); const tBody = document.getElementById("tabelRekapSiswa"); tBody.innerHTML = ""; let arrSiswa = Object.keys(rekap).sort(); arrSiswa.forEach((nm, idx) => { const r = rekap[nm]; tBody.innerHTML += `<tr><td>${idx+1}</td><td class="text-start fw-bold text-dark">${nm}</td><td class="text-dark">${r.h}</td><td class="text-dark">${r.a}</td><td class="text-dark">${r.s}</td><td class="text-dark">${r.i}</td><td class="fw-bold text-success">${r.poin}</td></tr>`; }); const listTop = document.getElementById("listTop10"); listTop.innerHTML = ""; let arrPeringkat = Object.entries(rekap).map(([nama, data]) => ({ nama, poin: data.poin })).sort((a,b) => b.poin - a.poin).slice(0, 10); if(arrPeringkat.length === 0) { listTop.innerHTML = "<div class='text-muted small'>Belum ada data.</div>"; return; } arrPeringkat.forEach((item, idx) => { let badge = idx === 0 ? "bg-warning text-dark" : (idx === 1 ? "bg-secondary" : "bg-wa"); listTop.innerHTML += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1 bg-light text-sm"><div class="fw-bold text-dark"><span class="badge ${badge} me-2 rounded-pill">#${idx+1}</span> ${item.nama}</div><div class="fw-bold text-success">${item.poin} Pts</div></div>`; }); }
+        function kalkulasiKinerjaMentor() { let rekapMentor = {}; dataLengkap.forEach(log => { if(!rekapMentor[log.nama]) rekapMentor[log.nama] = 0; rekapMentor[log.nama]++; }); const board = document.getElementById("leaderboardTutor"); board.innerHTML = ""; let arrMentor = Object.entries(rekapMentor).map(([nama, count]) => ({nama, count})).sort((a,b) => b.count - a.count); arrMentor.forEach((m, idx) => { let med = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : "🏅"); board.innerHTML += `<div class="d-flex justify-content-between p-2 border rounded mb-1 bg-white shadow-sm text-sm"><div class="fw-bold text-dark">${med} ${m.nama}</div><div class="badge bg-wa rounded-pill">${m.count} Logbook</div></div>`; }); }
         
         document.getElementById("btnLogout").onclick = () => { sessionStorage.clear(); window.location.replace("index.html"); };
     </script>
