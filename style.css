@@ -1,111 +1,135 @@
-/* ==================================================
-   style.css - Desain Utama Portal Mentor Jatirogo
-   ================================================== */
+/* ==============================================================
+   style.css - v4.0-WA-Ultimate (Centralized UI & WA Theme)
+   ============================================================== */
 
-/* --- 1. Pengaturan Dasar (Body & Font) --- */
-body { 
-    background-color: #f0f2f5; 
-    font-family: system-ui, -apple-system, sans-serif; 
+/* 1. VARIABEL WARNA (LIGHT MODE - DEFAULT) */
+:root {
+    --wa-primary: #128C7E;
+    --wa-dark: #075E54;
+    --wa-bg: #efeae2; 
+    --wa-bubble-me: #dcf8c6;
+    --wa-bubble-other: #ffffff;
+    --wa-card-bg: #ffffff;
+    --wa-text-main: #212529;
+    --wa-text-muted: #6c757d;
+    --wa-input-bg: #f8f9fa;
+    --wa-border: #dee2e6;
+    --bottom-nav-bg: #ffffff;
+    --bottom-nav-icon: #6c757d;
 }
 
-/* --- 2. Kustomisasi Kartu (Card) --- */
-.card-custom { 
-    border: none; 
-    border-radius: 16px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+/* 2. ADAPTIVE DARK MODE OTOMATIS (SISTEM) */
+@media (prefers-color-scheme: dark) {
+    /* Yen user durung milih tema manual, melu sistem HP */
+    :root:not([data-theme="light"]) {
+        --wa-primary: #1f2c34; 
+        --wa-dark: #111b21;
+        --wa-bg: #0b141a; 
+        --wa-bubble-me: #005c4b; 
+        --wa-bubble-other: #202c33; 
+        --wa-card-bg: #111b21;
+        --wa-text-main: #e9edef;
+        --wa-text-muted: #8696a0;
+        --wa-input-bg: #2a3942;
+        --wa-border: #222d32;
+        --bottom-nav-bg: #1f2c34;
+        --bottom-nav-icon: #8696a0;
+    }
 }
 
-/* --- 3. Halaman Login (index.html) --- */
-.login-wrapper { 
-    min-height: 100vh; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    padding: 20px 0; 
+/* THEME OVERRIDES (KANGGO TOMBOL PILIHAN MANUAL) */
+[data-theme="dark"] {
+    --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; 
+    --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21;
+    --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; 
+    --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0;
+}
+[data-theme="light"] {
+    --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; 
+    --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff;
+    --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; 
+    --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d;
 }
 
-.tracking-widest { 
-    letter-spacing: 0.3em; 
-}
+/* 3. CORE GLOBAL STYLES */
+body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: all 0.3s; padding-bottom: 70px; /* Space nggo bottom nav */ }
+.app-wrapper { max-width: 100%; overflow-x: hidden; }
+.bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: all 0.3s; }
+.text-wa { color: #00a884 !important; }
+.btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } 
+.btn-wa:hover { background-color: #075E54; color: white; }
+.cursor-pointer { cursor: pointer; }
 
-.digital-clock-login { 
-    font-size: 2.5rem; 
-    font-weight: 900; 
-    color: #0d6efd; 
-    letter-spacing: 2px; 
-}
+/* 4. OVERRIDE BOOTSTRAP KANGGO DARK/LIGHT MODE */
+.bg-white, .bg-light { background-color: var(--wa-card-bg) !important; }
+.text-dark { color: var(--wa-text-main) !important; }
+.text-muted { color: var(--wa-text-muted) !important; }
+.border, .border-bottom, .border-top, .border-start, .border-end { border-color: var(--wa-border) !important; }
+.form-control, .form-select, .input-group-text, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
+.card { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; }
+.dropdown-menu { background-color: var(--wa-card-bg); border-color: var(--wa-border); }
+.dropdown-item { color: var(--wa-text-main); }
+.dropdown-item:hover { background-color: var(--wa-input-bg); color: var(--wa-text-main); }
+.dropdown-header { color: #00a884 !important; }
+.table-light, .table-secondary, thead { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; }
+.table td, .table th { border-color: var(--wa-border); color: var(--wa-text-main); background-color: transparent !important; }
 
-/* --- 4. Halaman Aplikasi (mentor.html & superuser.html) --- */
-.app-wrapper { 
-    min-height: 100vh; 
-    display: flex; 
-    flex-direction: column; 
-}
+/* 5. KOMPONEN UI CUSTOM */
+.card-custom { border-radius: 12px; background-color: var(--wa-card-bg); box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--wa-border); transition: background-color 0.3s; }
+#schoolInfoBar { background-color: var(--wa-input-bg) !important; border-left: 4px solid #0288d1; }
+#modernSchoolSelect::-webkit-scrollbar { display: none; }
+.school-pill { transition: all 0.2s ease-in-out; } .school-pill:active { transform: scale(0.95); }
 
-.navbar-brand {
-    font-size: 1.25rem;
-}
+/* 6. CHAT BUBBLES WA STYLE */
+.chat-box { max-height: 450px; overflow-y: auto; background-color: var(--wa-bg); }
+.msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); position: relative; color: var(--wa-text-main); transition: background-color 0.3s; }
+.msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
+.msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
+.del-chat-btn { cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 2px 5px; } .del-chat-btn:hover { opacity: 1; color: red; }
 
-/* --- 5. Navigasi Menu (Tab Pills) --- */
-.nav-pills .nav-link { 
-    border-radius: 10px; 
-    color: #495057; 
-    font-weight: 500; 
-    margin-bottom: 5px; 
-    transition: all 0.2s ease-in-out;
+/* 7. BOTTOM NAVIGATION (MENU WA BARU) */
+.wa-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bottom-nav-bg);
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 12px 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1030;
+    border-top: 1px solid var(--wa-border);
 }
-
-.nav-pills .nav-link:hover {
-    background-color: #e9ecef;
-}
-
-.nav-pills .nav-link.active { 
-    background-color: #0d6efd; 
-    color: white;
-    box-shadow: 0 2px 4px rgba(13,110,253,0.3); 
-}
-
-/* --- 6. Kotak Item Logbook --- */
-.logbook-item { 
-    border-left: 4px solid #0d6efd; 
-    background: #fff; 
-    padding: 12px; 
-    margin-bottom: 10px; 
-    border-radius: 6px; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-}
-
-/* --- 7. Tampilan Jam di Dashboard --- */
-.digital-clock-dash {
-    font-size: 3rem;
+.wa-bottom-nav .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--bottom-nav-icon);
+    font-size: 0.65rem;
     font-weight: bold;
-    color: #0d6efd;
+    text-decoration: none;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    padding: 0;
 }
+.wa-bottom-nav .nav-link i { font-size: 1.4rem; margin-bottom: 2px; }
+.wa-bottom-nav .nav-link.active { color: #00a884; }
+.wa-bottom-nav .nav-link.active i { transform: scale(1.1); }
 
-/* --- 8. Kotak Info & Catatan dari Superadmin --- */
-.info-box {
-    background-color: #e0f2fe;
-    border-left: 4px solid #0284c7;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
+/* 8. MODAL KUSTOM (TIMELINE & TENTANG) */
+.modal-content { background-color: var(--wa-card-bg) !important; color: var(--wa-text-main); border-radius: 16px; border: 1px solid var(--wa-border); }
+.modal-header { border-bottom: 1px solid var(--wa-border); }
+.modal-footer { border-top: 1px solid var(--wa-border); }
 
-.info-box.warning {
-    background-color: #fef3c7;
-    border-left-color: #d97706;
+/* Timeline CSS */
+.timeline { position: relative; border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before {
+    content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px;
+    background-color: var(--wa-card-bg); border: 2px solid #00a884; border-radius: 50%;
 }
-
-.info-box.success {
-    background-color: #dcfce7;
-    border-left-color: #16a34a;
-}
-
-.info-box-title {
-    font-weight: bold;
-    color: #0f172a;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+.timeline-date { font-size: 0.75rem; font-weight: bold; color: var(--wa-text-muted); }
+.timeline-title { font-size: 0.95rem; font-weight: bold; color: var(--wa-text-main); margin-bottom: 3px; }
+.timeline-desc { font-size: 0.8rem; color: var(--wa-text-muted); }
