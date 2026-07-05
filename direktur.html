@@ -1,4 +1,5 @@
-<!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) kanggo Direktur -->
+<!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) -->
+<!-- v1.6: Header Slim, Pindah Filter ke bawah, Tambah Tab Overview & Setup Briefing -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -33,7 +34,7 @@
         #headTimeline > div { margin-top: 0 !important; }
         #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
         
-        /* v1.5: Style kanggo scroll UI sekolah modern */
+        /* v1.5/1.6: Style kanggo scroll UI sekolah modern */
         #modernSchoolSelect::-webkit-scrollbar { display: none; }
         .school-pill { transition: all 0.2s ease-in-out; }
         .school-pill:active { transform: scale(0.95); }
@@ -42,10 +43,10 @@
 <body style="background-color: #f1f5f9;">
     <div class="app-wrapper">
         
+        <!-- v1.6: HEADER DIBUAT SUPER SLIM (Anti Montok) -->
         <nav class="navbar navbar-expand bg-white sticky-top shadow-sm mb-3 border-bottom border-warning border-3" style="z-index: 1020; padding: 6px 0;">
             <div class="container-fluid px-3 d-flex flex-column align-items-stretch">
-                <!-- BARIS 1: Header Atas -->
-                <div class="d-flex justify-content-between align-items-center w-100 mb-2">
+                <div class="d-flex justify-content-between align-items-center w-100">
                     <div class="d-flex flex-column text-start flex-grow-1 overflow-hidden" style="font-size: 0.75rem; line-height: 1.25;">
                         <div class="d-flex align-items-center mb-1"><span id="netStatus" class="me-1"></span><span class="fw-bold text-warning" style="font-size: 0.85rem;"><i class="bi bi-star-fill me-1"></i> PANEL DIREKTUR</span></div>
                         <div class="mb-1 text-truncate"><span id="headClock" class="fw-bold text-dark font-monospace" style="font-size: 0.95rem; letter-spacing: 0.5px;">00:00:00</span><span class="text-secondary mx-1 fw-bold">|</span><span id="headDate" class="text-secondary fw-medium">Tanggal</span></div>
@@ -62,53 +63,98 @@
                         </ul>
                     </div>
                 </div>
-
-                <!-- v1.5: UI MODERN SCHOOL SELECTOR (Ngganteni Dropdown Nyembul) -->
-                <div class="w-100 bg-white pt-2 rounded-top d-flex flex-column">
-                    <div class="text-xs fw-bold text-warning mb-1"><i class="bi bi-buildings-fill me-1 text-warning"></i> PILIH SEKOLAH PENGAMATAN:</div>
-                    <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-2" style="gap: 8px; scrollbar-width: none;">
-                        <!-- Tombol Sekolah bakal muncul neng kene otomatis lewat JS -->
-                        <span class="text-muted small ms-1">Memuat sekolah...</span>
-                    </div>
-                </div>
-
-                <!-- BARIS 3: INFO LIVE SEKOLAH (Hidden until selected) -->
-                <div id="schoolInfoBar" class="d-none w-100 mt-2 flex-column text-start" style="font-size: 0.75rem; line-height: 1.25;">
-                    <div class="mb-1 text-truncate"><i class="bi bi-broadcast text-info me-1"></i><span class="fw-bold text-dark">Live:</span> <span id="tutorJadwalHarian" class="text-dark">Mendeteksi...</span></div>
-                    <div class="d-flex align-items-center text-truncate pe-1">
-                        <i class="bi bi-calendar2-day-fill text-danger me-1"></i><span class="fw-bold text-dark me-1">Day</span>
-                        <div id="headTimeline" class="d-inline-flex align-items-center me-1">...</div>
-                        <span class="text-secondary mx-1 fw-bold">|</span>
-                        <i class="bi bi-geo-alt-fill text-danger me-1"></i><span id="headSekolah" class="fw-bold text-secondary text-uppercase text-truncate">Lokasi</span>
-                    </div>
-                </div>
             </div>
         </nav>
 
-        <!-- KONTEN UTAMA - DISEMBUNYIKAN SEBELUM MILIH SEKOLAH -->
-        <div class="container pb-5" id="mainContentArea" style="display: none;">
+        <!-- KONTEN UTAMA DIREKTUR -->
+        <div class="container pb-5" id="mainContentArea">
+            
+            <!-- v1.6: Pilihan Sekolah Pindah Ning Kene Bawah Header -->
+            <div class="w-100 bg-white p-2 rounded-3 shadow-sm border border-warning border-opacity-50 mb-3 d-flex flex-column">
+                <div class="text-xs fw-bold text-warning mb-2"><i class="bi bi-buildings-fill me-1 text-warning"></i> PILIH SEKOLAH PENGAMATAN:</div>
+                <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-1" style="gap: 8px; scrollbar-width: none;">
+                    <span class="text-muted small ms-1">Memuat sekolah...</span>
+                </div>
+            </div>
+
+            <!-- INFO LIVE SEKOLAH (Hidden if Overview selected) -->
+            <div id="schoolInfoBar" class="d-none w-100 mb-3 p-2 bg-warning bg-opacity-10 rounded border border-warning flex-column text-start" style="font-size: 0.75rem; line-height: 1.25;">
+                <div class="mb-1 text-truncate"><i class="bi bi-broadcast text-info me-1"></i><span class="fw-bold text-dark">Live:</span> <span id="tutorJadwalHarian" class="text-dark">Mendeteksi...</span></div>
+                <div class="d-flex align-items-center text-truncate pe-1">
+                    <i class="bi bi-calendar2-day-fill text-danger me-1"></i><span class="fw-bold text-dark me-1">Day</span>
+                    <div id="headTimeline" class="d-inline-flex align-items-center me-1">...</div>
+                    <span class="text-secondary mx-1 fw-bold">|</span>
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i><span id="headSekolah" class="fw-bold text-secondary text-uppercase text-truncate">Lokasi</span>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-12 col-md-3 mb-4">
                     <div class="card card-custom p-2 shadow-sm border-0 bg-transparent">
                         <ul class="nav nav-pills flex-column dynamic-menu" id="menuTabs">
-                            <li class="nav-item"><button class="nav-link active" id="tab-beranda" data-bs-toggle="pill" data-bs-target="#beranda" title="Dashboard"><i class="bi bi-display text-primary"></i><span class="tab-label">Dashboard</span></button></li>
-                            <li class="nav-item"><button class="nav-link" id="tab-pantau" data-bs-toggle="pill" data-bs-target="#pantau" title="Monitoring Kinerja"><i class="bi bi-graph-up-arrow text-success"></i><span class="tab-label">Monitoring</span></button></li>
-                            <li class="nav-item"><button class="nav-link" id="tab-rekap" data-bs-toggle="pill" data-bs-target="#rekap" title="History Logbook"><i class="bi bi-clock-history text-secondary"></i><span class="tab-label">History</span></button></li>
-                            <li class="nav-item"><button class="nav-link" id="tab-diskusi" data-bs-toggle="pill" data-bs-target="#diskusi" title="Ruang Diskusi"><i class="bi bi-chat-dots-fill text-danger"></i><span class="tab-label">Diskusi</span></button></li>
+                            <!-- v1.6: Tab Overview Default Aktif -->
+                            <li class="nav-item"><button class="nav-link active" id="tab-btn-overview" data-bs-toggle="pill" data-bs-target="#tab-overview" title="Overview"><i class="bi bi-grid-1x2-fill text-warning"></i><span class="tab-label">Overview</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-btn-beranda" data-bs-toggle="pill" data-bs-target="#beranda" title="Dashboard"><i class="bi bi-display text-primary"></i><span class="tab-label">Dashboard</span></button></li>
+                            <!-- v1.6: Tab Setup Briefing Direktur -->
+                            <li class="nav-item"><button class="nav-link" id="tab-btn-briefing" data-bs-toggle="pill" data-bs-target="#tab-briefing" title="Kirim Notifikasi"><i class="bi bi-megaphone-fill text-info"></i><span class="tab-label">Setup Briefing</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-btn-pantau" data-bs-toggle="pill" data-bs-target="#pantau" title="Monitoring Kinerja"><i class="bi bi-graph-up-arrow text-success"></i><span class="tab-label">Monitoring</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-btn-rekap" data-bs-toggle="pill" data-bs-target="#rekap" title="History Logbook"><i class="bi bi-clock-history text-secondary"></i><span class="tab-label">History</span></button></li>
+                            <li class="nav-item"><button class="nav-link" id="tab-btn-diskusi" data-bs-toggle="pill" data-bs-target="#diskusi" title="Ruang Diskusi"><i class="bi bi-chat-dots-fill text-danger"></i><span class="tab-label">Diskusi</span></button></li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="col-12 col-md-9">
                     <div class="tab-content h-100">
-                        <div class="tab-pane fade show active" id="beranda">
-                            <div class="row text-start g-3">
-                                <div class="col-12"><div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> BRIEFING & NOTIFIKASI SAYA</h6><p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p></div></div>
-                                <div class="col-12 col-md-6"><div class="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-primary mb-2 text-xs"><i class="bi bi-calendar-week"></i> JADWAL FULL GLOBAL</h6><p id="tutorJadwal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p></div></div>
+                        
+                        <!-- v1.6: TAB OVERVIEW (Default Landing Page) -->
+                        <div class="tab-pane fade show active" id="tab-overview">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold text-warning mb-0"><i class="bi bi-rocket-takeoff-fill me-2 text-dark"></i> Overview Semua Sekolah</h5>
+                            </div>
+                            <div class="row g-3" id="overviewCardsContainer">
+                                <div class="col-12"><div class="alert alert-light text-center small border shadow-sm">Memuat data sekolah...</div></div>
                             </div>
                         </div>
+
+                        <!-- TAB DASHBOARD INFO TUTOR -->
+                        <div class="tab-pane fade" id="beranda">
+                            <div class="row text-start g-3">
+                                <div class="col-12"><div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> BRIEFING & NOTIFIKASI SAYA (DIREKTUR)</h6><p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p></div></div>
+                                <div class="col-12 col-md-6"><div class="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-primary mb-2 text-xs"><i class="bi bi-calendar-week"></i> JADWAL FULL GLOBAL</h6><p id="tutorJadwal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p></div></div>
+                                <div class="col-12 col-md-6"><div class="p-3 bg-success bg-opacity-10 border border-success border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-success mb-2 text-xs"><i class="bi bi-bullseye"></i> GOAL HARIAN</h6><p id="tutorGoal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p></div></div>
+                            </div>
+                        </div>
+
+                        <!-- v1.6: TAB SETUP BRIEFING & NOTIFIKASI (Kirim ke Mentor) -->
+                        <div class="tab-pane fade" id="tab-briefing">
+                            <div class="card card-custom p-4 shadow-sm border-top border-info border-4 bg-white h-100">
+                                <h5 class="fw-bold text-info mb-3"><i class="bi bi-megaphone-fill me-2"></i> Setup Notifikasi & Goal Sekolah</h5>
+                                <div class="alert alert-warning text-xs mb-3 shadow-sm"><i class="bi bi-info-circle-fill me-1"></i> Data yang Anda simpan di sini akan langsung muncul di halaman Dashboard seluruh Mentor yang bertugas di sekolah ini.</div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary text-xs mb-0">1. NOTIF / BRIEFING DIREKTUR</label>
+                                    <textarea id="dirBriefing" class="form-control bg-light text-sm border-primary" rows="3" placeholder="Tulis instruksi atau pengumuman untuk mentor..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-success text-xs mb-0">2. JADWAL FULL GLOBAL</label>
+                                    <textarea id="dirJadwal" class="form-control bg-light text-sm border-success" rows="3" placeholder="Contoh:&#10;1 Vocabulary (07.00 - 08.00)"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-danger text-xs mb-0">3. GOAL HARIAN</label>
+                                    <textarea id="dirGoal" class="form-control bg-light text-sm border-danger" rows="2" placeholder="Target pencapaian hari ini..."></textarea>
+                                </div>
+                                <button id="btnSaveDirBriefing" class="btn btn-info w-100 fw-bold shadow-sm text-dark py-2"><i class="bi bi-send-check-fill me-2"></i> SIMPAN & KIRIM KE MENTOR</button>
+                            </div>
+                        </div>
+
+                        <!-- TAB PANTAU -->
                         <div class="tab-pane fade" id="pantau"><div class="row g-4"><div class="col-12 col-lg-6"><div class="card card-custom p-3 shadow-sm border-top border-warning border-4 bg-white h-100"><h6 class="fw-bold text-warning mb-2"><i class="bi bi-clipboard-data me-2"></i> Tracker Kurikulum Otomatis</h6><select id="trackerKelas" class="form-select form-select-sm border-warning fw-bold mb-3"></select><div id="areaTracker" class="overflow-auto pe-1" style="max-height: 400px;">Memuat pencapaian...</div></div></div><div class="col-12 col-lg-6"><div class="card card-custom p-3 shadow-sm border-top border-success border-4 bg-white mb-4"><h6 class="fw-bold text-success mb-3"><i class="bi bi-star-fill me-2"></i> Top 10 Siswa (Leaderboard)</h6><select id="filterKelasSiswa" class="form-select form-select-sm fw-bold border-success mb-3"></select><div id="listTop10" class="space-y-2 overflow-auto" style="max-height: 200px;">Memuat peringkat...</div></div><div class="card card-custom p-3 shadow-sm border-top border-primary border-4 bg-white"><h6 class="fw-bold text-primary mb-2"><i class="bi bi-trophy-fill me-2"></i> Keaktifan Logbook Tutor</h6><div id="leaderboardTutor" class="space-y-2 overflow-auto" style="max-height: 150px;">Memuat ranking...</div></div></div></div></div>
+                        
+                        <!-- TAB REKAP -->
                         <div class="tab-pane fade" id="rekap"><div class="card card-custom p-4 shadow-sm border-top border-secondary border-4"><div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold text-secondary mb-0"><i class="bi bi-server me-2"></i> Pantau Logbook Sesi</h5><button id="btnExportPDF" class="btn btn-danger btn-sm fw-bold"><i class="bi bi-file-earmark-pdf-fill"></i> Ekspor PDF</button></div><div class="row g-2 mb-3"><div class="col-6"><select id="filterHari" class="form-select form-select-sm bg-light fw-bold text-danger"></select></div><div class="col-6"><select id="filterKelas" class="form-select form-select-sm bg-light fw-bold text-secondary"></select></div></div><div id="logbookList" class="overflow-auto pe-2" style="max-height: 500px;"></div></div></div>
+                        
+                        <!-- TAB DISKUSI -->
                         <div class="tab-pane fade h-100" id="diskusi"><div class="card card-custom p-3 shadow-sm border-top border-danger border-4 h-100 d-flex flex-column bg-white"><h5 class="fw-bold text-danger mb-1"><i class="bi bi-chat-dots-fill me-2"></i> Ruang Diskusi & Japri</h5><div id="chatBox" class="chat-box flex-grow-1 p-3 rounded border mb-3 d-flex flex-column gap-2" style="min-height: 350px;"></div><div class="input-group"><select id="chatTarget" class="form-select" style="max-width: 140px; font-weight: bold;"><option value="GLOBAL">Grup Semua</option></select><input type="text" id="inputChat" class="form-control text-sm" placeholder="Ketik arahan Anda..."><button class="btn btn-warning fw-bold px-4" id="btnSendChat"><i class="bi bi-send-fill text-dark"></i></button></div></div></div>
                     </div>
                 </div>
@@ -119,7 +165,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { db, startClock, listenToSchools, listenToSingleSchool, listenToLogbooks, generateTimelineHTML, getActiveSchedule, listenToChats, sendGlobalChat, sendJapri } from './script.js?v=14';
-        import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // v1.6: Import fungsi updateDoc & doc kanggo Setup Briefing
+        import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const activeRole = sessionStorage.getItem("userRole"); if (activeRole !== "direktur") window.location.replace("index.html");
         const userVal = sessionStorage.getItem("loggedInUser"); const myName = sessionStorage.getItem("loggedInName"); 
@@ -131,26 +179,72 @@
         let currentSchoolId = ""; let rawKurikulum = { vocab: [], speaking: [], grammar: [] }; let dataLengkap = [];
         let globalAllSchools = [];
 
-        // v1.5: FUNGSI RENDERING SEKOLAH MODERN (Ganti Dropdown Nyembul)
+        // v1.6: FUNGSI RENDER OVERVIEW CARDS
+        function renderOverview() {
+            const container = document.getElementById("overviewCardsContainer");
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (globalAllSchools.length === 0) {
+                container.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border shadow-sm">Belum ada sekolah yang aktif. Tambahkan lewat Setup Sekolah.</div></div>`;
+                return;
+            }
+
+            globalAllSchools.forEach(s => {
+                const hBerjalan = s.hariBerjalan || 0;
+                const tHari = s.totalHari || 0;
+                const jmlTutor = (s.assignedMentors && Array.isArray(s.assignedMentors)) ? s.assignedMentors.length : 0;
+
+                let jmlSiswa = 0;
+                if (s.masterSiswa) {
+                    const lines = s.masterSiswa.split('\n');
+                    lines.forEach(line => {
+                        if(line.includes(':')) {
+                            const namaArr = line.split(':')[1].split(',').map(n => n.trim()).filter(n => n !== "");
+                            jmlSiswa += namaArr.length;
+                        }
+                    });
+                }
+
+                container.innerHTML += `
+                <div class="col-12 col-md-6 col-lg-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white" style="border-left: 4px solid #f59e0b !important;">
+                        <div class="card-body p-3">
+                            <h6 class="fw-bold text-dark mb-3 text-truncate" title="${s.namaSekolah}"><i class="bi bi-building-check text-warning me-2"></i>${s.namaSekolah}</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary text-xs fw-bold"><i class="bi bi-calendar-event me-1"></i> Hari ke:</span>
+                                <span class="badge bg-warning bg-opacity-10 text-dark fw-bold px-2 py-1">${hBerjalan} / ${tHari}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-secondary text-xs fw-bold"><i class="bi bi-mortarboard me-1"></i> Jumlah Siswa:</span>
+                                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-2 py-1">${jmlSiswa} Peserta</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary text-xs fw-bold"><i class="bi bi-person-video3 me-1"></i> Tutor Bertugas:</span>
+                                <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2 py-1">${jmlTutor} Tutor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // v1.6: FUNGSI RENDERING SEKOLAH MODERN (Termasuk Tombol Overview)
         function renderModernSchoolSelect() {
             const container = document.getElementById("modernSchoolSelect");
             if (!container) return;
             
-            let html = ``;
-            if (globalAllSchools.length === 0) {
-                html = `<span class="text-muted small ms-2">Belum ada sekolah aktif...</span>`;
-            } else {
-                globalAllSchools.forEach(s => {
-                    const isSelected = (currentSchoolId === s.id);
-                    // Tema Direktur nggunakake werna warning (kuning)
-                    const btnClass = isSelected ? 'btn-warning shadow-sm border-warning' : 'btn-outline-secondary';
-                    const textClass = isSelected ? 'text-dark' : '';
-                    html += `<button class="btn btn-sm ${btnClass} ${textClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
-                });
-            }
+            // Tombol Overview
+            let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-warning shadow-sm border-warning text-dark' : 'btn-outline-secondary'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="">SEMUA (OVERVIEW)</button>`;
+            
+            globalAllSchools.forEach(s => {
+                const isSelected = (currentSchoolId === s.id);
+                const btnClass = isSelected ? 'btn-warning shadow-sm border-warning text-dark' : 'btn-outline-secondary';
+                html += `<button class="btn btn-sm ${btnClass} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="${s.id}">${s.namaSekolah}</button>`;
+            });
+            
             container.innerHTML = html;
 
-            // Pasang event click kanggo ganti onchange
             document.querySelectorAll('.school-pill').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const val = e.target.getAttribute('data-value');
@@ -163,21 +257,30 @@
         listenToSchools((schools) => {
             globalAllSchools = schools;
             renderModernSchoolSelect();
+            renderOverview();
         });
 
-        // v1.5: LOGIKA PAS SEKOLAH DIPILIH (Eks-onchange)
+        // v1.6: LOGIKA PAS SEKOLAH DIPILIH (Pindah Tab Otomatis)
         function handlePilihSekolah(val) {
-            if(currentSchoolId === val) return; // Nek diklik sekolah sing padha, jarno wae
+            if(currentSchoolId === val) return;
             currentSchoolId = val;
-            renderModernSchoolSelect(); // Render maneh ben warnane ganti
+            renderModernSchoolSelect();
 
             if(!val) { 
-                document.getElementById("mainContentArea").style.display = "none"; 
+                // Mode Overview
                 document.getElementById("schoolInfoBar").classList.add("d-none"); 
+                new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-overview"]')).show();
+                
+                // Clear input form
+                document.getElementById("dirBriefing").value = "";
+                document.getElementById("dirJadwal").value = "";
+                document.getElementById("dirGoal").value = "";
                 return; 
             }
-            document.getElementById("mainContentArea").style.display = "block"; 
+            
+            // Mode Spesifik Sekolah
             document.getElementById("schoolInfoBar").classList.remove("d-none");
+            new bootstrap.Tab(document.querySelector('[data-bs-target="#beranda"]')).show();
             muatDataSekolah(val);
         }
 
@@ -187,8 +290,17 @@
                 if(!data) return;
                 document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub Pusat"; document.getElementById('headTimeline').innerHTML = generateTimelineHTML(data.totalHari, data.hariBerjalan);
                 document.getElementById('tutorBriefing').innerText = data.briefing || "-"; document.getElementById('tutorJadwal').innerText = data.jadwal || "-";
+                
+                // v1.6: Goal Harian juga dirender ing Beranda
+                document.getElementById('tutorGoal').innerText = data.goal || "-";
+                
                 document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(data.jadwal);
                 
+                // v1.6: Isi data ing form Setup Briefing
+                document.getElementById('dirBriefing').value = data.briefing || "";
+                document.getElementById('dirJadwal').value = data.jadwal || "";
+                document.getElementById('dirGoal').value = data.goal || "";
+
                 const arrKelas = (data.masterKelas || "Kelas A").split(',').map(k=>k.trim()).filter(k=>k!=="");
                 const sels = ['filterKelasSiswa', 'trackerKelas', 'filterKelas'];
                 sels.forEach(id => { const el = document.getElementById(id); if(!el) return; el.innerHTML = `<option value="SEMUA">Semua Kelas</option>`; arrKelas.forEach(k => el.innerHTML += `<option value="${k}">${k}</option>`); });
@@ -211,6 +323,29 @@
                 }); box.scrollTop = box.scrollHeight;
             });
         }
+        
+        // v1.6: FUNGSI SIMPAN SETUP BRIEFING PAK DIREKTUR
+        document.getElementById("btnSaveDirBriefing").onclick = async () => {
+            if(!currentSchoolId) return alert("Silakan pilih sekolah spesifik di atas terlebih dahulu!");
+            
+            const briefing = document.getElementById("dirBriefing").value;
+            const jadwal = document.getElementById("dirJadwal").value;
+            const goal = document.getElementById("dirGoal").value;
+            
+            try {
+                // Update langsung nyang document sekolah ing Firestore
+                await updateDoc(doc(db, "schools", currentSchoolId), {
+                    briefing: briefing,
+                    jadwal: jadwal,
+                    goal: goal
+                });
+                alert("Briefing & Notifikasi sukses dikirim dan diupdate ke Mentor!");
+                new bootstrap.Tab(document.querySelector('[data-bs-target="#beranda"]')).show(); // Balik menyang dashboard bar nyimpen
+            } catch (error) {
+                alert("Gagal menyimpan: " + error.message);
+            }
+        };
+
         setInterval(() => { const globalJadwal = document.getElementById('tutorJadwal').innerText; document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(globalJadwal); }, 60000);
 
         onSnapshot(collection(db, "users"), (snap) => { const chatTarget = document.getElementById("chatTarget"); const prevTarget = chatTarget.value; chatTarget.innerHTML = `<option value="GLOBAL">Grup Semua</option>`; snap.forEach(d => { const ud = d.data(); if(ud.julukan !== myName) { chatTarget.innerHTML += `<option value="${ud.julukan}">Japri: ${ud.julukan}</option>`; } }); chatTarget.value = prevTarget; });
