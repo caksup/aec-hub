@@ -1,5 +1,6 @@
 <!-- v1.5: UI Modern School Select (Anti Dropdown Nyembul) -->
 <!-- v1.6: Header Slim, Pindah Filter ke bawah, Tambah Tab Overview & Setup Briefing -->
+<!-- v1.6.1: Hotfix PWA Cache Buster & Pembersihan Pipa Data (Anti Bocor) -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,7 +11,7 @@
     <meta name="theme-color" content="#ffffff">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.6.1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         .dynamic-menu { gap: 8px; }
@@ -34,7 +35,6 @@
         #headTimeline > div { margin-top: 0 !important; }
         #headTimeline span { font-size: 0.85rem !important; margin: 0 1px !important; }
         
-        /* v1.5/1.6: Style kanggo scroll UI sekolah modern */
         #modernSchoolSelect::-webkit-scrollbar { display: none; }
         .school-pill { transition: all 0.2s ease-in-out; }
         .school-pill:active { transform: scale(0.95); }
@@ -43,7 +43,7 @@
 <body style="background-color: #f1f5f9;">
     <div class="app-wrapper">
         
-        <!-- v1.6: HEADER DIBUAT SUPER SLIM (Anti Montok) -->
+        <!-- HEADER DIBUAT SUPER SLIM -->
         <nav class="navbar navbar-expand bg-white sticky-top shadow-sm mb-3 border-bottom border-warning border-3" style="z-index: 1020; padding: 6px 0;">
             <div class="container-fluid px-3 d-flex flex-column align-items-stretch">
                 <div class="d-flex justify-content-between align-items-center w-100">
@@ -69,7 +69,7 @@
         <!-- KONTEN UTAMA DIREKTUR -->
         <div class="container pb-5" id="mainContentArea">
             
-            <!-- v1.6: Pilihan Sekolah Pindah Ning Kene Bawah Header -->
+            <!-- Pilihan Sekolah Pindah Ning Kene -->
             <div class="w-100 bg-white p-2 rounded-3 shadow-sm border border-warning border-opacity-50 mb-3 d-flex flex-column">
                 <div class="text-xs fw-bold text-warning mb-2"><i class="bi bi-buildings-fill me-1 text-warning"></i> PILIH SEKOLAH PENGAMATAN:</div>
                 <div id="modernSchoolSelect" class="d-flex flex-nowrap overflow-auto pb-1" style="gap: 8px; scrollbar-width: none;">
@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <!-- INFO LIVE SEKOLAH (Hidden if Overview selected) -->
+            <!-- INFO LIVE SEKOLAH -->
             <div id="schoolInfoBar" class="d-none w-100 mb-3 p-2 bg-warning bg-opacity-10 rounded border border-warning flex-column text-start" style="font-size: 0.75rem; line-height: 1.25;">
                 <div class="mb-1 text-truncate"><i class="bi bi-broadcast text-info me-1"></i><span class="fw-bold text-dark">Live:</span> <span id="tutorJadwalHarian" class="text-dark">Mendeteksi...</span></div>
                 <div class="d-flex align-items-center text-truncate pe-1">
@@ -92,10 +92,8 @@
                 <div class="col-12 col-md-3 mb-4">
                     <div class="card card-custom p-2 shadow-sm border-0 bg-transparent">
                         <ul class="nav nav-pills flex-column dynamic-menu" id="menuTabs">
-                            <!-- v1.6: Tab Overview Default Aktif -->
                             <li class="nav-item"><button class="nav-link active" id="tab-btn-overview" data-bs-toggle="pill" data-bs-target="#tab-overview" title="Overview"><i class="bi bi-grid-1x2-fill text-warning"></i><span class="tab-label">Overview</span></button></li>
                             <li class="nav-item"><button class="nav-link" id="tab-btn-beranda" data-bs-toggle="pill" data-bs-target="#beranda" title="Dashboard"><i class="bi bi-display text-primary"></i><span class="tab-label">Dashboard</span></button></li>
-                            <!-- v1.6: Tab Setup Briefing Direktur -->
                             <li class="nav-item"><button class="nav-link" id="tab-btn-briefing" data-bs-toggle="pill" data-bs-target="#tab-briefing" title="Kirim Notifikasi"><i class="bi bi-megaphone-fill text-info"></i><span class="tab-label">Setup Briefing</span></button></li>
                             <li class="nav-item"><button class="nav-link" id="tab-btn-pantau" data-bs-toggle="pill" data-bs-target="#pantau" title="Monitoring Kinerja"><i class="bi bi-graph-up-arrow text-success"></i><span class="tab-label">Monitoring</span></button></li>
                             <li class="nav-item"><button class="nav-link" id="tab-btn-rekap" data-bs-toggle="pill" data-bs-target="#rekap" title="History Logbook"><i class="bi bi-clock-history text-secondary"></i><span class="tab-label">History</span></button></li>
@@ -107,7 +105,7 @@
                 <div class="col-12 col-md-9">
                     <div class="tab-content h-100">
                         
-                        <!-- v1.6: TAB OVERVIEW (Default Landing Page) -->
+                        <!-- TAB OVERVIEW -->
                         <div class="tab-pane fade show active" id="tab-overview">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-bold text-warning mb-0"><i class="bi bi-rocket-takeoff-fill me-2 text-dark"></i> Overview Semua Sekolah</h5>
@@ -117,7 +115,7 @@
                             </div>
                         </div>
 
-                        <!-- TAB DASHBOARD INFO TUTOR -->
+                        <!-- TAB DASHBOARD -->
                         <div class="tab-pane fade" id="beranda">
                             <div class="row text-start g-3">
                                 <div class="col-12"><div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-50 rounded-3 h-100"><h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> BRIEFING & NOTIFIKASI SAYA (DIREKTUR)</h6><p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p></div></div>
@@ -126,7 +124,7 @@
                             </div>
                         </div>
 
-                        <!-- v1.6: TAB SETUP BRIEFING & NOTIFIKASI (Kirim ke Mentor) -->
+                        <!-- TAB SETUP BRIEFING -->
                         <div class="tab-pane fade" id="tab-briefing">
                             <div class="card card-custom p-4 shadow-sm border-top border-info border-4 bg-white h-100">
                                 <h5 class="fw-bold text-info mb-3"><i class="bi bi-megaphone-fill me-2"></i> Setup Notifikasi & Goal Sekolah</h5>
@@ -164,9 +162,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        import { db, startClock, listenToSchools, listenToSingleSchool, listenToLogbooks, generateTimelineHTML, getActiveSchedule, listenToChats, sendGlobalChat, sendJapri } from './script.js?v=14';
-        
-        // v1.6: Import fungsi updateDoc & doc kanggo Setup Briefing
+        import { db, startClock, listenToSchools, listenToSingleSchool, listenToLogbooks, generateTimelineHTML, getActiveSchedule, listenToChats, sendGlobalChat, sendJapri } from './script.js?v=14.2';
         import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const activeRole = sessionStorage.getItem("userRole"); if (activeRole !== "direktur") window.location.replace("index.html");
@@ -178,8 +174,17 @@
         
         let currentSchoolId = ""; let rawKurikulum = { vocab: [], speaking: [], grammar: [] }; let dataLengkap = [];
         let globalAllSchools = [];
+        
+        // v1.6.1: Variabel penampung listener ben ora tumpuk undung
+        let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null;
 
-        // v1.6: FUNGSI RENDER OVERVIEW CARDS
+        function bersihkanListener() {
+            if(unsubSchool) { unsubSchool(); unsubSchool = null; }
+            if(unsubLogbooks) { unsubLogbooks(); unsubLogbooks = null; }
+            if(unsubChats) { unsubChats(); unsubChats = null; }
+            dataLengkap = [];
+        }
+
         function renderOverview() {
             const container = document.getElementById("overviewCardsContainer");
             if (!container) return;
@@ -229,12 +234,10 @@
             });
         }
 
-        // v1.6: FUNGSI RENDERING SEKOLAH MODERN (Termasuk Tombol Overview)
         function renderModernSchoolSelect() {
             const container = document.getElementById("modernSchoolSelect");
             if (!container) return;
             
-            // Tombol Overview
             let html = `<button class="btn btn-sm ${currentSchoolId === '' ? 'btn-warning shadow-sm border-warning text-dark' : 'btn-outline-secondary'} rounded-pill fw-bold flex-shrink-0 school-pill" data-value="">SEMUA (OVERVIEW)</button>`;
             
             globalAllSchools.forEach(s => {
@@ -253,50 +256,43 @@
             });
         }
 
-        // 1. INIT DROPDOWN SCHOOL
         listenToSchools((schools) => {
             globalAllSchools = schools;
             renderModernSchoolSelect();
             renderOverview();
         });
 
-        // v1.6: LOGIKA PAS SEKOLAH DIPILIH (Pindah Tab Otomatis)
         function handlePilihSekolah(val) {
             if(currentSchoolId === val) return;
             currentSchoolId = val;
             renderModernSchoolSelect();
+            
+            // v1.6.1: Bersihkan listener sadurunge pindah sekolah ben ora numpuk memori
+            bersihkanListener(); 
 
             if(!val) { 
-                // Mode Overview
                 document.getElementById("schoolInfoBar").classList.add("d-none"); 
                 new bootstrap.Tab(document.querySelector('[data-bs-target="#tab-overview"]')).show();
                 
-                // Clear input form
                 document.getElementById("dirBriefing").value = "";
                 document.getElementById("dirJadwal").value = "";
                 document.getElementById("dirGoal").value = "";
                 return; 
             }
             
-            // Mode Spesifik Sekolah
             document.getElementById("schoolInfoBar").classList.remove("d-none");
             new bootstrap.Tab(document.querySelector('[data-bs-target="#beranda"]')).show();
             muatDataSekolah(val);
         }
 
-        // 2. LOAD DATA SCHOOL
         function muatDataSekolah(sid) {
-            listenToSingleSchool(sid, (data) => {
+            unsubSchool = listenToSingleSchool(sid, (data) => {
                 if(!data) return;
                 document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub Pusat"; document.getElementById('headTimeline').innerHTML = generateTimelineHTML(data.totalHari, data.hariBerjalan);
                 document.getElementById('tutorBriefing').innerText = data.briefing || "-"; document.getElementById('tutorJadwal').innerText = data.jadwal || "-";
-                
-                // v1.6: Goal Harian juga dirender ing Beranda
                 document.getElementById('tutorGoal').innerText = data.goal || "-";
-                
                 document.getElementById('tutorJadwalHarian').innerText = getActiveSchedule(data.jadwal);
                 
-                // v1.6: Isi data ing form Setup Briefing
                 document.getElementById('dirBriefing').value = data.briefing || "";
                 document.getElementById('dirJadwal').value = data.jadwal || "";
                 document.getElementById('dirGoal').value = data.goal || "";
@@ -307,11 +303,9 @@
                 rawKurikulum = data.kurikulum || { vocab: [], speaking: [], grammar: [] }; renderTracker();
             });
 
-            // LOAD LOGBOOKS
-            listenToLogbooks(sid, (logs) => { dataLengkap = logs; ekstrakHari(); renderLogbookList(); renderTracker(); kalkulasiDataSiswa(); kalkulasiKinerjaMentor(); });
+            unsubLogbooks = listenToLogbooks(sid, (logs) => { dataLengkap = logs; ekstrakHari(); renderLogbookList(); renderTracker(); kalkulasiDataSiswa(); kalkulasiKinerjaMentor(); });
             
-            // LOAD CHATS
-            listenToChats(sid, (chats) => {
+            unsubChats = listenToChats(sid, (chats) => {
                 const box = document.getElementById("chatBox"); box.innerHTML = ""; 
                 chats.forEach(c => {
                     if (c.type === 'global' || (c.type === 'private' && (c.sender === myName || c.receiver === myName || c.receiver === "direktur"))) {
@@ -324,7 +318,6 @@
             });
         }
         
-        // v1.6: FUNGSI SIMPAN SETUP BRIEFING PAK DIREKTUR
         document.getElementById("btnSaveDirBriefing").onclick = async () => {
             if(!currentSchoolId) return alert("Silakan pilih sekolah spesifik di atas terlebih dahulu!");
             
@@ -333,14 +326,13 @@
             const goal = document.getElementById("dirGoal").value;
             
             try {
-                // Update langsung nyang document sekolah ing Firestore
                 await updateDoc(doc(db, "schools", currentSchoolId), {
                     briefing: briefing,
                     jadwal: jadwal,
                     goal: goal
                 });
                 alert("Briefing & Notifikasi sukses dikirim dan diupdate ke Mentor!");
-                new bootstrap.Tab(document.querySelector('[data-bs-target="#beranda"]')).show(); // Balik menyang dashboard bar nyimpen
+                new bootstrap.Tab(document.querySelector('[data-bs-target="#beranda"]')).show(); 
             } catch (error) {
                 alert("Gagal menyimpan: " + error.message);
             }
@@ -364,7 +356,6 @@
             dt.forEach((d, i) => { const w = d.waktu ? d.waktu.toDate().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : 'Pending...'; let tb = ""; if (d.dataSiswa && d.dataSiswa.length > 0) { tb = `<table class="table table-bordered text-xs mt-2 mb-0 text-center"><tr class="bg-light"><th style="width:25px;">No.</th><th>Nama Siswa</th><th>Abs</th><th>Nilai</th></tr>`; d.dataSiswa.forEach((s, idx) => { let ikon = s.kehadiran === 'h' ? '✔' : (s.kehadiran === 'a' ? '✖' : s.kehadiran.toUpperCase()); tb += `<tr><td>${idx+1}</td><td class="text-start">${s.nama}</td><td class="text-uppercase fw-bold">${ikon}</td><td class="fw-bold">${s.nilai || '-'}</td></tr>`; }); tb += `</table>`; } let displayJam = (d.jamKe || "").replace('Jam ', 'Jam ke-'); let displayMateri = d.materi && d.materi.length > 0 ? d.materi.join(', ') : '-'; list.innerHTML += `<div class="p-3 bg-white border rounded-3 mb-3 shadow-sm"><div class="d-flex justify-content-between border-bottom pb-1 mb-2"><span class="fw-bold text-primary"><i class="bi bi-person-fill"></i> ${d.nama}</span><span class="text-muted text-xs">${w}</span></div><div><span class="badge bg-primary me-1">${d.kelas}</span><span class="badge bg-dark">${displayJam}</span></div><div class="text-xs fw-bold mt-2 text-dark">📖 Materi: <span class="fw-normal">${displayMateri}</span></div><div class="text-xs mt-2 text-danger">📝 <b>Class Note:</b><br><span class="text-dark">${d.laporanSiswa || '-'}</span></div><div class="text-xs mt-2 text-success">🎯 <b>Tugas Siswa:</b><br><span class="text-dark">${d.tugasSiswa || '-'}</span></div><button class="btn btn-sm btn-outline-secondary w-100 mt-2 text-xs fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col_${i}">Lihat Rapor ▼</button><div class="collapse" id="col_${i}">${tb}</div></div>`; });
         }
         
-        // RENDER PDF MODEL TABEL (PAK DHE EXCEL)
         document.getElementById("btnExportPDF").onclick = () => {
             if(!currentSchoolId) return alert("Pilih sekolah dulu!");
             const fHari = document.getElementById("filterHari").value; let dataTampil = dataLengkap; if (fHari !== "SEMUA") dataTampil = dataTampil.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari);
