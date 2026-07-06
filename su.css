@@ -6,15 +6,16 @@
    - v2.0: Perubahan skema warna hijau gelap WhatsApp Style.
    - v3.0: Penambahan layout data table, render logbook, & export PDF.
    - v4.0: Pemisahan file CSS mandiri terpusat agar tidak bentrok dengan panel lain.
-   - v4.1: Integrasi warna khusus untuk Tab Menu Sistem & Timeline.
-   - v5.0: Implementasi animasi micro-interactions pada transisi tema malam/terang.
+   - v4.1: Penambahan tab Sistem & styling timeline roadmap.
+   - v5.0: Animasi interaktif ikon tema & transisi warna malam.
    - v5.1: Perbaikan alur Offcanvas bottom navigation menu titik 3 bawah.
-   - v5.2: (CURRENT) FIX TOTAL Kontras Dark Mode, Tab Menu Pill Adaptif (Icon Only saat Inaktif).
+   - v5.2: Uji coba perbaikan kontras warna gelap terang.
+   - v5.3: (CURRENT) FIX TOTAL Kontras Dark Mode, Tab Menu Pill Adaptif (Icon Only saat Inaktif), Anti Mbludak.
    ================================================== */
 
 :root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
 
-/* FIX KONTRAS TEMA GELAP (V5.2 - Cetho Welo-Welo) */
+/* KONTRAS TEMA GELAP FIX V5.3 (Cetho Welo-Welo) */
 [data-theme="dark"] { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; } }
 [data-theme="light"] { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
@@ -22,8 +23,8 @@
 body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: background-color 0.3s ease, color 0.3s ease; padding-bottom: 75px; }
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
 .bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.3s ease; }
-.text-wa { color: #00a884 !important; }
-.btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: #075E54; color: white; }
+.text-wa { color: var(--wa-primary) !important; }
+.btn-wa { background-color: var(--wa-primary); color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: var(--wa-dark); color: white; }
 .bg-white, .bg-light { background-color: var(--wa-card-bg) !important; transition: background-color 0.3s ease; }
 .text-dark { color: var(--wa-text-main) !important; } .text-muted { color: var(--wa-text-muted) !important; }
 .border, .border-bottom, .border-top { border-color: var(--wa-border) !important; }
@@ -37,7 +38,7 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 #modernSchoolSelect::-webkit-scrollbar { display: none; } 
 .table, th, td { color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
 
-/* SYSTEM FIX V5.2: ATURAN PILL ADAPTIF (IKON HARUS JELAS) */
+/* SYSTEM PILL ADAPTIF V5.3 (Mung Muncul Teks Pas Aktif) */
 .school-pill .tab-label, 
 .nav-pills .nav-link .tab-label, 
 .wa-bottom-nav .nav-link .tab-label,
@@ -47,8 +48,9 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 .school-pill i, .nav-pills .nav-link i, .wa-bottom-nav i {
     color: var(--bottom-nav-icon) !important;
     font-size: 1.35rem;
+    transition: transform 0.2s ease;
 }
-/* KONDISI AKTIF: NAMPILKE IKON + TEKS KONTRAST */
+/* KONDISI AKTIF PILL / TAB */
 .school-pill.active-pill .tab-label,
 .nav-pills .nav-link.active .tab-label,
 .wa-bottom-nav .nav-link.active .tab-label {
@@ -63,15 +65,16 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
     transform: scale(1.1);
 }
 .nav-pills .nav-link.active {
-    background-color: #128C7E !important;
-}
-.wa-bottom-nav .nav-link.active {
-    background-color: #00a884 !important;
-    border-radius: 20px;
-    padding: 5px 12px;
+    background-color: var(--wa-primary) !important;
 }
 
-/* ANIMASI IKON TEMA HEADER */
+/* MENU BAWAH ANTI-MBLUDAK V5.3 */
+.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: flex-start; gap: 4px; padding: 8px 6px 12px 6px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); overflow-x: auto; scrollbar-width: none; transition: background-color 0.3s ease; white-space: nowrap; }
+.wa-bottom-nav::-webkit-scrollbar { display: none; }
+.wa-bottom-nav .nav-link, .wa-bottom-nav .btn-nav { display: inline-flex; flex-direction: row; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 6px 10px; border-radius: 20px; background: transparent; transition: all 0.2s ease; }
+.wa-bottom-nav .nav-link.active { background-color: #00a884 !important; }
+
+/* ANIMASI SIKLUS TEMA HEADER */
 @keyframes iconPop { 0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
 .theme-icon-animate { animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; display: inline-block; }
 
