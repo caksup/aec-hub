@@ -2,30 +2,27 @@
    mt.css - Stylesheet Panel Mentor (AEC Hub)
    
    Riwayat Versi:
-   - v1.0: Desain awal aplikasi.
-   - v2.0: Perubahan warna dasar WA (WhatsApp style).
-   - v3.0: Penambahan layout chat box dan tugas harian.
-   - v4.0: Pemisahan file CSS mandiri agar tidak bentrok dengan Admin.
-   - v4.1: Penambahan styling untuk Roadmap Timeline.
-   - v4.2: Fix layout 3 kartu (Briefing, Jadwal, Goal).
-   - v5.0: (CURRENT) Penambahan animasi ikon interaktif & transisi tema.
+   - v1.0 - v3.0: Styling awal dan layout dashboard mentor.
+   - v4.0: Pemisahan file (mt.css) anti-bentrok.
+   - v4.1 - v4.3: Styling timeline roadmap, layout 3 kartu.
+   - v5.0: Animasi interaktif ikon tema & transisi warna.
+   - v5.1: (CURRENT) Fix Bug Tema, Animasi Bottom Nav (Ikon+Teks), Menu Offcanvas.
    ================================================== */
-
 :root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; } }
 [data-theme="dark"] { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; }
 [data-theme="light"] { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
 
-body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: background-color 0.4s ease, color 0.4s ease; padding-bottom: 70px; }
+body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: background-color 0.3s ease, color 0.3s ease; padding-bottom: 75px; }
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
-.bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.4s ease; }
-.text-wa { color: #00a884 !important; }
-.btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: #075E54; color: white; }
-.bg-white, .bg-light { background-color: var(--wa-card-bg) !important; transition: background-color 0.4s ease; }
+.bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.3s ease; }
+.text-wa { color: var(--wa-primary) !important; }
+.btn-wa { background-color: var(--wa-primary); color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: var(--wa-dark); color: white; }
+.bg-white, .bg-light { background-color: var(--wa-card-bg) !important; transition: background-color 0.3s ease; }
 .text-dark { color: var(--wa-text-main) !important; } .text-muted { color: var(--wa-text-muted) !important; }
 .border, .border-bottom, .border-top { border-color: var(--wa-border) !important; }
 .form-control, .form-select, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
-.card, .modal-content, .dropdown-menu { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; transition: background-color 0.4s ease; }
+.card, .modal-content, .offcanvas { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; transition: background-color 0.3s ease; color: var(--wa-text-main); }
 .dropdown-item { color: var(--wa-text-main); } .dropdown-item:hover { background-color: var(--wa-input-bg); color: var(--wa-text-main); }
 .card-custom { border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .chat-box { max-height: 400px; overflow-y: auto; }
@@ -33,21 +30,21 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 .msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
 .msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
 
-/* MENU BAWAH ADAPTIF & INTERAKTIF */
-.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: space-around; padding: 8px 10px 12px 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); transition: background-color 0.4s ease; }
-.wa-bottom-nav .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 5px; background: transparent; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.wa-bottom-nav .nav-link i { font-size: 1.4rem; margin-bottom: 2px; transition: transform 0.2s ease; }
-.wa-bottom-nav .nav-link .tab-label { display: none; margin-top: 2px; font-size: 0.6rem; }
-.wa-bottom-nav .nav-link.active { color: #00a884; transform: translateY(-3px); }
-.wa-bottom-nav .nav-link.active i { transform: scale(1.15); }
+/* MENU BAWAH ADAPTIF & INTERAKTIF (v5.1) */
+.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: space-around; gap: 8px; padding: 8px 10px 12px 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); overflow-x: auto; scrollbar-width: none; transition: background-color 0.3s ease; }
+.wa-bottom-nav::-webkit-scrollbar { display: none; }
+.wa-bottom-nav .nav-link, .wa-bottom-nav .btn-nav { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 5px 8px; white-space: nowrap; background: transparent; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.wa-bottom-nav i { font-size: 1.4rem; margin-bottom: 2px; transition: transform 0.2s ease; }
+.wa-bottom-nav .tab-label { display: none; margin-top: 2px; font-size: 0.6rem; }
+.wa-bottom-nav .nav-link.active, .wa-bottom-nav .btn-nav:focus { color: var(--wa-primary); transform: translateY(-3px); }
+.wa-bottom-nav .nav-link.active i, .wa-bottom-nav .btn-nav:focus i { transform: scale(1.15); }
 .wa-bottom-nav .nav-link.active .tab-label { display: block; }
-.wa-bottom-nav .nav-link:active i { transform: scale(0.85); } /* Animasi tekan */
+.wa-bottom-nav .nav-link:active i { transform: scale(0.85); }
 
 /* ANIMASI IKON TEMA HEADER */
 @keyframes iconPop { 0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
 .theme-icon-animate { animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; display: inline-block; }
-
-.timeline { border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
+.timeline { border-left: 2px solid var(--wa-primary); margin-left: 15px; padding-left: 20px; list-style: none; }
 .timeline-item { position: relative; margin-bottom: 20px; }
-.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid #00a884; border-radius: 50%; transition: background-color 0.4s ease; }
+.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid var(--wa-primary); border-radius: 50%; }
 .timeline-date { font-size: 0.75rem; font-weight: bold; color: var(--wa-text-muted); } .timeline-title { font-size: 0.95rem; font-weight: bold; } .timeline-desc { font-size: 0.8rem; color: var(--wa-text-muted); }
