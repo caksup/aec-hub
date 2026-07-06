@@ -2,9 +2,10 @@
    mt.js - Script Khusus Mentor Panel (AEC Hub)
    
    Riwayat Versi (JS):
-   - v4.1: Penambahan listener Roadmap untuk tampil di Tab Info.
-   - v4.0 Ultimate: Pemisahan logika mandiri khusus mentor, Auto-login.
+   - v4.2: Fix injeksi HTML ke 3 Kartu Info (Briefing, Jadwal, Goal).
+   - v4.1: Penambahan listener Roadmap.
    ================================================== */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, onSnapshot, addDoc, collection, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -23,13 +24,14 @@ enableIndexedDbPersistence(db).catch((err) => { console.warn("Offline mode err:"
 
 const actUser = localStorage.getItem("loggedInUser");
 const myName = localStorage.getItem("loggedInName"); 
+
 if (!actUser) window.location.replace("index.html");
 
 function initGlobalUI() {
     const globalModals = `
     <div class="modal fade" id="modalTema" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-palette-fill me-2"></i>Pilih Tema</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-2 bg-light"><button class="list-group-item w-100 p-2 mb-1 border rounded shadow-sm text-center fw-bold" onclick="setTema('light')">Terang</button><button class="list-group-item w-100 p-2 mb-1 border rounded shadow-sm text-center fw-bold" onclick="setTema('dark')">Gelap</button><button class="list-group-item w-100 p-2 border rounded shadow-sm text-center fw-bold" onclick="setTema('system')">Ikuti Sistem HP</button></div></div></div></div>
     <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Buku Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="alert alert-info border-0 shadow-sm text-sm">Panduan mentor sedang disusun oleh Direktur...</div></div></div></div></div>
-    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 4.1-WA Mentor Premium</p></div></div></div></div>
+    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 4.2-WA Mentor Premium</p></div></div></div></div>
     <div class="modal fade" id="modalLapor" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-danger text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-headset me-2"></i>Lapor Admin</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="mb-2"><label class="form-label text-xs fw-bold mb-1">Nama Anda</label><input type="text" id="laporNama" class="form-control form-control-sm" value="${myName}" readonly></div><div class="mb-3"><label class="form-label text-xs fw-bold mb-1">Detail Kendala</label><textarea id="laporDetail" class="form-control text-sm" rows="3" placeholder="Jelaskan masalah aplikasi..."></textarea></div><button class="btn btn-danger btn-sm w-100 fw-bold rounded-pill shadow-sm" id="btnKirimLapor"><i class="bi bi-send-fill me-1"></i> Kirim Laporan</button></div></div></div></div>
     `;
     if (!document.getElementById('modalTema')) document.body.insertAdjacentHTML('beforeend', globalModals);
@@ -42,19 +44,11 @@ function initGlobalUI() {
         window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`, '_blank'); document.getElementById("laporDetail").value = "";
     };
 
-    // Listener Roadmap Khusus Tab Info Mentor
     onSnapshot(query(collection(db, "roadmaps")), (snap) => {
-        const listInfo = document.getElementById("infoRoadmap");
-        if(!listInfo) return;
-        listInfo.innerHTML = "";
-        let dataRoadmap = [];
-        snap.forEach(d => { dataRoadmap.push({id: d.id, ...d.data()}); });
+        const listInfo = document.getElementById("infoRoadmap"); if(!listInfo) return; listInfo.innerHTML = "";
+        let dataRoadmap = []; snap.forEach(d => { dataRoadmap.push({id: d.id, ...d.data()}); });
         dataRoadmap.sort((a,b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
-        
-        dataRoadmap.forEach(r => { 
-            listInfo.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`; 
-        });
-        
+        dataRoadmap.forEach(r => { listInfo.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`; });
         if(listInfo.innerHTML === "") listInfo.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap program.</div></li>`;
     });
 }
@@ -82,9 +76,13 @@ onSnapshot(collection(db, "schools"), (snap) => {
     
     if(tugasSekolahku) {
         currentSchoolId = tugasSekolahku.id;
+        document.getElementById("pesanKosong").classList.add("d-none");
+        document.getElementById("utamaMentorContent").classList.remove("d-none");
         muatDataSekolah(tugasSekolahku.id);
     } else {
-        document.getElementById("tutorBriefing").innerHTML = `<div class="alert alert-danger text-center mb-0">Sampeyan durung diwenehi tugas sekolah karo Admin, bolo!</div>`;
+        document.getElementById("pesanKosong").classList.remove("d-none");
+        document.getElementById("utamaMentorContent").classList.add("d-none");
+        document.getElementById("schoolInfoBar").classList.add("d-none");
     }
 });
 
@@ -96,15 +94,17 @@ function muatDataSekolah(sid) {
         const timelineText = `${(hBerjalan > 0 && hBerjalan <= 20) ? filledArr[hBerjalan - 1] : hBerjalan}/${tHari}`;
         const jadwalLive = getActiveSchedule(d.jadwal);
         
-        document.getElementById("tutorBriefing").innerHTML = `
-            <div class="mb-3 p-2 bg-light border rounded">
-                <div class="fw-bold text-wa text-xs"><i class="bi bi-geo-alt-fill"></i> LOKASI TUGAS:</div><h5 class="fw-bold text-dark mb-0">${d.namaSekolah}</h5>
-                <div class="text-xs text-muted mt-1">Hari Kursus Berjalan: <span class="badge bg-danger">${timelineText}</span></div>
-            </div>
-            <div class="mb-2"><h6><b>📢 BRIEFING DIREKTUR:</b></h6><p style="white-space: pre-line;" class="mb-0 text-dark p-2 bg-light border rounded text-sm">${d.briefing || '-'}</p></div>
-            <div class="mb-2"><h6><b>📅 JADWAL FULL GLOBAL:</b></h6><p style="white-space: pre-line;" class="mb-0 text-dark p-2 bg-light border rounded text-sm">${d.jadwal || '-'}</p></div>
-            <div class="mb-2"><h6><b>🎯 GOAL HARIAN:</b></h6><p style="white-space: pre-line;" class="mb-0 text-dark p-2 bg-light border rounded text-sm">${d.goal || '-'}</p></div>
-        `;
+        // Iki sing penting: Ngisi info bar dhuwur lan 3 kotak siji-siji!
+        const infoBar = document.getElementById("schoolInfoBar");
+        if(infoBar) infoBar.classList.remove("d-none");
+        
+        if(document.getElementById("headSekolah")) document.getElementById("headSekolah").innerText = d.namaSekolah;
+        if(document.getElementById("headTimeline")) document.getElementById("headTimeline").innerText = timelineText;
+        if(document.getElementById("tutorJadwalHarian")) document.getElementById("tutorJadwalHarian").innerText = jadwalLive;
+
+        if(document.getElementById("tutorBriefing")) document.getElementById("tutorBriefing").innerText = d.briefing || "-";
+        if(document.getElementById("tutorJadwal")) document.getElementById("tutorJadwal").innerText = d.jadwal || "-";
+        if(document.getElementById("tutorGoal")) document.getElementById("tutorGoal").innerText = d.goal || "-";
         
         rawKurikulum = d.kurikulum || { vocab: [], speaking: [], grammar: [], practice: [] }; rawMasterSiswa = d.masterSiswa || "";
         renderStrukturFormLogbook(d.masterKelas); renderDinamicMateri(jadwalLive); renderFormAbsen();
