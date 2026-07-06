@@ -5,7 +5,7 @@
    - v1.0 - v3.0: Core logic Firebase Mentor.
    - v4.0 - v4.3: Pemisahan file (mt.js) & perbaikan DOM null pointer.
    - v5.0: Fungsionalitas Tombol Tema Siklus Header.
-   - v5.1: (CURRENT) Fix Tema Siklus DOM, Offcanvas Menu & Logout Logic.
+   - v5.1: (CURRENT) Offcanvas Menu & Logout Logic terintegrasi.
    ================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, onSnapshot, addDoc, collection, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -25,54 +25,30 @@ let currentThemeIndex = themes.indexOf(localStorage.getItem('aecTheme') || 'syst
 if (currentThemeIndex === -1) currentThemeIndex = 2;
 
 function applyThemeVisuals(index) {
-    const t = themes[index];
-    localStorage.setItem('aecTheme', t);
+    const t = themes[index]; localStorage.setItem('aecTheme', t);
     if (t === 'system') {
         const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', t);
-    }
+    } else { document.documentElement.setAttribute('data-theme', t); }
     const iconEl = document.getElementById("themeIconDisplay");
-    if(iconEl) {
-        iconEl.className = `bi ${themeIcons[index]} fs-4`; 
-        void iconEl.offsetWidth;
-        iconEl.classList.add("theme-icon-animate");
-    }
+    if(iconEl) { iconEl.className = `bi ${themeIcons[index]} fs-4`; void iconEl.offsetWidth; iconEl.classList.add("theme-icon-animate"); }
 }
 applyThemeVisuals(currentThemeIndex);
 
 const btnCycleTheme = document.getElementById("btnCycleTheme");
-if(btnCycleTheme) {
-    btnCycleTheme.onclick = () => {
-        currentThemeIndex = (currentThemeIndex + 1) % 3;
-        applyThemeVisuals(currentThemeIndex);
-    };
-}
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex);
-});
+if(btnCycleTheme) { btnCycleTheme.onclick = () => { currentThemeIndex = (currentThemeIndex + 1) % 3; applyThemeVisuals(currentThemeIndex); }; }
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex); });
 
-// UI GLOBAL MODALS & LOGOUT
+// UI GLOBAL MODALS & LOGOUT OFFCANVAS
 function initGlobalUI() {
     const globalModals = `
-    <!-- Modal Tentang -->
     <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 5.1 (Ultimate Cycle Theme)</p></div></div></div></div>
-    <!-- Modal Panduan -->
     <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light text-sm"><div class="alert alert-info border-0 shadow-sm">Buku panduan Mentor sedang disusun.</div></div></div></div></div>
-    <!-- Modal Lapor (Khusus Mentor) -->
-    <div class="modal fade" id="modalLapor" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-danger text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-headset me-2"></i>Lapor Admin</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="mb-2"><label class="form-label text-xs fw-bold mb-1">Nama Anda</label><input type="text" id="laporNama" class="form-control form-control-sm" value="${myName}" readonly></div><div class="mb-3"><label class="form-label text-xs fw-bold mb-1">Detail Kendala</label><textarea id="laporDetail" class="form-control text-sm" rows="3" placeholder="Jelaskan masalah aplikasi..."></textarea></div><button class="btn btn-danger btn-sm w-100 fw-bold rounded-pill shadow-sm" id="btnKirimLapor"><i class="bi bi-send-fill me-1"></i> Kirim Laporan</button></div></div></div></div>
     `;
     if (!document.getElementById('modalTentang')) document.body.insertAdjacentHTML('beforeend', globalModals);
 
     const logOutFunc = (e) => { e.preventDefault(); if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } };
     if(document.getElementById("btnLogoutOffcanvas")) document.getElementById("btnLogoutOffcanvas").onclick = logOutFunc;
-
-    if(document.getElementById("btnKirimLapor")) document.getElementById("btnKirimLapor").onclick = () => {
-        const detail = document.getElementById("laporDetail").value.trim(); if(!detail) return alert("Isi detail kendala dhisik bolo!");
-        const text = `🚨 *LAPORAN KENDALA (MENTOR)* 🚨\n\n*Nama:* ${myName}\n*Detail:* ${detail}`;
-        window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`, '_blank'); document.getElementById("laporDetail").value = "";
-    };
 }
 initGlobalUI();
 
@@ -209,12 +185,7 @@ if(document.getElementById("btnSendChat")) {
 onSnapshot(collection(db, "materials"), (snap) => {
     const list = document.getElementById("listGudangMateri"); if(!list) return; list.innerHTML = ""; let html = "";
     snap.forEach(d => { const data = d.data(); html += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2 bg-white shadow-sm"><div><div class="fw-bold text-dark text-sm">${data.judul} <span class="badge bg-wa rounded-pill ms-1">${data.kelas}</span></div></div><a href="${data.link}" target="_blank" class="btn btn-sm btn-primary py-0 px-3 rounded-pill fw-bold"><i class="bi bi-eye"></i> Buka</a></div>`; });
-    list.innerHTML = html || "<div class='text-muted text-center small mt-2'>Belum ada materi pembelajaran dari Cloud Admin.</div>";
+    list.innerHTML = html || "<div class='text-muted text-center small mt-2'>Belum ada materi pembelajaran.</div>";
 });
 
 window.kirimKeWA = function(encodedText) { window.open(`https://wa.me/?text=${encodedText}`, '_blank'); }
-
-document.addEventListener("DOMContentLoaded", () => { 
-    initGlobalUI(); 
-    setInterval(() => { const now = new Date(); if(document.getElementById('headClock')) document.getElementById('headClock').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); }, 1000);
-});
