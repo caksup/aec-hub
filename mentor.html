@@ -12,6 +12,7 @@
 </head>
 <body>
     <div class="app-wrapper">
+        
         <nav class="navbar bg-wa sticky-top shadow-sm p-0" style="z-index: 1020;">
             <div class="container-fluid px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
@@ -22,17 +23,21 @@
                     </div>
                 </div>
                 
-                <div class="dropdown">
-                    <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
-                        <li><h6 class="dropdown-header text-wa fw-bold text-xs">PENGATURAN</h6></li>
-                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTema"><i class="bi bi-palette-fill me-2 text-secondary"></i> Tema Tampilan</a></li>
-                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalPanduan"><i class="bi bi-book-half me-2 text-success"></i> Buku Panduan</a></li>
-                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTentang"><i class="bi bi-info-circle-fill me-2 text-primary"></i> Tentang Aplikasi</a></li>
-                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalLapor"><i class="bi bi-headset me-2 text-warning"></i> Lapor Admin</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger fw-bold py-2 rounded bg-danger bg-opacity-10 text-center mt-2" href="#" id="btnLogout"><i class="bi bi-power me-1"></i> LOGOUT</a></li>
-                    </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-sm-block" style="line-height: 1;"><div id="headClock" class="fw-bold text-white font-monospace text-xs">00:00</div></div>
+                    
+                    <div class="dropdown">
+                        <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
+                            <li><h6 class="dropdown-header text-wa fw-bold text-xs">PENGATURAN</h6></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTema"><i class="bi bi-palette-fill me-2 text-secondary"></i> Tema Tampilan</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalPanduan"><i class="bi bi-book-half me-2 text-success"></i> Buku Panduan</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTentang"><i class="bi bi-info-circle-fill me-2 text-primary"></i> Tentang Aplikasi</a></li>
+                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalLapor"><i class="bi bi-headset me-2 text-warning"></i> Lapor Admin</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger fw-bold py-2 rounded bg-danger bg-opacity-10 text-center mt-2" href="#" id="btnLogout"><i class="bi bi-power me-1"></i> LOGOUT</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -47,10 +52,11 @@
                 <div class="text-truncate text-muted"><i class="bi bi-broadcast text-danger me-1"></i> Live: <span id="tutorJadwalHarian" class="fw-bold text-dark">Mendeteksi...</span></div>
             </div>
             
-            <div id="pesanKosong" class="d-none alert alert-danger text-center fw-bold shadow-sm">Sampeyan durung diwenehi tugas sekolah karo Admin, bolo!</div>
+            <div id="pesanKosong" class="d-none alert alert-danger text-center fw-bold shadow-sm text-sm">Sampeyan durung diwenehi tugas sekolah karo Admin, bolo!</div>
 
             <div class="tab-content h-100" id="utamaMentorContent">
-                <div class="tab-pane fade show active" id="info">
+                
+                <div class="tab-pane fade show active" id="beranda">
                     <div class="row text-start g-3 mb-4">
                         <div class="col-12">
                             <div class="card card-custom p-3 border-start border-danger border-4 bg-white">
@@ -72,7 +78,7 @@
                         </div>
                     </div>
                     
-                    <div class="card card-custom p-3 border-start border-info border-4 bg-white shadow-sm mb-4">
+                    <div class="card card-custom p-3 border-start border-info border-4 bg-white shadow-sm">
                         <h6 class="fw-bold text-info mb-3"><i class="bi bi-signpost-split-fill me-2"></i> Roadmap Program AEC Hub</h6>
                         <ul class="timeline" id="infoRoadmap">
                             <li class="timeline-item"><div class="timeline-desc text-muted">Memuat...</div></li>
@@ -80,25 +86,52 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="logbook"><div class="card card-custom p-3 bg-white border-top border-primary border-4 mb-3" id="formLogbook"><div class="text-center text-muted small">Memuat form...</div></div></div>
+                <div class="tab-pane fade" id="logbook">
+                    <div class="card card-custom p-3 bg-white border-top border-primary border-4 mb-3" id="formLogbook">
+                        <div class="text-center text-muted small">Memuat form logbook harian...</div>
+                    </div>
+                </div>
                 
-                <div class="tab-pane fade h-100" id="chat"><div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none"><div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div><div class="input-group bg-white p-2 rounded-bottom shadow-sm border"><input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan global..."><button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button></div></div></div>
+                <div class="tab-pane fade h-100" id="diskusi">
+                    <div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none">
+                        <div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div>
+                        <div class="input-group bg-white p-2 rounded-bottom shadow-sm border">
+                            <input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan global...">
+                            <button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button>
+                        </div>
+                    </div>
+                </div>
                 
-                <div class="tab-pane fade" id="tugaswa"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h6><div id="listTugasWAHarian" class="space-y-3" style="max-height: 400px; overflow-y: auto;">Memuat tugas...</div></div></div>
+                <div class="tab-pane fade" id="tugaswa">
+                    <div class="card card-custom p-3 bg-white">
+                        <h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h6>
+                        <div id="listTugasWAHarian" class="space-y-3" style="max-height: 400px; overflow-y: auto;">
+                            Memuat tugas hari ini...
+                        </div>
+                    </div>
+                </div>
 
-                <div class="tab-pane fade" id="gudang"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi Pembelajaran</h6><div id="listGudangMateri" class="overflow-auto" style="max-height: 400px;"><div class="text-center text-muted small mt-2">Memuat gudang materi...</div></div></div></div>
+                <div class="tab-pane fade" id="gudang">
+                    <div class="card card-custom p-3 bg-white">
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi Pembelajaran</h6>
+                        <div id="listGudangMateri" class="overflow-auto" style="max-height: 400px;">
+                            <div class="text-center text-muted small mt-2">Memuat gudang materi...</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <nav class="wa-bottom-nav" role="tablist">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info"><i class="bi bi-display"></i><span class="tab-label">INFO</span></button>
+        <nav class="wa-bottom-nav" id="menuTabs" role="tablist">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#beranda"><i class="bi bi-display"></i><span class="tab-label">INFO</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#logbook"><i class="bi bi-pencil-square"></i><span class="tab-label">LOGBOOK</span></button>
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#diskusi"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tugaswa"><i class="bi bi-whatsapp"></i><span class="tab-label">TUGAS</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#gudang"><i class="bi bi-box-seam-fill"></i><span class="tab-label">MATERI</span></button>
         </nav>
+
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="mt.js"></script>
 </body>
 </html>
