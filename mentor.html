@@ -1,3 +1,10 @@
+<!-- ==================================================
+     mentor.html - AEC HUB (Panel Mentor)
+     
+     Riwayat Versi (HTML):
+     - v4.1: Penambahan Timeline Roadmap di Tab Info.
+     - v4.0 Ultimate: Rombak UI Tersentralisasi, link khusus mt.css & mt.js, Menu Bawah Adaptif.
+     ================================================== -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,12 +15,10 @@
     <meta name="theme-color" content="#128C7E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mt.css">
 </head>
 <body>
     <div class="app-wrapper">
-        
-        <!-- HEADER WA STYLE GLOBAL -->
         <nav class="navbar bg-wa sticky-top shadow-sm p-0" style="z-index: 1020;">
             <div class="container-fluid px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
@@ -24,405 +29,63 @@
                     </div>
                 </div>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-end d-none d-sm-block" style="line-height: 1;"><div id="headClock" class="fw-bold text-white font-monospace text-xs">00:00</div></div>
-                    
-                    <div class="dropdown">
-                        <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
-                            <li><h6 class="dropdown-header text-wa fw-bold text-xs">PENGATURAN</h6></li>
-                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTema"><i class="bi bi-palette-fill me-2 text-secondary"></i> Tema Tampilan</a></li>
-                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalRoadmap"><i class="bi bi-signpost-split-fill me-2 text-info"></i> Roadmap Program</a></li>
-                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalPanduan"><i class="bi bi-book-half me-2 text-success"></i> Buku Panduan</a></li>
-                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTentang"><i class="bi bi-info-circle-fill me-2 text-primary"></i> Tentang Aplikasi</a></li>
-                            <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalLapor"><i class="bi bi-headset me-2 text-warning"></i> Lapor Admin</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger fw-bold py-2 rounded bg-danger bg-opacity-10 text-center mt-2" href="#" id="btnLogout"><i class="bi bi-power me-1"></i> LOGOUT</a></li>
-                        </ul>
-                    </div>
+                <div class="dropdown">
+                    <i class="bi bi-three-dots-vertical fs-4 text-white" data-bs-toggle="dropdown" style="cursor:pointer;"></i>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
+                        <li><h6 class="dropdown-header text-wa fw-bold text-xs">PENGATURAN</h6></li>
+                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTema"><i class="bi bi-palette-fill me-2 text-secondary"></i> Tema Tampilan</a></li>
+                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalPanduan"><i class="bi bi-book-half me-2 text-success"></i> Buku Panduan</a></li>
+                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalTentang"><i class="bi bi-info-circle-fill me-2 text-primary"></i> Tentang Aplikasi</a></li>
+                        <li><a class="dropdown-item fw-medium py-2 rounded mb-1" href="#" data-bs-toggle="modal" data-bs-target="#modalLapor"><i class="bi bi-headset me-2 text-warning"></i> Lapor Admin</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger fw-bold py-2 rounded bg-danger bg-opacity-10 text-center mt-2" href="#" id="btnLogout"><i class="bi bi-power me-1"></i> LOGOUT</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>
 
         <div class="container pb-5 pt-3" id="mainContentArea">
             
-            <!-- INFO SEKOLAH & TIMELINE -->
-            <div id="schoolInfoBar" class="w-100 mb-3 p-2 rounded shadow-sm flex-column text-start" style="font-size: 0.8rem; line-height: 1.3;">
-                <div class="d-flex justify-content-between align-items-center mb-1 border-bottom border-warning pb-1">
-                    <span class="fw-bold text-dark"><i class="bi bi-geo-alt-fill text-wa me-1"></i> <span id="headSekolah">Mencari Sekolah...</span></span>
-                    <span class="badge bg-wa rounded-pill"><i class="bi bi-calendar-event me-1"></i> <span id="headTimeline">...</span></span>
-                </div>
-                <div class="text-truncate text-muted"><i class="bi bi-broadcast text-danger me-1"></i> Live: <span id="tutorJadwalHarian" class="fw-bold text-dark">Mendeteksi...</span></div>
-            </div>
-
-            <!-- TAB CONTENT -->
             <div class="tab-content h-100">
-                
                 <!-- TAB INFO (DASHBOARD) -->
-                <div class="tab-pane fade show active" id="beranda">
-                    <div class="row text-start g-3">
-                        <div class="col-12">
-                            <div class="card card-custom p-3 border-start border-danger border-4 bg-white">
-                                <h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> NOTIFIKASI DIREKTUR</h6>
-                                <p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="card card-custom p-3 border-start border-wa border-4 bg-white">
-                                <h6 class="fw-bold text-wa mb-2 text-xs"><i class="bi bi-calendar-week"></i> JADWAL FULL GLOBAL</h6>
-                                <p id="tutorJadwal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="card card-custom p-3 border-start border-warning border-4 bg-white">
-                                <h6 class="fw-bold text-warning mb-2 text-xs"><i class="bi bi-bullseye"></i> GOAL HARIAN</h6>
-                                <p id="tutorGoal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p>
-                            </div>
-                        </div>
+                <div class="tab-pane fade show active" id="info">
+                    <div class="card card-custom p-3 border-start border-danger border-4 bg-white mb-3">
+                        <h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> INFO TUGAS & JADWAL LIVE</h6>
+                        <div id="tutorBriefing" class="text-sm">Memuat info...</div>
+                    </div>
+                    
+                    <!-- ROADMAP MUNCUL NENG KENE -->
+                    <div class="card card-custom p-3 border-start border-info border-4 bg-white shadow-sm mb-4">
+                        <h6 class="fw-bold text-info mb-3"><i class="bi bi-signpost-split-fill me-2"></i> Roadmap Program AEC Hub</h6>
+                        <ul class="timeline" id="infoRoadmap">
+                            <li class="timeline-item"><div class="timeline-desc text-muted">Memuat...</div></li>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- TAB LOGBOOK (INPUT DATA) -->
-                <div class="tab-pane fade" id="logbook">
-                    <div class="card card-custom p-3 bg-white border-top border-primary border-4 mb-3">
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-journal-check me-2"></i> Form Logbook Harian</h6>
-                        
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <label class="form-label text-xs fw-bold text-secondary mb-1">PILIH KELAS</label>
-                                <select id="inputKelas" class="form-select form-select-sm fw-bold border-primary rounded-pill"></select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label text-xs fw-bold text-secondary mb-1">SESI / JAM KE</label>
-                                <select id="inputJam" class="form-select form-select-sm fw-bold border-primary rounded-pill">
-                                    <option value="Jam 1">Sesi 1</option><option value="Jam 2">Sesi 2</option>
-                                    <option value="Jam 3">Sesi 3</option><option value="Jam 4">Sesi 4</option>
-                                    <option value="Jam 5">Sesi 5</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- DINAMIS MATERI BERDASARKAN JADWAL -->
-                        <div class="p-2 border rounded bg-light mb-3 shadow-sm">
-                            <h6 class="text-xs fw-bold text-wa mb-2 border-bottom pb-1"><i class="bi bi-list-check"></i> MATERI SESI INI</h6>
-                            <div id="materiKosong" class="text-muted text-xs d-none">Jadwal tidak terdeteksi, pilih materi manual:</div>
-                            
-                            <div id="wadahVocab" class="mb-2 d-none">
-                                <span class="badge bg-primary rounded-pill mb-1">Vocabulary</span>
-                                <div id="checkVocab" class="row g-1 text-xs px-1"></div>
-                            </div>
-                            <div id="wadahSpeaking" class="mb-2 d-none">
-                                <span class="badge bg-success rounded-pill mb-1">Speaking</span>
-                                <div id="checkSpeaking" class="row g-1 text-xs px-1"></div>
-                            </div>
-                            <div id="wadahGrammar" class="mb-2 d-none">
-                                <span class="badge bg-danger rounded-pill mb-1">Grammar</span>
-                                <div id="checkGrammar" class="row g-1 text-xs px-1"></div>
-                            </div>
-                            <div id="wadahPractice" class="mb-2 d-none">
-                                <span class="badge bg-warning text-dark rounded-pill mb-1">Practice Class</span>
-                                <div id="checkPractice" class="row g-1 text-xs px-1"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label text-xs fw-bold text-secondary mb-1">CATATAN & EVALUASI</label>
-                            <textarea id="inputCatatan" class="form-control text-sm rounded-3" rows="2" placeholder="Tulis progress kelas hari ini..."></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-xs fw-bold text-secondary mb-1">TUGAS UNTUK SISWA</label>
-                            <textarea id="inputTugasSiswa" class="form-control text-sm rounded-3 border-warning" rows="2" placeholder="PR atau tugas..."></textarea>
-                        </div>
-
-                        <!-- DAFTAR ABSENSI SISWA -->
-                        <div class="p-2 border rounded bg-white shadow-sm mb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-1">
-                                <h6 class="text-xs fw-bold text-wa mb-0"><i class="bi bi-people-fill"></i> ABSENSI & NILAI</h6>
-                            </div>
-                            <div id="listAbsenSiswa" class="space-y-2">
-                                <div class="text-muted text-xs text-center">Pilih kelas dulu...</div>
-                            </div>
-                        </div>
-
-                        <button id="btnSubmitLogbook" class="btn btn-primary w-100 fw-bold rounded-pill shadow-sm py-2"><i class="bi bi-send-fill me-2"></i> KIRIM LOGBOOK</button>
-                    </div>
-                </div>
+                <div class="tab-pane fade" id="logbook"><div class="card card-custom p-3 bg-white border-top border-primary border-4 mb-3" id="formLogbook"><div class="text-center text-muted small">Memuat form...</div></div></div>
                 
                 <!-- TAB DISKUSI -->
-                <div class="tab-pane fade h-100" id="diskusi">
-                    <div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none">
-                        <div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div>
-                        <div class="input-group bg-white p-2 rounded-bottom shadow-sm border">
-                            <input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan global...">
-                            <button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button>
-                        </div>
-                    </div>
-                </div>
+                <div class="tab-pane fade h-100" id="chat"><div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none"><div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div><div class="input-group bg-white p-2 rounded-bottom shadow-sm border"><input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan global..."><button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button></div></div></div>
                 
                 <!-- TAB TUGAS WA -->
-                <div class="tab-pane fade" id="tugaswa">
-                    <div class="card card-custom p-3 bg-white">
-                        <h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h6>
-                        <div id="listTugasWAHarian" class="space-y-3" style="max-height: 400px; overflow-y: auto;">
-                            Memuat tugas hari ini...
-                        </div>
-                    </div>
-                </div>
+                <div class="tab-pane fade" id="tugaswa"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h6><div id="listTugasWAHarian" class="space-y-3" style="max-height: 400px; overflow-y: auto;">Memuat tugas...</div></div></div>
 
                 <!-- TAB GUDANG MATERI -->
-                <div class="tab-pane fade" id="gudang">
-                    <div class="card card-custom p-3 bg-white">
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi Pembelajaran</h6>
-                        <div id="listGudangMateri" class="overflow-auto" style="max-height: 400px;">
-                            <div class="text-center text-muted small mt-2">Memuat gudang materi...</div>
-                        </div>
-                    </div>
-                </div>
-
+                <div class="tab-pane fade" id="gudang"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi Pembelajaran</h6><div id="listGudangMateri" class="overflow-auto" style="max-height: 400px;"><div class="text-center text-muted small mt-2">Memuat gudang materi...</div></div></div></div>
             </div>
         </div>
 
-        <!-- WA BOTTOM NAVIGATION BARU (Adaptive Icons - Fix Text HTML) -->
-        <nav class="wa-bottom-nav" id="menuTabs" role="tablist">
-            <!-- Wajib nganggo <span class="tab-label"> ben CSS-e mlaku adaptif! -->
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#beranda"><i class="bi bi-display"></i><span class="tab-label">INFO</span></button>
+        <nav class="wa-bottom-nav" role="tablist">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info"><i class="bi bi-display"></i><span class="tab-label">INFO</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#logbook"><i class="bi bi-pencil-square"></i><span class="tab-label">LOGBOOK</span></button>
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#diskusi"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#chat"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tugaswa"><i class="bi bi-whatsapp"></i><span class="tab-label">TUGAS</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#gudang"><i class="bi bi-box-seam-fill"></i><span class="tab-label">MATERI</span></button>
         </nav>
-
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module">
-        import { db, startClock, listenToSchools, listenToSingleSchool, sendLogbook, getActiveSchedule, listenToChats, sendGlobalChat, listenToTugasWA, initGlobalUI } from './script.js?v=4.0';
-        import { collection, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Manggil UI Global (Suntik modal, Tema, lan Logout soko localStorage)
-        initGlobalUI();
-
-        const actUser = localStorage.getItem("loggedInUser");
-        const myName = localStorage.getItem("loggedInName"); 
-        
-        document.getElementById("userNameDisplay").innerText = myName; 
-        document.getElementById("identitasMenu").innerText = "ID: " + actUser; 
-
-        function updateNetworkStatus() { document.getElementById('netStatus').innerHTML = navigator.onLine ? '' : '<i class="bi bi-wifi-off text-warning me-1"></i>'; } 
-        window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus(); 
-        
-        let currentSchoolId = ""; let rawKurikulum = { vocab: [], speaking: [], grammar: [], practice: [] }; 
-        let rawMasterSiswa = ""; let masterTugasWA = [];
-        let unsubSchool = null; let unsubChats = null; let unsubWA = null;
-
-        // Cari sekolah di mana mentor ini ditugaskan
-        listenToSchools((schools) => { 
-            const mySchool = schools.find(s => s.assignedMentors && s.assignedMentors.includes(actUser));
-            if(mySchool) {
-                currentSchoolId = mySchool.id;
-                document.getElementById("schoolInfoBar").classList.remove("d-none");
-                muatDataSekolah(mySchool.id);
-            } else {
-                document.getElementById("headSekolah").innerText = "Belum Ada Tugas";
-                document.getElementById("tutorBriefing").innerText = "Anda belum ditugaskan ke sekolah manapun oleh Admin.";
-            }
-        });
-
-        function muatDataSekolah(sid) {
-            unsubSchool = listenToSingleSchool(sid, (data) => {
-                if(!data) return;
-                document.getElementById('headSekolah').innerText = data.namaSekolah || "AEC Hub"; 
-                const filledArr = ["❶","❷","❸","❹","❺","❻","❼","❽","❾","❿","⓫","⓬","⓭","⓮","⓯","⓰","⓱","⓲","⓳","⓴"];
-                const hBerjalan = parseInt(data.hariBerjalan) || 0; const tHari = parseInt(data.totalHari) || 5;
-                document.getElementById('headTimeline').innerText = `${(hBerjalan > 0 && hBerjalan <= 20) ? filledArr[hBerjalan - 1] : hBerjalan}/${(tHari > 0 && tHari <= 20) ? filledArr[tHari - 1] : tHari}`;
-
-                document.getElementById('tutorBriefing').innerText = data.briefing || "-"; 
-                document.getElementById('tutorJadwal').innerText = data.jadwal || "-";
-                document.getElementById('tutorGoal').innerText = data.goal || "-"; 
-                
-                const jadwalAktif = getActiveSchedule(data.jadwal);
-                document.getElementById('tutorJadwalHarian').innerText = jadwalAktif;
-                
-                rawKurikulum = data.kurikulum || { vocab: [], speaking: [], grammar: [], practice: [] }; 
-                rawMasterSiswa = data.masterSiswa || "";
-
-                // Update dropdown kelas
-                const arrKelas = (data.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!=="");
-                const selKls = document.getElementById('inputKelas');
-                const valSkg = selKls.value;
-                selKls.innerHTML = "";
-                arrKelas.forEach(k => selKls.innerHTML += `<option value="${k}">${k}</option>`);
-                if(arrKelas.includes(valSkg)) selKls.value = valSkg;
-                
-                renderFormAbsen();
-                renderDinamicMateri(jadwalAktif);
-            });
-
-            // Chat & WA
-            unsubChats = listenToChats(sid, (chats) => {
-                const box = document.getElementById("chatBox"); box.innerHTML = ""; 
-                chats.forEach(c => {
-                    if (c.type === 'global') {
-                        const isMe = c.sender === myName; const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..'; 
-                        let nameColor = isMe ? 'text-wa' : 'text-primary'; 
-                        let roleBadge = ""; if(c.role === "admin") { nameColor = 'text-danger'; roleBadge = '<i class="bi bi-shield-lock-fill ms-1"></i>'; } else if(c.role === "direktur") { nameColor = 'text-warning'; roleBadge = '<i class="bi bi-star-fill ms-1 text-dark"></i>'; } 
-                        
-                        box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'} mb-2"><div class="fw-bold text-xs ${nameColor}">${c.sender} ${roleBadge}</div><div class="mt-1" style="word-wrap: break-word;">${c.message}</div><div class="text-end text-muted mt-1" style="font-size: 0.6rem;">${time} ${isMe ? '<i class="bi bi-check2-all text-info ms-1"></i>' : ''}</div></div>`;
-                    }
-                }); box.scrollTop = box.scrollHeight;
-            });
-
-            unsubWA = listenToTugasWA(sid, (tugas) => { 
-                const listHariIni = document.getElementById("listTugasWAHarian");
-                listHariIni.innerHTML = "";
-                
-                let htmlSemua = ""; 
-                tugas.forEach((d, i) => { 
-                    htmlSemua += `<div class="card card-custom p-3 mb-3 bg-white"><div class="d-flex justify-content-between mb-2"><span class="badge bg-wa rounded-pill">${d.targetKelas}</span><span class="text-xs text-muted">${d.waktu ? d.waktu.toDate().toLocaleDateString('id-ID', { dateStyle: 'long'}) : 'Baru Saja'}</span></div>${d.linkGambar ? `<img src="${d.linkGambar}" class="img-fluid rounded mb-2 border w-100" style="max-height: 200px; object-fit: cover;">` : ''}<div class="p-2 bg-light border rounded text-sm mb-2 font-monospace" id="txtWA_${i}" style="white-space: pre-line;">${d.instruksi}</div><button class="btn btn-wa btn-sm w-100 fw-bold rounded-pill" onclick="window.kirimKeWA('${encodeURIComponent(d.instruksi)}')"><i class="bi bi-whatsapp me-1"></i> Kirim ke WA</button></div>`;
-                }); 
-                listHariIni.innerHTML = htmlSemua || `<div class="alert text-center border-0 text-muted bg-transparent mt-3">Belum ada tugas WA.</div>`;
-            });
-        }
-        
-        window.kirimKeWA = function(encodedText) { window.open(`https://wa.me/?text=${encodedText}`, '_blank'); }
-
-        // MENGATUR CHECKBOX MATERI SESUAI JADWAL AKTIF
-        function renderDinamicMateri(jadwalAktif) {
-            const lowJadwal = jadwalAktif.toLowerCase();
-            const wVocab = document.getElementById("wadahVocab"); const wSpeak = document.getElementById("wadahSpeaking"); const wGram = document.getElementById("wadahGrammar"); const wPrac = document.getElementById("wadahPractice");
-            const cVocab = document.getElementById("checkVocab"); const cSpeak = document.getElementById("checkSpeaking"); const cGram = document.getElementById("checkGrammar"); const cPrac = document.getElementById("checkPractice");
-            
-            wVocab.classList.add('d-none'); wSpeak.classList.add('d-none'); wGram.classList.add('d-none'); wPrac.classList.add('d-none');
-            cVocab.innerHTML = ""; cSpeak.innerHTML = ""; cGram.innerHTML = ""; cPrac.innerHTML = "";
-            document.getElementById("materiKosong").classList.add('d-none');
-
-            const buatCheckbox = (arrayMateri, containerId, warna) => {
-                const container = document.getElementById(containerId);
-                arrayMateri.forEach((m, idx) => {
-                    const cleanM = m.replace(/"/g, '&quot;'); const id = `${containerId}_${idx}`;
-                    container.innerHTML += `<div class="col-6"><div class="form-check p-1 border rounded bg-white shadow-sm"><input class="form-check-input ms-1 cek-materi" type="checkbox" value="${cleanM}" id="${id}" data-kategori="${containerId}"><label class="form-check-label ms-1 text-dark fw-medium" style="font-size:0.75rem;" for="${id}">${m}</label></div></div>`;
-                });
-            };
-
-            let adaMateri = false;
-            if(lowJadwal.includes("vocab")) { wVocab.classList.remove('d-none'); buatCheckbox(rawKurikulum.vocab, 'checkVocab', 'primary'); adaMateri = true; }
-            if(lowJadwal.includes("speak")) { wSpeak.classList.remove('d-none'); buatCheckbox(rawKurikulum.speaking, 'checkSpeaking', 'success'); adaMateri = true; }
-            if(lowJadwal.includes("gram")) { wGram.classList.remove('d-none'); buatCheckbox(rawKurikulum.grammar, 'checkGrammar', 'danger'); adaMateri = true; }
-            if(lowJadwal.includes("prac")) { wPrac.classList.remove('d-none'); buatCheckbox(rawKurikulum.practice, 'checkPractice', 'warning'); adaMateri = true; }
-
-            // Yen di luar jam kelas / jadwal ra jelas, tampilke kabeh ben mentor iso milih manual
-            if(!adaMateri) {
-                document.getElementById("materiKosong").classList.remove('d-none');
-                wVocab.classList.remove('d-none'); buatCheckbox(rawKurikulum.vocab, 'checkVocab', 'primary');
-                wSpeak.classList.remove('d-none'); buatCheckbox(rawKurikulum.speaking, 'checkSpeaking', 'success');
-                wGram.classList.remove('d-none'); buatCheckbox(rawKurikulum.grammar, 'checkGrammar', 'danger');
-                wPrac.classList.remove('d-none'); buatCheckbox(rawKurikulum.practice, 'checkPractice', 'warning');
-            }
-        }
-
-        // RENDER ABSENSI
-        document.getElementById('inputKelas').addEventListener('change', renderFormAbsen);
-        function renderFormAbsen() {
-            const kelasDipilih = document.getElementById('inputKelas').value;
-            const list = document.getElementById('listAbsenSiswa');
-            list.innerHTML = "";
-            let arrSiswa = [];
-            
-            rawMasterSiswa.split('\n').forEach(line => {
-                if(line.startsWith(kelasDipilih + ":")) {
-                    arrSiswa = line.split(':')[1].split(',').map(n => n.trim()).filter(n => n !== "");
-                }
-            });
-
-            if(arrSiswa.length === 0) { list.innerHTML = `<div class="text-center text-muted text-xs p-2">Data siswa kosong untuk kelas ini.</div>`; return; }
-
-            arrSiswa.forEach((nama, i) => {
-                list.innerHTML += `
-                <div class="d-flex align-items-center justify-content-between p-2 border rounded bg-light siswa-row">
-                    <div class="fw-bold text-dark text-sm w-50 text-truncate nama-siswa">${nama}</div>
-                    <div class="d-flex gap-1 w-50 justify-content-end">
-                        <select class="form-select form-select-sm p-1 text-center fw-bold absen-siswa border-secondary" style="width: 55px; font-size: 0.75rem;">
-                            <option value="h">✔</option><option value="a">✖</option><option value="s">S</option><option value="i">I</option>
-                        </select>
-                        <input type="text" class="form-control form-control-sm p-1 text-center fw-bold nilai-siswa border-secondary" style="width: 50px; font-size: 0.75rem;" placeholder="Nilai">
-                    </div>
-                </div>`;
-            });
-        }
-
-        // SUBMIT LOGBOOK
-        document.getElementById("btnSubmitLogbook").onclick = async () => {
-            if(!currentSchoolId) return alert("Anda belum ditugaskan ke sekolah manapun!");
-            
-            const btn = document.getElementById("btnSubmitLogbook");
-            btn.innerHTML = '<div class="spinner-border spinner-border-sm text-white" role="status"></div> Mengirim...';
-            btn.disabled = true;
-
-            const kelas = document.getElementById("inputKelas").value;
-            const jam = document.getElementById("inputJam").value;
-            const catatan = document.getElementById("inputCatatan").value;
-            const tugas = document.getElementById("inputTugasSiswa").value;
-
-            let groupMateri = { vocab: [], speaking: [], grammar: [], practice: [] };
-            let flatMateri = [];
-            document.querySelectorAll('.cek-materi:checked').forEach(el => {
-                const val = el.value;
-                const kat = el.getAttribute('data-kategori');
-                if(kat === 'checkVocab') groupMateri.vocab.push(val);
-                else if(kat === 'checkSpeaking') groupMateri.speaking.push(val);
-                else if(kat === 'checkGrammar') groupMateri.grammar.push(val);
-                else if(kat === 'checkPractice') groupMateri.practice.push(val);
-                flatMateri.push(val);
-            });
-
-            if(flatMateri.length === 0) { alert("Pilih minimal satu materi!"); btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> KIRIM LOGBOOK'; btn.disabled = false; return; }
-
-            let dataSiswa = [];
-            document.querySelectorAll('.siswa-row').forEach(row => {
-                dataSiswa.push({
-                    nama: row.querySelector('.nama-siswa').innerText,
-                    kehadiran: row.querySelector('.absen-siswa').value,
-                    nilai: row.querySelector('.nilai-siswa').value.trim()
-                });
-            });
-
-            try {
-                await sendLogbook(currentSchoolId, actUser, myName, kelas, jam, groupMateri, flatMateri, catatan, "", dataSiswa, tugas);
-                alert("Logbook berhasil dikirim!");
-                document.getElementById("inputCatatan").value = ""; document.getElementById("inputTugasSiswa").value = "";
-                document.querySelectorAll('.cek-materi').forEach(el => el.checked = false);
-                document.querySelectorAll('.nilai-siswa').forEach(el => el.value = "");
-                document.querySelectorAll('.absen-siswa').forEach(el => el.value = "h");
-            } catch(e) {
-                alert("Gagal kirim logbook: " + e.message);
-            }
-            
-            btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> KIRIM LOGBOOK';
-            btn.disabled = false;
-        };
-
-        // CHAT SEND
-        document.getElementById("btnSendChat").onclick = async () => { 
-            if(!currentSchoolId) return alert("Pilih sekolah!"); 
-            const msg = document.getElementById("inputChat").value.trim(); if(!msg) return; 
-            await sendGlobalChat(currentSchoolId, myName, msg, "mentor"); 
-            document.getElementById("inputChat").value = ""; 
-        }; 
-        document.getElementById("inputChat").addEventListener("keypress", function(e) { if (e.key === "Enter") { e.preventDefault(); document.getElementById("btnSendChat").click(); } });
-
-        // GUDANG MATERI VIEW
-        onSnapshot(collection(db, "materials"), (snap) => {
-            const list = document.getElementById("listGudangMateri"); list.innerHTML = ""; let html = "";
-            snap.forEach(d => {
-                const data = d.data();
-                html += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2 bg-white shadow-sm">
-                    <div><div class="fw-bold text-dark text-sm">${data.judul} <span class="badge bg-wa rounded-pill ms-1">${data.kelas}</span></div></div>
-                    <a href="${data.link}" target="_blank" class="btn btn-sm btn-primary py-0 px-3 rounded-pill fw-bold"><i class="bi bi-eye"></i> Buka</a>
-                </div>`;
-            });
-            list.innerHTML = html || "<div class='text-muted text-center small mt-2'>Belum ada materi dari Admin.</div>";
-        });
-
-    </script>
+    <script type="module" src="mt.js"></script>
 </body>
 </html>
