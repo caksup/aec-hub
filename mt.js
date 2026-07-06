@@ -2,13 +2,13 @@
    mt.js - Script Khusus Mentor Panel (AEC Hub)
    
    Riwayat Versi (JS):
-   - v4.2: Fix injeksi HTML ke 3 Kartu Info (Briefing, Jadwal, Goal).
-   - v4.1: Penambahan listener Roadmap.
+   - v4.3: Perbaikan Total Injeksi Id (Anti Null-Pointer Error & Blank).
+   - v4.1: Penambahan listener Roadmap terintegrasi database.
    ================================================== */
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, onSnapshot, addDoc, collection, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// 1. CONFIG FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyCgXGAww1dMu4eWzA1clUiOQht1DzxHl4A",
     authDomain: "special-mentor.firebaseapp.com",
@@ -24,14 +24,14 @@ enableIndexedDbPersistence(db).catch((err) => { console.warn("Offline mode err:"
 
 const actUser = localStorage.getItem("loggedInUser");
 const myName = localStorage.getItem("loggedInName"); 
-
 if (!actUser) window.location.replace("index.html");
 
+// 2. UI GLOBAL & ROADMAP REALTIME LISTENER
 function initGlobalUI() {
     const globalModals = `
     <div class="modal fade" id="modalTema" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-palette-fill me-2"></i>Pilih Tema</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-2 bg-light"><button class="list-group-item w-100 p-2 mb-1 border rounded shadow-sm text-center fw-bold" onclick="setTema('light')">Terang</button><button class="list-group-item w-100 p-2 mb-1 border rounded shadow-sm text-center fw-bold" onclick="setTema('dark')">Gelap</button><button class="list-group-item w-100 p-2 border rounded shadow-sm text-center fw-bold" onclick="setTema('system')">Ikuti Sistem HP</button></div></div></div></div>
     <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Buku Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="alert alert-info border-0 shadow-sm text-sm">Panduan mentor sedang disusun oleh Direktur...</div></div></div></div></div>
-    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 4.2-WA Mentor Premium</p></div></div></div></div>
+    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 4.3-WA Mentor Premium</p></div></div></div></div>
     <div class="modal fade" id="modalLapor" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-danger text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-headset me-2"></i>Lapor Admin</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="mb-2"><label class="form-label text-xs fw-bold mb-1">Nama Anda</label><input type="text" id="laporNama" class="form-control form-control-sm" value="${myName}" readonly></div><div class="mb-3"><label class="form-label text-xs fw-bold mb-1">Detail Kendala</label><textarea id="laporDetail" class="form-control text-sm" rows="3" placeholder="Jelaskan masalah aplikasi..."></textarea></div><button class="btn btn-danger btn-sm w-100 fw-bold rounded-pill shadow-sm" id="btnKirimLapor"><i class="bi bi-send-fill me-1"></i> Kirim Laporan</button></div></div></div></div>
     `;
     if (!document.getElementById('modalTema')) document.body.insertAdjacentHTML('beforeend', globalModals);
@@ -39,7 +39,7 @@ function initGlobalUI() {
     const savedTheme = localStorage.getItem('aecTheme') || 'system'; window.setTema(savedTheme, false);
     document.getElementById("btnLogout").onclick = (e) => { e.preventDefault(); if(confirm("Yakin ingin keluar bolo?")) { localStorage.clear(); window.location.replace("index.html"); } };
     document.getElementById("btnKirimLapor").onclick = () => {
-        const detail = document.getElementById("laporDetail").value.trim(); if(!detail) return alert("Isi detail kendala dhisik, bolo!");
+        const detail = document.getElementById("laporDetail").value.trim(); if(!detail) return alert("Isi detail dhisik bolo!");
         const text = `🚨 *LAPORAN KENDALA AEC HUB (MENTOR)* 🚨\n\n*Nama:* ${myName}\n*Detail:* ${detail}`;
         window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`, '_blank'); document.getElementById("laporDetail").value = "";
     };
@@ -70,6 +70,7 @@ export function getActiveSchedule(jadwalGlobal) {
 
 let currentSchoolId = ""; let rawKurikulum = {}; let rawMasterSiswa = "";
 
+// 3. LISTEN TUGAS SEKOLAH MENTOR
 onSnapshot(collection(db, "schools"), (snap) => {
     let listSekolah = []; snap.forEach(doc => { if(doc.data().status !== 'archived') listSekolah.push({ id: doc.id, ...doc.data() }); });
     const tugasSekolahku = listSekolah.find(s => s.assignedMentors && s.assignedMentors.includes(actUser));
@@ -94,7 +95,7 @@ function muatDataSekolah(sid) {
         const timelineText = `${(hBerjalan > 0 && hBerjalan <= 20) ? filledArr[hBerjalan - 1] : hBerjalan}/${tHari}`;
         const jadwalLive = getActiveSchedule(d.jadwal);
         
-        // Iki sing penting: Ngisi info bar dhuwur lan 3 kotak siji-siji!
+        // Ngisi Info Bar Atas & 3 Kartu Siji-siji (Fix Total Anti Blank)
         const infoBar = document.getElementById("schoolInfoBar");
         if(infoBar) infoBar.classList.remove("d-none");
         
@@ -113,7 +114,7 @@ function muatDataSekolah(sid) {
     onSnapshot(query(collection(db, "chats"), where("schoolId", "==", sid)), (snap) => {
         let chats = []; snap.forEach(doc => chats.push({ id: doc.id, ...doc.data() }));
         chats.sort((a, b) => (a.waktu?.toMillis() || 0) - (b.waktu?.toMillis() || 0));
-        const box = document.getElementById("chatBox"); box.innerHTML = "";
+        const box = document.getElementById("chatBox"); if(!box) return; box.innerHTML = "";
         chats.forEach(c => {
             if(c.type === 'global') {
                 const isMe = c.sender === myName; const time = c.waktu ? c.waktu.toDate().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '..';
@@ -124,7 +125,7 @@ function muatDataSekolah(sid) {
     });
 
     onSnapshot(query(collection(db, "tugas_wa"), where("schoolId", "==", sid)), (snap) => {
-        const list = document.getElementById("listTugasWAHarian"); list.innerHTML = ""; let html = "";
+        const list = document.getElementById("listTugasWAHarian"); if(!list) return; list.innerHTML = ""; let html = "";
         snap.forEach(doc => {
             const d = doc.data(); const w = d.waktu ? d.waktu.toDate().toLocaleDateString('id-ID', { dateStyle: 'long'}) : 'Baru Saja';
             html += `<div class="card card-custom p-3 mb-2 bg-white"><div class="d-flex justify-content-between mb-2"><span class="badge bg-wa">${d.targetKelas}</span><span class="text-xs text-muted">${w}</span></div>${d.linkGambar ? `<img src="${d.linkGambar}" class="img-fluid rounded mb-2 border w-100">` : ''}<div class="p-2 bg-light border rounded text-sm mb-2 font-monospace" style="white-space: pre-line;">${d.instruksi}</div><button class="btn btn-wa btn-sm w-100 fw-bold rounded-pill" onclick="window.kirimKeWA('${encodeURIComponent(d.instruksi)}')"><i class="bi bi-whatsapp me-1"></i> Broadcast Tugas</button></div>`;
@@ -138,7 +139,8 @@ function renderStrukturFormLogbook(masterKelas) {
     const arrKelas = (masterKelas || "Kelas A").split(',').map(k=>k.trim()).filter(k=>k!=="");
     let htmlOptions = arrKelas.map(k => `<option value="${k}">${k}</option>`).join('');
 
-    document.getElementById("formLogbook").innerHTML = `
+    const formBox = document.getElementById("formLogbook"); if(!formBox) return;
+    formBox.innerHTML = `
         <h6 class="fw-bold text-primary mb-3"><i class="bi bi-journal-check me-2"></i> Input Sesi Kelas</h6>
         <div class="row g-2 mb-3"><div class="col-6"><label class="text-xs fw-bold text-secondary mb-1">PILIH KELAS</label><select id="inputKelas" class="form-select form-select-sm rounded-pill">${htmlOptions}</select></div><div class="col-6"><label class="text-xs fw-bold text-secondary mb-1">SESI / JAM KE</label><select id="inputJam" class="form-select form-select-sm rounded-pill"><option value="Jam 1">Sesi 1</option><option value="Jam 2">Sesi 2</option><option value="Jam 3">Sesi 3</option><option value="Jam 4">Sesi 4</option><option value="Jam 5">Sesi 5</option></select></div></div>
         <div class="p-2 border rounded bg-light mb-3"><h6 class="text-xs fw-bold text-wa mb-2 border-bottom pb-1"><i class="bi bi-list-check"></i> SILAKAN PILIH MATERI SESI INI:</h6><div id="wadahVocab" class="mb-2 d-none"><span class="badge bg-primary mb-1">Vocabulary</span><div id="checkVocab" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahSpeaking"><span class="badge bg-success mb-1">Speaking</span><div id="checkSpeaking" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahGrammar"><span class="badge bg-danger mb-1">Grammar</span><div id="checkGrammar" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahPractice"><span class="badge bg-warning text-dark mb-1">Practice Class</span><div id="checkPractice" class="row g-1 text-xs px-1"></div></div></div>
@@ -194,4 +196,8 @@ onSnapshot(collection(db, "materials"), (snap) => {
 
 window.kirimKeWA = function(encodedText) { window.open(`https://wa.me/?text=${encodedText}`, '_blank'); }
 
-document.addEventListener("DOMContentLoaded", () => { initGlobalUI(); document.getElementById("userNameDisplay").innerText = myName; });
+document.addEventListener("DOMContentLoaded", () => { 
+    initGlobalUI(); 
+    document.getElementById("userNameDisplay").innerText = myName; 
+    setInterval(() => { const now = new Date(); if(document.getElementById('headClock')) document.getElementById('headClock').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); }, 1000);
+});
