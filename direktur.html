@@ -5,8 +5,8 @@
      - v1.0 - v3.0: Struktur UI dashboard direktur.
      - v4.0: Rombak UI Tersentralisasi, link dt.css & dt.js.
      - v4.1: Penambahan tab Sistem.
-     - v5.0: Tombol Tema Siklus di Header, Hapus modal tema.
-     - v5.1: (CURRENT) Menu Titik 3 Pindah Kanan Bawah (Offcanvas), Logout Icon Only.
+     - v5.0: Tombol Tema Siklus di Header.
+     - v5.1: (CURRENT) Menu Tab Bawah (Icon Only), Titik 3 Pindah Kanan Bawah (Offcanvas), Logout Icon Only.
      ================================================== -->
 <!DOCTYPE html>
 <html lang="id">
@@ -56,6 +56,7 @@
             </div>
         </div>
 
+        <!-- WA BOTTOM NAVIGATION (V5.1: Titik 3 di Kanan Bawah) -->
         <nav class="wa-bottom-nav" id="menuTabs" role="tablist">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview"><i class="bi bi-grid-1x2-fill"></i><span class="tab-label">OVERVIEW</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#beranda"><i class="bi bi-display"></i><span class="tab-label">INFO</span></button>
@@ -63,7 +64,8 @@
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pantau"><i class="bi bi-graph-up-arrow"></i><span class="tab-label">PANTAU</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rekap"><i class="bi bi-clock-history"></i><span class="tab-label">HISTORY</span></button>
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#diskusi"><i class="bi bi-chat-fill"></i><span class="tab-label">CHAT</span></button>
-            <button class="nav-link text-primary" data-bs-toggle="tab" data-bs-target="#tab-sistem"><i class="bi bi-sliders"></i><span class="tab-label">SISTEM</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-tugas"><i class="bi bi-whatsapp"></i><span class="tab-label">TUGAS</span></button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-gudang"><i class="bi bi-box-seam-fill"></i><span class="tab-label">MATERI</span></button>
             
             <!-- TITIK 3 (POJOK KANAN BAWAH) Buka Offcanvas -->
             <button class="btn-nav" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLainnya" aria-controls="offcanvasLainnya" style="color:var(--wa-text-muted);">
@@ -77,14 +79,17 @@
                 <h6 class="offcanvas-title fw-bold text-wa"><i class="bi bi-ui-checks-grid me-2"></i> Menu Direktur</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
-            <div class="offcanvas-body small">
-                <div class="list-group list-group-flush">
-                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent" data-bs-toggle="modal" data-bs-target="#modalPanduan" data-bs-dismiss="offcanvas"><i class="bi bi-book-half text-success me-3 fs-5"></i> Panduan Aplikasi</button>
-                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent" data-bs-toggle="modal" data-bs-target="#modalTentang" data-bs-dismiss="offcanvas"><i class="bi bi-info-circle-fill text-primary me-3 fs-5"></i> Tentang Aplikasi</button>
-                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent" onclick="new bootstrap.Tab(document.querySelector('button[data-bs-target=\'#tab-sistem\']')).show();" data-bs-dismiss="offcanvas"><i class="bi bi-stars text-warning me-3 fs-5"></i> Pembaruan (Roadmap)</button>
-                    <button class="list-group-item list-group-item-action py-3 text-center mt-3 border-0" id="btnLogoutOffcanvas" data-bs-dismiss="offcanvas">
-                        <div class="btn btn-danger rounded-circle shadow-sm" style="width: 50px; height: 50px; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-power fs-3 text-white"></i></div>
-                    </button>
+            <div class="offcanvas-body p-0 bg-light bg-opacity-50">
+                <div class="list-group list-group-flush shadow-sm">
+                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent border-bottom" data-bs-toggle="modal" data-bs-target="#modalPanduan" data-bs-dismiss="offcanvas"><i class="bi bi-book-half text-success me-3 fs-5"></i> Panduan Aplikasi</button>
+                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent border-bottom" data-bs-toggle="modal" data-bs-target="#modalTentang" data-bs-dismiss="offcanvas"><i class="bi bi-info-circle-fill text-primary me-3 fs-5"></i> Tentang Aplikasi</button>
+                    <button class="list-group-item list-group-item-action py-3 fw-bold bg-transparent border-bottom" onclick="new bootstrap.Tab(document.querySelector('button[data-bs-target=\'#tab-sistem\']')).show();" data-bs-dismiss="offcanvas"><i class="bi bi-stars text-warning me-3 fs-5"></i> Pembaruan (Roadmap)</button>
+                    <!-- LOGOUT ICON ONLY -->
+                    <div class="text-center py-3">
+                        <button class="btn btn-danger rounded-circle shadow" id="btnLogoutOffcanvas" data-bs-dismiss="offcanvas" style="width: 52px; height: 50px; display: inline-flex; align-items: center; justify-content: center;" title="Keluar">
+                            <i class="bi bi-power fs-3 text-white"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
