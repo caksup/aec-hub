@@ -1,1 +1,42 @@
-mt
+/* ==================================================
+   mt.css - Stylesheet Khusus Mentor Panel
+   
+   Riwayat Versi:
+   - v4.3: Perbaikan container chat-box & timeline layout.
+   - v4.0 Ultimate: Pemisahan file, Bottom Nav Adaptif WA, Dark Mode.
+   ================================================== */
+:root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; } }
+[data-theme="dark"] { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; }
+[data-theme="light"] { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
+
+body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: all 0.3s; padding-bottom: 70px; }
+.app-wrapper { max-width: 100%; overflow-x: hidden; }
+.bg-wa { background-color: var(--wa-primary) !important; color: white !important; }
+.text-wa { color: #00a884 !important; }
+.btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: #075E54; color: white; }
+.bg-white, .bg-light { background-color: var(--wa-card-bg) !important; }
+.text-dark { color: var(--wa-text-main) !important; } .text-muted { color: var(--wa-text-muted) !important; }
+.border, .border-bottom, .border-top { border-color: var(--wa-border) !important; }
+.form-control, .form-select, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
+.card, .modal-content, .dropdown-menu { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; }
+.dropdown-item { color: var(--wa-text-main); } .dropdown-item:hover { background-color: var(--wa-input-bg); color: var(--wa-text-main); }
+.card-custom { border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: background-color 0.3s; }
+.chat-box { max-height: 400px; overflow-y: auto; }
+.msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); color: var(--wa-text-main); }
+.msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
+.msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
+
+/* MENU BAWAH ADAPTIF MENTOR */
+.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: space-around; padding: 8px 10px 12px 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); }
+.wa-bottom-nav .nav-link { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 5px; background: transparent; transition: 0.2s; }
+.wa-bottom-nav .nav-link i { font-size: 1.4rem; margin-bottom: 2px; }
+.wa-bottom-nav .nav-link .tab-label { display: none; margin-top: 2px; font-size: 0.6rem; }
+.wa-bottom-nav .nav-link.active { color: #00a884; }
+.wa-bottom-nav .nav-link.active i { transform: scale(1.1); }
+.wa-bottom-nav .nav-link.active .tab-label { display: block; }
+
+.timeline { border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid #00a884; border-radius: 50%; }
+.timeline-date { font-size: 0.75rem; font-weight: bold; color: var(--wa-text-muted); } .timeline-title { font-size: 0.95rem; font-weight: bold; } .timeline-desc { font-size: 0.8rem; color: var(--wa-text-muted); }
