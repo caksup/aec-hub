@@ -1,12 +1,12 @@
 /* ==================================================
    dt.js - Script Khusus Direktur (Panel Mas Afif)
    
-   Riwayat Versi:
+   Riwayat Versi (JS):
    - v1.0 - v3.0: Core logic Firebase Direktur.
    - v4.0: Pemisahan file (dt.js) & Auto-login handler.
    - v4.1: Listener Roadmap Sistem.
    - v5.0: Tombol Tema Siklus Header.
-   - v5.1: (CURRENT) Fix Tema Siklus DOM, Offcanvas Logout Logic.
+   - v5.1: (CURRENT) Offcanvas Logout Logic terintegrasi.
    ================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, onSnapshot, updateDoc, collection, query, where, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -26,40 +26,24 @@ let currentThemeIndex = themes.indexOf(localStorage.getItem('aecTheme') || 'syst
 if (currentThemeIndex === -1) currentThemeIndex = 2;
 
 function applyThemeVisuals(index) {
-    const t = themes[index];
-    localStorage.setItem('aecTheme', t);
+    const t = themes[index]; localStorage.setItem('aecTheme', t);
     if (t === 'system') {
         const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', t);
-    }
+    } else { document.documentElement.setAttribute('data-theme', t); }
     const iconEl = document.getElementById("themeIconDisplay");
-    if(iconEl) {
-        iconEl.className = `bi ${themeIcons[index]} fs-4`; 
-        void iconEl.offsetWidth;
-        iconEl.classList.add("theme-icon-animate");
-    }
+    if(iconEl) { iconEl.className = `bi ${themeIcons[index]} fs-4`; void iconEl.offsetWidth; iconEl.classList.add("theme-icon-animate"); }
 }
 applyThemeVisuals(currentThemeIndex);
 
 const btnCycleTheme = document.getElementById("btnCycleTheme");
-if(btnCycleTheme) {
-    btnCycleTheme.onclick = () => {
-        currentThemeIndex = (currentThemeIndex + 1) % 3;
-        applyThemeVisuals(currentThemeIndex);
-    };
-}
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex);
-});
+if(btnCycleTheme) { btnCycleTheme.onclick = () => { currentThemeIndex = (currentThemeIndex + 1) % 3; applyThemeVisuals(currentThemeIndex); }; }
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex); });
 
-// UI GLOBAL MODALS & LOGOUT
+// UI GLOBAL MODALS & LOGOUT OFFCANVAS
 function initGlobalUI() {
     const globalModals = `
-    <!-- Modal Tentang -->
     <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 5.1 (Ultimate Cycle Theme)</p></div></div></div></div>
-    <!-- Modal Panduan -->
     <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light text-sm"><div class="alert alert-info border-0 shadow-sm">Buku panduan Direktur sedang disusun.</div></div></div></div></div>
     `;
     if (!document.getElementById('modalTentang')) document.body.insertAdjacentHTML('beforeend', globalModals);
