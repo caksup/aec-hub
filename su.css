@@ -2,25 +2,28 @@
    su.css - Stylesheet Khusus Superuser (Admin Panel)
    
    Riwayat Versi:
-   - v1.0: Desain awal admin panel, standard grid layout.
-   - v2.0: Adaptasi skema warna hijau gelap WhatsApp Style.
+   - v1.0: Desain awal aplikasi, standard CSS grid layout.
+   - v2.0: Perubahan skema warna hijau gelap WhatsApp Style.
    - v3.0: Penambahan layout data table, render logbook, & export PDF.
-   - v4.0: Pemisahan file CSS mandiri terpusat untuk cegah bug tabrakan style.
+   - v4.0: Pemisahan file CSS mandiri terpusat agar tidak bentrok dengan panel lain.
    - v4.1: Integrasi warna khusus untuk Tab Menu Sistem & Timeline.
-   - v5.0: Implemetasi animasi micro-interactions pada transisi tema malam/terang.
-   - v5.1: (CURRENT) Rombak total animasi bottom nav, support Offcanvas titik 3 bawah.
+   - v5.0: Implementasi animasi micro-interactions pada transisi tema malam/terang.
+   - v5.1: Perbaikan alur Offcanvas bottom navigation menu titik 3 bawah.
+   - v5.2: (CURRENT) FIX TOTAL Kontras Dark Mode, Tab Menu Pill Adaptif (Icon Only saat Inaktif).
    ================================================== */
 
 :root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; } }
-[data-theme="dark"] { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; }
+
+/* FIX KONTRAS TEMA GELAP (V5.2 - Cetho Welo-Welo) */
+[data-theme="dark"] { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; } }
 [data-theme="light"] { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
 
 body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: background-color 0.3s ease, color 0.3s ease; padding-bottom: 75px; }
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
 .bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.3s ease; }
-.text-wa { color: var(--wa-primary) !important; }
-.btn-wa { background-color: var(--wa-primary); color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: var(--wa-dark); color: white; }
+.text-wa { color: #00a884 !important; }
+.btn-wa { background-color: #128C7E; color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: #075E54; color: white; }
 .bg-white, .bg-light { background-color: var(--wa-card-bg) !important; transition: background-color 0.3s ease; }
 .text-dark { color: var(--wa-text-main) !important; } .text-muted { color: var(--wa-text-muted) !important; }
 .border, .border-bottom, .border-top { border-color: var(--wa-border) !important; }
@@ -28,27 +31,51 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 .card, .modal-content, .offcanvas { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; transition: background-color 0.3s ease; color: var(--wa-text-main); }
 .card-custom { border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .chat-box { max-height: 450px; overflow-y: auto; }
-.msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); color: var(--wa-text-main); }
-.msg-me { background-color: var(--wa-bubble-me); margin-left: auto; border-top-right-radius: 0; }
-.msg-other { background-color: var(--wa-bubble-other); margin-right: auto; border-top-left-radius: 0; }
-#modernSchoolSelect::-webkit-scrollbar { display: none; } .school-pill:active { transform: scale(0.95); }
+.msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--wa-text-main); }
+.msg-me { background-color: var(--wa-bubble-me); margin-left: auto; }
+.msg-other { background-color: var(--wa-bubble-other); margin-right: auto; }
+#modernSchoolSelect::-webkit-scrollbar { display: none; } 
+.table, th, td { color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
 
-/* MENU BAWAH INTERAKTIF ADAPTIF (v5.1 Upgrade) */
-.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: flex-start; gap: 4px; padding: 8px 6px 12px 6px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); overflow-x: auto; scrollbar-width: none; transition: background-color 0.3s ease; }
-.wa-bottom-nav::-webkit-scrollbar { display: none; }
-.wa-bottom-nav .nav-link, .wa-bottom-nav .btn-nav { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 5px 8px; white-space: nowrap; background: transparent; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.wa-bottom-nav i { font-size: 1.35rem; margin-bottom: 2px; transition: transform 0.2s ease; }
-.wa-bottom-nav .tab-label { display: none; margin-top: 2px; font-size: 0.58rem; }
-.wa-bottom-nav .nav-link.active, .wa-bottom-nav .btn-nav:focus { color: var(--wa-primary); transform: translateY(-3px); }
-.wa-bottom-nav .nav-link.active i { transform: scale(1.15); }
-.wa-bottom-nav .nav-link.active .tab-label { display: block; }
-.wa-bottom-nav .nav-link:active i { transform: scale(0.85); }
+/* SYSTEM FIX V5.2: ATURAN PILL ADAPTIF (IKON HARUS JELAS) */
+.school-pill .tab-label, 
+.nav-pills .nav-link .tab-label, 
+.wa-bottom-nav .nav-link .tab-label,
+.wa-bottom-nav .btn-nav .tab-label {
+    display: none !important;
+}
+.school-pill i, .nav-pills .nav-link i, .wa-bottom-nav i {
+    color: var(--bottom-nav-icon) !important;
+    font-size: 1.35rem;
+}
+/* KONDISI AKTIF: NAMPILKE IKON + TEKS KONTRAST */
+.school-pill.active-pill .tab-label,
+.nav-pills .nav-link.active .tab-label,
+.wa-bottom-nav .nav-link.active .tab-label {
+    display: inline-block !important;
+    margin-left: 5px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #ffffff !important;
+}
+.school-pill.active-pill i, .nav-pills .nav-link.active i, .wa-bottom-nav .nav-link.active i {
+    color: #ffffff !important;
+    transform: scale(1.1);
+}
+.nav-pills .nav-link.active {
+    background-color: #128C7E !important;
+}
+.wa-bottom-nav .nav-link.active {
+    background-color: #00a884 !important;
+    border-radius: 20px;
+    padding: 5px 12px;
+}
 
-/* ANIMASI SIKLUS TEMA HEADER */
+/* ANIMASI IKON TEMA HEADER */
 @keyframes iconPop { 0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
 .theme-icon-animate { animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; display: inline-block; }
 
-.timeline { border-left: 2px solid var(--wa-primary); margin-left: 15px; padding-left: 20px; list-style: none; }
+.timeline { border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
 .timeline-item { position: relative; margin-bottom: 20px; }
-.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid var(--wa-primary); border-radius: 50%; }
+.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid #00a884; border-radius: 50%; }
 .timeline-date { font-size: 0.75rem; font-weight: bold; color: var(--wa-text-muted); } .timeline-title { font-size: 0.95rem; font-weight: bold; } .timeline-desc { font-size: 0.8rem; color: var(--wa-text-muted); }
