@@ -1,4 +1,10 @@
-/* su.css - Stylesheet Khusus Superuser */
+/* ==================================================
+   su.css - Stylesheet Khusus Superuser (Admin)
+   
+   Riwayat Versi:
+   - v4.1: Penambahan tab menu Sistem, Roadmap ditarik ke Overview.
+   - v4.0: Pemisahan file mandiri, Bottom Nav Adaptif.
+   ================================================== */
 :root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; } }
 [data-theme="dark"] { --wa-primary: #1f2c34; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #e9edef; --wa-text-muted: #8696a0; --wa-input-bg: #2a3942; --wa-border: #222d32; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #8696a0; }
@@ -29,7 +35,7 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 .wa-bottom-nav .nav-link .tab-label { display: none; margin-top: 2px; font-size: 0.6rem; }
 .wa-bottom-nav .nav-link.active { color: #00a884; }
 .wa-bottom-nav .nav-link.active i { transform: scale(1.1); }
-.wa-bottom-nav .nav-link.active .tab-label { display: block; } /* Iki kunci adaptife */
+.wa-bottom-nav .nav-link.active .tab-label { display: block; }
 
 .timeline { border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
 .timeline-item { position: relative; margin-bottom: 20px; }
