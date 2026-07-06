@@ -1,11 +1,12 @@
 /* ==================================================
    su.js - Script Khusus Superuser (Admin AEC Hub)
    
-   Riwayat Versi:
+   Riwayat Versi (JS):
    - v1.0 - v3.0: Core logic CRUD Firebase Admin.
    - v4.0: Pemisahan file (su.js) & Auto-login handler.
    - v4.1: Pemindahan Input Roadmap ke Tab Sistem.
-   - v5.0: (CURRENT) Fungsionalitas Tombol Tema Siklus Header (Interaktif).
+   - v5.0: Tombol Tema Siklus Header.
+   - v5.1: (CURRENT) Jam & Tanggal Header Realtime, Fix Tema Siklus DOM.
    ================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, getDoc, setDoc, collection, addDoc, serverTimestamp, query, onSnapshot, updateDoc, deleteDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -19,21 +20,27 @@ enableIndexedDbPersistence(db).catch((err) => { console.warn("Offline mode err:"
 const actUser = localStorage.getItem("loggedInUser"); const myName = localStorage.getItem("loggedInName");
 if (actUser !== "sup" && actUser !== "afif") window.location.replace("index.html");
 document.getElementById("userNameDisplay").innerText = myName;
-document.getElementById("identitasMenu").innerText = "ID: " + actUser;
 
-// 3. FUNGSI TEMA SIKLUS (V5.0)
+// 3. FUNGSI TEMA SIKLUS (V5.1)
 const themes = ['light', 'dark', 'system'];
-const themeIcons = ['bi-sun-fill', 'bi-moon-stars-fill', 'bi-display'];
+const themeIcons = ['bi-sun-fill text-warning', 'bi-moon-stars-fill text-white', 'bi-display text-info'];
 let currentThemeIndex = themes.indexOf(localStorage.getItem('aecTheme') || 'system');
 if (currentThemeIndex === -1) currentThemeIndex = 2;
 
 function applyThemeVisuals(index) {
     const t = themes[index];
     localStorage.setItem('aecTheme', t);
-    document.documentElement.setAttribute('data-theme', t === 'system' ? '' : t);
+    
+    if (t === 'system') {
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', t);
+    }
+    
     const iconEl = document.getElementById("themeIconDisplay");
     if(iconEl) {
-        iconEl.className = `bi ${themeIcons[index]} fs-4 text-white`; 
+        iconEl.className = `bi ${themeIcons[index]} fs-4`; 
         void iconEl.offsetWidth; // force reflow untuk animasi
         iconEl.classList.add("theme-icon-animate");
     }
@@ -48,9 +55,27 @@ if(btnCycleTheme) {
     };
 }
 
-// 4. INISIALISASI MODAL GLOBAL (Wis tanpa Modal Tema)
+// Update Tema nek Sistem HP ganti (Khusus yen milih System)
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex);
+});
+
+// 4. JAM DAN TANGGAL HEADER (V5.1)
+function updateClock() {
+    const el = document.getElementById('headClockDate');
+    if(!el) return;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+    el.innerText = `${dateStr}\n${timeStr} WIB`;
+}
+setInterval(updateClock, 1000); updateClock();
+
+// 5. INISIALISASI MODAL GLOBAL & LOGOUT
 function initGlobalUI() {
     const globalModals = `
+    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 5.1 (Ultimate Cycle Theme)</p></div></div></div></div>
+    <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light text-sm"><div class="alert alert-info border-0 shadow-sm">Buku panduan Admin sedang disusun.</div></div></div></div></div>
     <div class="modal fade" id="modalArsipSekolah" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -76,8 +101,11 @@ function initGlobalUI() {
     `;
     if (!document.getElementById('modalArsipSekolah')) document.body.insertAdjacentHTML('beforeend', globalModals);
 
-    document.getElementById("btnLogout").onclick = (e) => { e.preventDefault(); if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } };
+    const logOutFunc = (e) => { e.preventDefault(); if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } };
+    if(document.getElementById("btnLogout")) document.getElementById("btnLogout").onclick = logOutFunc;
+    if(document.getElementById("btnLogoutOffcanvas")) document.getElementById("btnLogoutOffcanvas").onclick = logOutFunc;
     
+    // Simpan Roadmap
     document.getElementById("btnSimpanRoadmap").onclick = async () => {
         const w = document.getElementById("rmWaktu").value; const j = document.getElementById("rmJudul").value; const d = document.getElementById("rmDesc").value;
         if(!w || !j) return alert("Waktu dan Judul wajib diisi!");
@@ -87,6 +115,7 @@ function initGlobalUI() {
         } catch(e) { alert("Error: " + e.message); }
     };
     
+    // Tampil Roadmap
     onSnapshot(query(collection(db, "roadmaps")), (snap) => {
         const listOverview = document.getElementById("overviewRoadmap"); const listSistem = document.getElementById("sistemRoadmapList");
         if(listOverview) listOverview.innerHTML = ""; if(listSistem) listSistem.innerHTML = "";
@@ -102,7 +131,7 @@ function initGlobalUI() {
 }
 window.hapusRoadmap = async function(id) { if(confirm("Hapus roadmap ini?")) await deleteDoc(doc(db, "roadmaps", id)); }
 
-// ================= LOGIKA ADMIN UTAMA (TETEP SAMA) =================
+// ================= LOGIKA ADMIN UTAMA =================
 let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = []; let masterTugasWA = [];
 let globalAllSchools = []; let globalAllUsers = []; let currentAssignedMentors = []; 
 let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
@@ -304,4 +333,4 @@ document.getElementById("btnExportPDF").onclick = () => {
     html2pdf().set({ margin: 0.3, filename: `AEC_Report_${currentSchoolId}_${fHari.replace(/\//g, "-")}.pdf`, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }}).from(printDiv).save();
 };
 
-document.addEventListener("DOMContentLoaded", () => { initGlobalUI(); setInterval(() => { const now = new Date(); if(document.getElementById('headClock')) document.getElementById('headClock').innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}); }, 1000); });
+document.addEventListener("DOMContentLoaded", () => { initGlobalUI(); });
