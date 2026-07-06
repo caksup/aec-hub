@@ -1,11 +1,14 @@
-
 /* ==================================================
    su.js - Script Khusus Superuser (Admin AEC Hub)
+   
+   Riwayat Versi:
+   - v4.1: Pemindahan Input Roadmap ke Tab Sistem, Timeline di Overview.
+   - v4.0: Pemisahan logika, Integrasi UI modal, Auto-login.
    ================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, getDoc, setDoc, collection, addDoc, serverTimestamp, query, onSnapshot, updateDoc, deleteDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// 1. CONFIG FIREBASE (Saka kodingan aslimu)
+// 1. CONFIG FIREBASE
 const firebaseConfig = {
     apiKey: "AIzaSyCgXGAww1dMu4eWzA1clUiOQht1DzxHl4A",
     authDomain: "special-mentor.firebaseapp.com",
@@ -25,42 +28,16 @@ const myName = localStorage.getItem("loggedInName");
 if (actUser !== "sup" && actUser !== "afif") {
     window.location.replace("index.html");
 }
-
 document.getElementById("userNameDisplay").innerText = myName;
 document.getElementById("identitasMenu").innerText = "ID: " + actUser;
 
-// 3. INISIALISASI MODAL GLOBAL & ROADMAP
+// 3. INISIALISASI MODAL GLOBAL
 function initGlobalUI() {
     const globalModals = `
     <!-- Modal Tema -->
     <div class="modal fade" id="modalTema" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-palette-fill me-2"></i>Pilih Tema</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-2 bg-light"><button class="list-group-item list-group-item-action fw-bold w-100 p-2 mb-1 border rounded shadow-sm text-center" onclick="setTema('light')">Terang</button><button class="list-group-item list-group-item-action fw-bold w-100 p-2 mb-1 border rounded shadow-sm text-center" onclick="setTema('dark')">Gelap</button><button class="list-group-item list-group-item-action fw-bold w-100 p-2 border rounded shadow-sm text-center" onclick="setTema('system')">Ikuti Sistem HP</button></div></div></div></div>
 
-    <!-- Modal Input Roadmap (KHUSUS ADMIN) -->
-    <div class="modal fade" id="modalInputRoadmap" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white py-2 border-0">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-pen-fill me-2"></i>Input Roadmap Sistem</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <div class="mb-2"><label class="form-label text-xs fw-bold mb-1">Waktu Target</label><input type="text" id="rmWaktu" class="form-control form-control-sm" placeholder="Cth: Agustus 2026"></div>
-                    <div class="mb-2"><label class="form-label text-xs fw-bold mb-1">Judul Fitur</label><input type="text" id="rmJudul" class="form-control form-control-sm" placeholder="Cth: Export PDF"></div>
-                    <div class="mb-3"><label class="form-label text-xs fw-bold mb-1">Deskripsi</label><textarea id="rmDesc" class="form-control text-sm" rows="3" placeholder="Penjelasan fitur..."></textarea></div>
-                    <button class="btn btn-primary btn-sm w-100 fw-bold rounded-pill shadow-sm" id="btnSimpanRoadmap"><i class="bi bi-save me-1"></i> Simpan Roadmap</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Lihat Roadmap -->
-    <div class="modal fade" id="modalRoadmap" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-signpost-split-fill me-2"></i>Roadmap Program</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><ul class="timeline" id="roadmapTimeline"><li class="timeline-item"><div class="timeline-desc text-muted">Memuat...</div></li></ul></div></div></div></div>
-    
-    <!-- Modal Tentang & Panduan -->
-    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 4.0-WA (Mutakhir)</p></div></div></div></div>
-    <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Buku Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light"><div class="alert alert-info border-0 shadow-sm text-sm">Panduan sedang disusun...</div></div></div></div></div>
-    
-    <!-- Modal Arsip Sekolah (KHUSUS ADMIN) -->
+    <!-- Modal Arsip Sekolah -->
     <div class="modal fade" id="modalArsipSekolah" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -87,21 +64,17 @@ function initGlobalUI() {
     </div>
     `;
     
-    if (!document.getElementById('modalTema')) {
-        document.body.insertAdjacentHTML('beforeend', globalModals);
-    }
+    if (!document.getElementById('modalTema')) document.body.insertAdjacentHTML('beforeend', globalModals);
 
     const savedTheme = localStorage.getItem('aecTheme') || 'system';
     window.setTema(savedTheme, false);
 
     document.getElementById("btnLogout").onclick = (e) => { 
         e.preventDefault(); 
-        if(confirm("Yakin ingin keluar dari aplikasi?")) { 
-            localStorage.clear(); window.location.replace("index.html"); 
-        } 
+        if(confirm("Yakin ingin keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } 
     };
     
-    // Fungsi Simpan Roadmap (Titik Tiga)
+    // Fungsi Simpan Roadmap (Saka Form Tab Sistem)
     document.getElementById("btnSimpanRoadmap").onclick = async () => {
         const w = document.getElementById("rmWaktu").value; const j = document.getElementById("rmJudul").value; const d = document.getElementById("rmDesc").value;
         if(!w || !j) return alert("Waktu dan Judul wajib diisi!");
@@ -109,23 +82,28 @@ function initGlobalUI() {
             await addDoc(collection(db, "roadmaps"), { waktu_target: w, judul: j, deskripsi: d, created_at: serverTimestamp() });
             alert("Roadmap berhasil disimpan!"); 
             document.getElementById("rmWaktu").value = ""; document.getElementById("rmJudul").value = ""; document.getElementById("rmDesc").value = "";
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalInputRoadmap'));
-            if(modal) modal.hide();
         } catch(e) { alert("Error: " + e.message); }
     };
     
-    // Listener Data Roadmap
+    // Listener Data Roadmap -> Nampilake neng Overview & Tab Sistem
     onSnapshot(query(collection(db, "roadmaps")), (snap) => {
-        const list = document.getElementById("roadmapTimeline"); list.innerHTML = "";
+        const listOverview = document.getElementById("overviewRoadmap");
+        const listSistem = document.getElementById("sistemRoadmapList");
+        listOverview.innerHTML = ""; listSistem.innerHTML = "";
+        
         let dataRoadmap = [];
         snap.forEach(d => { dataRoadmap.push({id: d.id, ...d.data()}); });
-        // Urutke berdasar timestamp (nek ana)
         dataRoadmap.sort((a,b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
         
         dataRoadmap.forEach(r => { 
-            list.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target} <i class="bi bi-trash text-danger ms-2 cursor-pointer" onclick="window.hapusRoadmap('${r.id}')" title="Hapus"></i></div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`; 
+            // Render neng Overview
+            listOverview.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`; 
+            // Render neng Tab Sistem (kanggo dibusak)
+            listSistem.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center"><div><div class="fw-bold">${r.judul}</div><div class="text-muted" style="font-size:0.65rem">${r.waktu_target}</div></div><i class="bi bi-trash text-danger" style="cursor:pointer;" onclick="window.hapusRoadmap('${r.id}')" title="Hapus"></i></li>`;
         });
-        if(list.innerHTML === "") list.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap program.</div></li>`;
+        
+        if(listOverview.innerHTML === "") listOverview.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap program.</div></li>`;
+        if(listSistem.innerHTML === "") listSistem.innerHTML = `<li class="list-group-item text-muted">Belum ada data.</li>`;
     });
 }
 
@@ -139,7 +117,8 @@ window.setTema = function(theme, closeUI = true) {
 };
 window.hapusRoadmap = async function(id) { if(confirm("Hapus roadmap ini?")) await deleteDoc(doc(db, "roadmaps", id)); }
 
-
+// (KODE FIREBASE LANJUTAN: render sekolah, logbook, dll tetep padha kaya versi wingi)
+// ...
 // 4. VARIABEL & LISTENER STATE
 let currentSchoolId = ""; let rawKurikulum = {}; let dataLengkap = []; let masterTugasWA = [];
 let globalAllSchools = []; let globalAllUsers = []; let currentAssignedMentors = []; 
@@ -199,7 +178,6 @@ function renderModernSchoolSelect() {
     });
 }
 
-// 6. MANAJEMEN SEKOLAH (PILIH, SIMPAN, ARSIP)
 window.langsungKeSekolah = function(val) {
     bersihkanListener();
     if(!val) {
@@ -300,7 +278,6 @@ document.getElementById("btnSaveSchool").onclick = async () => {
 
 document.getElementById("btnArsipSekolah").onclick = async () => { if(currentSchoolId && currentSchoolId !== 'NEW' && confirm("Yakin arsipkan sekolah ini?")) { await setDoc(doc(db, "schools", currentSchoolId), { status: 'archived' }, {merge:true}); alert("Diarsipkan!"); window.langsungKeSekolah(""); } };
 
-// Import Excel
 document.getElementById('btnImportExcel').addEventListener('click', function() {
     const file = document.getElementById('excelSiswa').files[0]; if(!file) return alert("Pilih file excel (.xlsx/.xls) dhisik!");
     const reader = new FileReader();
@@ -314,7 +291,6 @@ document.getElementById('btnImportExcel').addEventListener('click', function() {
     }; reader.readAsArrayBuffer(file);
 });
 
-// 7. RENDER LOGBOOK & FILTER
 function ekstrakHari() { const daysMap = new Map(); dataLengkap.forEach(d => { if(d.waktu) { daysMap.set(d.waktu.toDate().toLocaleDateString('id-ID'), d.waktu.toDate()); } }); const sortedDays = Array.from(daysMap.entries()).sort((a,b) => a[1] - b[1]); const selHari = document.getElementById("filterHari"); const valSkg = selHari.value; selHari.innerHTML = '<option value="SEMUA">Semua Data (Global)</option>'; sortedDays.forEach((entry, idx) => { selHari.innerHTML += `<option value="${entry[0]}">Hari ke-${idx+1} (${entry[0]})</option>`; }); if (Array.from(selHari.options).some(o=>o.value===valSkg) && valSkg !== "SEMUA") selHari.value = valSkg; else if (sortedDays.length > 0 && valSkg === "SEMUA" && selHari.options.length <= 2) selHari.value = sortedDays[sortedDays.length-1][0]; }
 
 function renderListAdmin() {
@@ -331,15 +307,12 @@ function renderListAdmin() {
 window.aksidminHapus = async function(id) { if (confirm(`Hapus permanen sesi ini?`)) await deleteDoc(doc(db, "logbooks", id)); };
 window.hapusPesan = async function(cid) { if(confirm("Hapus pesan ini?")) await deleteDoc(doc(db, "chats", cid)); };
 
-// Filter listener
 document.getElementById('filterHari').onchange = () => renderListAdmin(); document.getElementById('filterKelasHistori').onchange = () => renderListAdmin(); document.getElementById('trackerKelas').onchange = () => renderTracker(); document.getElementById('filterKelasSiswa').onchange = () => kalkulasiDataSiswa(); if(document.getElementById("filterWA")) document.getElementById("filterWA").onchange = () => renderTugasWA();
 
-// 8. KINERJA, TRACKER & SISWA
 function renderTracker() { const area = document.getElementById("areaTracker"); const kelasAktif = document.getElementById("trackerKelas").value; if(!rawKurikulum || Object.keys(rawKurikulum).length === 0) { area.innerHTML = "<div class='small text-muted'>Kosong.</div>"; return; } let materiSelesai = new Set(); dataLengkap.forEach(log => { if (log.kelas === kelasAktif && log.materi) { log.materi.forEach(m => materiSelesai.add(m)); } }); const renderBlok = (judul, arrayMateri, warna) => { if(!arrayMateri || arrayMateri.length === 0) return ''; let listHtml = ""; arrayMateri.forEach(mat => { const isDone = materiSelesai.has(mat); const icon = isDone ? `<i class="bi bi-check-circle-fill text-${warna}"></i>` : `<i class="bi bi-circle text-secondary opacity-50"></i>`; const bg = isDone ? `bg-${warna} bg-opacity-10 border-${warna}` : 'bg-transparent text-muted border'; listHtml += `<div class="d-flex justify-content-between align-items-center p-2 mb-1 rounded text-xs ${bg}"><span class="${isDone ? 'fw-bold' : ''}">${mat}</span> <span>${icon}</span></div>`; }); return `<div class="mb-3"><h6 class="text-xs fw-bold text-${warna} mb-1 border-bottom pb-1">${judul}</h6>${listHtml}</div>`; }; area.innerHTML = renderBlok("VOCABULARY", rawKurikulum.vocab, "primary") + renderBlok("SPEAKING", rawKurikulum.speaking, "success") + renderBlok("GRAMMAR", rawKurikulum.grammar, "danger") + renderBlok("PRACTICE CLASS", rawKurikulum.practice, "warning"); }
 function kalkulasiDataSiswa() { const kls = document.getElementById("filterKelasSiswa").value; let rekap = {}; dataLengkap.forEach(log => { if(log.kelas === kls && log.dataSiswa) { log.dataSiswa.forEach(s => { if(!rekap[s.nama]) rekap[s.nama] = { h:0, a:0, s:0, i:0, poin:0 }; if(s.kehadiran === 'h') rekap[s.nama].h++; else if(s.kehadiran === 'a') rekap[s.nama].a++; else if(s.kehadiran === 's') rekap[s.nama].s++; else if(s.kehadiran === 'i') rekap[s.nama].i++; let nStr = (s.nilai || "").toString().toLowerCase().trim(); if(nStr === 'a' || nStr === 'a+') rekap[s.nama].poin += 90; else if(parseInt(nStr) > 0) rekap[s.nama].poin += parseInt(nStr); }); } }); const tBody = document.getElementById("tabelRekapSiswa"); tBody.innerHTML = ""; let arrSiswa = Object.keys(rekap).sort(); arrSiswa.forEach((nm, idx) => { const r = rekap[nm]; tBody.innerHTML += `<tr><td>${idx+1}</td><td class="text-start fw-bold text-dark">${nm}</td><td class="text-dark">${r.h}</td><td class="text-dark">${r.a}</td><td class="text-dark">${r.s}</td><td class="text-dark">${r.i}</td><td class="fw-bold text-success">${r.poin}</td></tr>`; }); const listTop = document.getElementById("listTop10"); listTop.innerHTML = ""; let arrPeringkat = Object.entries(rekap).map(([nama, data]) => ({ nama, poin: data.poin })).sort((a,b) => b.poin - a.poin).slice(0, 10); if(arrPeringkat.length === 0) { listTop.innerHTML = "<div class='text-muted small'>Belum ada data.</div>"; return; } arrPeringkat.forEach((item, idx) => { let badge = idx === 0 ? "bg-warning text-dark" : (idx === 1 ? "bg-secondary text-white" : "bg-wa text-white"); listTop.innerHTML += `<div class="d-flex justify-content-between align-items-center p-2 border rounded mb-1 bg-light text-sm"><div class="fw-bold text-dark"><span class="badge ${badge} me-2 rounded-pill">#${idx+1}</span> ${item.nama}</div><div class="fw-bold text-success">${item.poin} Pts</div></div>`; }); }
 function kalkulasiKinerjaMentor() { let rekapMentor = {}; dataLengkap.forEach(log => { if(!rekapMentor[log.nama]) rekapMentor[log.nama] = 0; rekapMentor[log.nama]++; }); const board = document.getElementById("leaderboardTutor"); board.innerHTML = ""; let arrMentor = Object.entries(rekapMentor).map(([nama, count]) => ({nama, count})).sort((a,b) => b.count - a.count); arrMentor.forEach((m, idx) => { let med = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : "🏅"); board.innerHTML += `<div class="d-flex justify-content-between p-2 border rounded mb-1 bg-white shadow-sm text-sm"><div class="fw-bold text-dark">${med} ${m.nama}</div><div class="badge bg-wa rounded-pill">${m.count} Logbook</div></div>`; }); }
 
-// 9. WA TUGAS & CHAT
 window.aksidminHapusTugas = async function(id) { if (confirm(`Hapus template tugas ini?`)) await deleteDoc(doc(db, "tugas_wa", id)); };
 document.getElementById("btnKirimTugasWA").onclick = async () => { 
     if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu!"); 
@@ -373,7 +346,6 @@ document.getElementById("btnSendChat").onclick = async () => {
 }; 
 document.getElementById("inputChat").addEventListener("keypress", function(e) { if (e.key === "Enter") { e.preventDefault(); document.getElementById("btnSendChat").click(); } });
 
-// 10. MANAJEMEN TUTOR (USER)
 function renderMentorChecklist() {
     const setupMentorList = document.getElementById("setupMentorList"); if (!setupMentorList) return; setupMentorList.innerHTML = "";
     const mentorsAktif = globalAllUsers.filter(u => u.status === 'aktif');
@@ -417,7 +389,6 @@ document.getElementById("btnAddUser").onclick = async () => {
     await setDoc(doc(db, "users", u), { pin: p, julukan: n, role: r, status: "aktif" }, { merge: true }); alert("Data Akun Disimpen!"); window.batalEditUser();
 }; 
 
-// 11. GUDANG MATERI & ARSIP
 document.getElementById("btnSaveMateri").onclick = async () => {
     const j = document.getElementById("materiJudul").value; const k = document.getElementById("materiKelas").value; const l = document.getElementById("materiLink").value;
     if(!j || !l) return alert("Judul dan Link wajib diisi!");
@@ -455,7 +426,6 @@ window.lihatLogbookArsip = async function(schoolId, schoolName) {
     } catch (error) { konten.innerHTML = '<div class="text-danger text-center">Gagal memuat logbook.</div>'; }
 };
 
-// 12. EXPORT PDF
 document.getElementById("btnExportPDF").onclick = () => {
     if(!currentSchoolId || currentSchoolId==='NEW') return alert("Pilih sekolah dulu di bagian atas!");
     const fHari = document.getElementById("filterHari").value; let dataTampil = dataLengkap; if (fHari !== "SEMUA") dataTampil = dataTampil.filter(d => d.waktu && d.waktu.toDate().toLocaleDateString('id-ID') === fHari);
