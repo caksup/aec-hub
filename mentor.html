@@ -1,10 +1,3 @@
-<!-- ==================================================
-     mentor.html - AEC HUB (Panel Mentor)
-     
-     Riwayat Versi (HTML):
-     - v4.1: Penambahan Timeline Roadmap di Tab Info.
-     - v4.0 Ultimate: Rombak UI Tersentralisasi, link khusus mt.css & mt.js, Menu Bawah Adaptif.
-     ================================================== -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -46,15 +39,39 @@
 
         <div class="container pb-5 pt-3" id="mainContentArea">
             
-            <div class="tab-content h-100">
-                <!-- TAB INFO (DASHBOARD) -->
+            <div id="schoolInfoBar" class="d-none w-100 mb-3 p-2 rounded shadow-sm flex-column text-start bg-white border" style="font-size: 0.8rem; line-height: 1.3;">
+                <div class="d-flex justify-content-between align-items-center mb-1 border-bottom border-warning pb-1">
+                    <span class="fw-bold text-dark"><i class="bi bi-geo-alt-fill text-wa me-1"></i> <span id="headSekolah">Lokasi</span></span>
+                    <span class="badge bg-wa rounded-pill"><i class="bi bi-calendar-event me-1"></i> <span id="headTimeline">...</span></span>
+                </div>
+                <div class="text-truncate text-muted"><i class="bi bi-broadcast text-danger me-1"></i> Live: <span id="tutorJadwalHarian" class="fw-bold text-dark">Mendeteksi...</span></div>
+            </div>
+            
+            <div id="pesanKosong" class="d-none alert alert-danger text-center fw-bold shadow-sm">Sampeyan durung diwenehi tugas sekolah karo Admin, bolo!</div>
+
+            <div class="tab-content h-100" id="utamaMentorContent">
                 <div class="tab-pane fade show active" id="info">
-                    <div class="card card-custom p-3 border-start border-danger border-4 bg-white mb-3">
-                        <h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> INFO TUGAS & JADWAL LIVE</h6>
-                        <div id="tutorBriefing" class="text-sm">Memuat info...</div>
+                    <div class="row text-start g-3 mb-4">
+                        <div class="col-12">
+                            <div class="card card-custom p-3 border-start border-danger border-4 bg-white">
+                                <h6 class="fw-bold text-danger mb-2 text-xs"><i class="bi bi-megaphone"></i> NOTIFIKASI DIREKTUR</h6>
+                                <p id="tutorBriefing" class="text-sm mb-0 text-dark fw-bold" style="white-space: pre-line;">Memuat...</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card card-custom p-3 border-start border-wa border-4 bg-white">
+                                <h6 class="fw-bold text-wa mb-2 text-xs"><i class="bi bi-calendar-week"></i> JADWAL FULL GLOBAL</h6>
+                                <p id="tutorJadwal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card card-custom p-3 border-start border-warning border-4 bg-white">
+                                <h6 class="fw-bold text-warning mb-2 text-xs"><i class="bi bi-bullseye"></i> GOAL HARIAN</h6>
+                                <p id="tutorGoal" class="text-sm mb-0 text-dark fw-medium" style="white-space: pre-line;">Memuat...</p>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- ROADMAP MUNCUL NENG KENE -->
                     <div class="card card-custom p-3 border-start border-info border-4 bg-white shadow-sm mb-4">
                         <h6 class="fw-bold text-info mb-3"><i class="bi bi-signpost-split-fill me-2"></i> Roadmap Program AEC Hub</h6>
                         <ul class="timeline" id="infoRoadmap">
@@ -63,16 +80,12 @@
                     </div>
                 </div>
 
-                <!-- TAB LOGBOOK (INPUT DATA) -->
                 <div class="tab-pane fade" id="logbook"><div class="card card-custom p-3 bg-white border-top border-primary border-4 mb-3" id="formLogbook"><div class="text-center text-muted small">Memuat form...</div></div></div>
                 
-                <!-- TAB DISKUSI -->
                 <div class="tab-pane fade h-100" id="chat"><div class="card card-custom h-100 d-flex flex-column border-0 bg-transparent shadow-none"><div id="chatBox" class="chat-box flex-grow-1 p-3 rounded-top mb-1 d-flex flex-column gap-2" style="min-height: 380px;"></div><div class="input-group bg-white p-2 rounded-bottom shadow-sm border"><input type="text" id="inputChat" class="form-control border-0 bg-light rounded-pill px-3" placeholder="Ketik pesan global..."><button class="btn btn-wa rounded-circle ms-1" id="btnSendChat" style="width: 40px; height: 40px; padding: 0;"><i class="bi bi-send-fill"></i></button></div></div></div>
                 
-                <!-- TAB TUGAS WA -->
                 <div class="tab-pane fade" id="tugaswa"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-success mb-3"><i class="bi bi-whatsapp me-2"></i> Penugasan WhatsApp</h6><div id="listTugasWAHarian" class="space-y-3" style="max-height: 400px; overflow-y: auto;">Memuat tugas...</div></div></div>
 
-                <!-- TAB GUDANG MATERI -->
                 <div class="tab-pane fade" id="gudang"><div class="card card-custom p-3 bg-white"><h6 class="fw-bold text-primary mb-3"><i class="bi bi-box-seam-fill me-2"></i> Gudang Materi Pembelajaran</h6><div id="listGudangMateri" class="overflow-auto" style="max-height: 400px;"><div class="text-center text-muted small mt-2">Memuat gudang materi...</div></div></div></div>
             </div>
         </div>
