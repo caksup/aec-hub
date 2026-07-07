@@ -3,66 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - AEC Hub</title>
+    <title>Masuk - AEC Hub</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#128C7E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-
-    <div class="container" style="max-width: 400px;">
-        <div class="card card-custom p-4 shadow bg-white border-0">
-            <div class="text-center mb-4">
-                <i class="bi bi-shield-lock-fill text-wa" style="font-size: 3.5rem;"></i>
-                <h4 class="fw-bold mt-2 text-dark">AEC HUB</h4>
-                <p class="text-muted small mb-0">Mlebu nggunakake akun sing diwenehi Admin</p>
-            </div>
+<body>
+    <div class="login-header-bg"></div>
+    <div class="login-container">
+        <div class="login-card text-center animate-pop">
+            <i class="bi bi-chat-square-quote-fill text-wa mb-3 d-block" style="font-size: 3.5rem; color: var(--wa-primary);"></i>
+            <h4 class="fw-bold mb-1" style="color: var(--wa-text-main);">AEC Hub</h4>
+            <p class="text-muted small mb-4" style="color: var(--wa-text-muted);">Sistem Manajemen Pengajaran Terpadu</p>
             
-            <div class="mb-3">
-                <label class="form-label text-xs fw-bold text-secondary">USERNAME / ID</label>
-                <input type="text" id="username" class="form-control form-control-lg rounded-pill px-4 text-lowercase font-monospace text-sm" placeholder="cth: budi">
-            </div>
-            <div class="mb-4">
-                <label class="form-label text-xs fw-bold text-secondary">PIN ANGKA</label>
-                <input type="password" id="pin" class="form-control form-control-lg rounded-pill px-4 font-monospace text-sm" placeholder="••••">
-            </div>
-            
-            <button id="btnLogin" class="btn btn-wa btn-lg w-100 rounded-pill py-2 fw-bold shadow-sm"><i class="bi bi-box-arrow-in-right me-2"></i> MASUK BOLO</button>
+            <form id="loginForm">
+                <div class="mb-3 text-start">
+                    <label class="form-label text-xs fw-bold" style="color: var(--wa-text-muted);">ID PENGGUNA</label>
+                    <input type="text" id="username" class="form-control" placeholder="Masukkan ID Anda" required autocomplete="off">
+                </div>
+                <div class="mb-4 text-start">
+                    <label class="form-label text-xs fw-bold" style="color: var(--wa-text-muted);">PIN KEAMANAN</label>
+                    <input type="password" id="pin" class="form-control" placeholder="Masukkan PIN 6 Digit" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-wa w-100" id="btnLogin">MASUK SISTEM</button>
+            </form>
         </div>
     </div>
 
-    <!-- LOGIKA AWET UTUH DIUNGSINE NENG SCRIPT.JS -->
-    <script type="module">
-        import { cekAutoLogin, prosesLogin } from './script.js?v=4.0';
+    <div class="modal fade" id="modernAlertModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="background-color: var(--wa-card-bg); border-color: var(--wa-border);">
+                <div class="modal-body text-center p-4">
+                    <i id="alertIcon" class="bi bi-exclamation-circle-fill text-danger mb-3 d-block" style="font-size: 3rem;"></i>
+                    <h6 class="fw-bold" style="color: var(--wa-text-main);" id="alertTitle">Peringatan</h6>
+                    <p class="text-muted small mb-4" id="alertMessage">Pesan peringatan.</p>
+                    <button type="button" class="btn btn-wa w-100 rounded-pill" data-bs-dismiss="modal">MENGERTI</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // 1. Langsung cek auto-login pas halaman dibukak
-        cekAutoLogin();
-
-        // 2. Event click tombol login
-        document.getElementById("btnLogin").onclick = async () => {
-            const user = document.getElementById("username").value;
-            const pin = document.getElementById("pin").value;
-            
-            // Ganti tombol dadi loading ben user ra ngeklik dobel
-            const btn = document.getElementById("btnLogin");
-            btn.innerHTML = '<div class="spinner-border spinner-border-sm text-white" role="status"></div> Loading...';
-            btn.disabled = true;
-            
-            await prosesLogin(user, pin);
-            
-            // Mbalikne tombol nek misal logine salah
-            btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i> MASUK BOLO';
-            btn.disabled = false;
-        };
-
-        // 3. Login nganggo tombol Enter
-        document.body.addEventListener("keypress", async (e) => {
-            if (e.key === "Enter") {
-                document.getElementById("btnLogin").click();
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
