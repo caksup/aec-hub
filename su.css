@@ -11,23 +11,87 @@
    - v1.5: Animasi interaktif ikon tema & transisi warna malam.
    - v1.5.1: Perbaikan alur Offcanvas bottom navigation menu titik 3 bawah.
    - v1.5.2: Uji coba perbaikan kontras warna gelap terang.
-   - v1.5.3: (CURRENT) FIX TOTAL Kontras Dark Mode, Tab Menu Pill Adaptif (Icon Only saat Inaktif), Anti Mbludak.
+   - v1.5.3: (CURRENT) FIX TOTAL Kontras Dark Mode, Tab Menu Pill Adaptif (Icon Only saat Inaktif), Pemindahan Chat & WA ke Tombol Melayang (FAB), Menu Navigasi Bawah dapat digeser.
    ================================================== */
 
-:root { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
+:root { 
+    --wa-primary: #128C7E; 
+    --wa-dark: #075E54; 
+    --wa-bg: #efeae2; 
+    --wa-bubble-me: #dcf8c6; 
+    --wa-bubble-other: #ffffff; 
+    --wa-card-bg: #ffffff; 
+    --wa-text-main: #212529; 
+    --wa-text-muted: #6c757d; 
+    --wa-input-bg: #f8f9fa; 
+    --wa-border: #dee2e6; 
+    --bottom-nav-bg: #ffffff; 
+    --bottom-nav-icon: #6c757d; 
+}
 
-/* KONTRAS TEMA GELAP FIX V1.5.3 (Cetho Welo-Welo) */
-[data-theme="dark"] { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wa-primary: #005c4b; --wa-dark: #111b21; --wa-bg: #0b141a; --wa-bubble-me: #005c4b; --wa-bubble-other: #202c33; --wa-card-bg: #111b21; --wa-text-main: #f0f2f3; --wa-text-muted: #a1b0b9; --wa-input-bg: #2a3942; --wa-border: #374248; --bottom-nav-bg: #1f2c34; --bottom-nav-icon: #a1b0b9; } }
-[data-theme="light"] { --wa-primary: #128C7E; --wa-dark: #075E54; --wa-bg: #efeae2; --wa-bubble-me: #dcf8c6; --wa-bubble-other: #ffffff; --wa-card-bg: #ffffff; --wa-text-main: #212529; --wa-text-muted: #6c757d; --wa-input-bg: #f8f9fa; --wa-border: #dee2e6; --bottom-nav-bg: #ffffff; --bottom-nav-icon: #6c757d; }
+/* KONTRAS TEMA GELAP FIX V1.5.3 */
+[data-theme="dark"] { 
+    --wa-primary: #005c4b; 
+    --wa-dark: #111b21; 
+    --wa-bg: #0b141a; 
+    --wa-bubble-me: #005c4b; 
+    --wa-bubble-other: #202c33; 
+    --wa-card-bg: #111b21; 
+    --wa-text-main: #f0f2f3; 
+    --wa-text-muted: #a1b0b9; 
+    --wa-input-bg: #2a3942; 
+    --wa-border: #374248; 
+    --bottom-nav-bg: #1f2c34; 
+    --bottom-nav-icon: #a1b0b9; 
+}
 
-body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !important; transition: background-color 0.3s ease, color 0.3s ease; padding-bottom: 75px; }
+@media (prefers-color-scheme: dark) { 
+    :root:not([data-theme="light"]) { 
+        --wa-primary: #005c4b; 
+        --wa-dark: #111b21; 
+        --wa-bg: #0b141a; 
+        --wa-bubble-me: #005c4b; 
+        --wa-bubble-other: #202c33; 
+        --wa-card-bg: #111b21; 
+        --wa-text-main: #f0f2f3; 
+        --wa-text-muted: #a1b0b9; 
+        --wa-input-bg: #2a3942; 
+        --wa-border: #374248; 
+        --bottom-nav-bg: #1f2c34; 
+        --bottom-nav-icon: #a1b0b9; 
+    } 
+}
+
+[data-theme="light"] { 
+    --wa-primary: #128C7E; 
+    --wa-dark: #075E54; 
+    --wa-bg: #efeae2; 
+    --wa-bubble-me: #dcf8c6; 
+    --wa-bubble-other: #ffffff; 
+    --wa-card-bg: #ffffff; 
+    --wa-text-main: #212529; 
+    --wa-text-muted: #6c757d; 
+    --wa-input-bg: #f8f9fa; 
+    --wa-border: #dee2e6; 
+    --bottom-nav-bg: #ffffff; 
+    --bottom-nav-icon: #6c757d; 
+}
+
+body { 
+    background-color: var(--wa-bg) !important; 
+    color: var(--wa-text-main) !important; 
+    transition: background-color 0.3s ease, color 0.3s ease; 
+    padding-bottom: 75px; 
+}
+
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
 .bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.3s ease; }
 .text-wa { color: var(--wa-primary) !important; }
-.btn-wa { background-color: var(--wa-primary); color: white; font-weight: bold; border: none; } .btn-wa:hover { background-color: var(--wa-dark); color: white; }
+.btn-wa { background-color: var(--wa-primary); color: white; font-weight: bold; border: none; } 
+.btn-wa:hover { background-color: var(--wa-dark); color: white; }
 .bg-white, .bg-light { background-color: var(--wa-card-bg) !important; transition: background-color 0.3s ease; }
-.text-dark { color: var(--wa-text-main) !important; } .text-muted { color: var(--wa-text-muted) !important; }
+.text-dark { color: var(--wa-text-main) !important; } 
+.text-muted { color: var(--wa-text-muted) !important; }
 .border, .border-bottom, .border-top { border-color: var(--wa-border) !important; }
 .form-control, .form-select, textarea { background-color: var(--wa-input-bg) !important; color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
 .card, .modal-content, .offcanvas { background-color: var(--wa-card-bg) !important; border-color: var(--wa-border) !important; transition: background-color 0.3s ease; color: var(--wa-text-main); }
@@ -39,52 +103,134 @@ body { background-color: var(--wa-bg) !important; color: var(--wa-text-main) !im
 #modernSchoolSelect::-webkit-scrollbar { display: none; } 
 .table, th, td { color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
 
-/* SYSTEM PILL ADAPTIF V1.5.3 (Mung Muncul Teks Pas Aktif) */
+/* ==========================================
+   TAB PILLS ADAPTIF (MENYEMBUNYIKAN TEKS)
+   ========================================== */
 .school-pill .tab-label, 
-.nav-pills .nav-link .tab-label, 
-.wa-bottom-nav .nav-link .tab-label,
-.wa-bottom-nav .btn-nav .tab-label {
-    display: none !important;
+.nav-pills .nav-link .tab-label { 
+    display: none !important; 
 }
-.school-pill i, .nav-pills .nav-link i, .wa-bottom-nav i {
-    color: var(--bottom-nav-icon) !important;
-    font-size: 1.35rem;
-    transition: transform 0.2s ease;
-}
-/* KONDISI AKTIF PILL / TAB */
-.school-pill.active-pill .tab-label,
-.nav-pills .nav-link.active .tab-label,
-.wa-bottom-nav .nav-link.active .tab-label {
-    display: inline-block !important;
-    margin-left: 5px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: #ffffff !important;
-}
-.school-pill.active-pill i, .nav-pills .nav-link.active i, .wa-bottom-nav .nav-link.active i {
-    color: #ffffff !important;
-    transform: scale(1.1);
-}
-.nav-pills .nav-link.active {
-    background-color: var(--wa-primary) !important;
+.school-pill i, .nav-pills .nav-link i { 
+    color: var(--bottom-nav-icon) !important; 
+    font-size: 1.25rem; 
+    transition: transform 0.2s ease; 
 }
 
-/* MENU BAWAH ANTI-MBLUDAK V1.5.3 */
-.wa-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--bottom-nav-bg); display: flex; justify-content: flex-start; gap: 4px; padding: 8px 6px 12px 6px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1030; border-top: 1px solid var(--wa-border); overflow-x: auto; scrollbar-width: none; transition: background-color 0.3s ease; white-space: nowrap; }
+/* Kondisi Aktif Tab Pill */
+.school-pill.active-pill .tab-label, 
+.nav-pills .nav-link.active .tab-label { 
+    display: inline-block !important; 
+    margin-left: 5px; 
+    font-size: 0.75rem; 
+    font-weight: bold; 
+    color: #ffffff !important; 
+}
+.school-pill.active-pill i, .nav-pills .nav-link.active i { 
+    color: #ffffff !important; 
+    transform: scale(1.1); 
+}
+.nav-pills .nav-link.active { 
+    background-color: var(--wa-primary) !important; 
+}
+
+/* ==========================================
+   NAVIGASI BAWAH ADAPTIF (ANTI PENUH)
+   Teks muncul di bawah ikon saat aktif
+   ========================================== */
+.wa-bottom-nav { 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    background-color: var(--bottom-nav-bg); 
+    display: flex; 
+    justify-content: flex-start; 
+    padding: 10px 5px; 
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
+    z-index: 1030; 
+    border-top: 1px solid var(--wa-border); 
+    overflow-x: auto; 
+    scrollbar-width: none; 
+}
 .wa-bottom-nav::-webkit-scrollbar { display: none; }
-.wa-bottom-nav .nav-link, .wa-bottom-nav .btn-nav { display: inline-flex; flex-direction: row; align-items: center; justify-content: center; color: var(--bottom-nav-icon); font-size: 0.65rem; font-weight: bold; border: none; padding: 6px 10px; border-radius: 20px; background: transparent; transition: all 0.2s ease; }
-.wa-bottom-nav .nav-link.active { background-color: #00a884 !important; }
+.wa-bottom-nav .nav-link, .wa-bottom-nav .btn-nav { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    color: var(--bottom-nav-icon); 
+    background: transparent; 
+    border: none; 
+    min-width: 65px; 
+    transition: all 0.2s ease; 
+}
+.wa-bottom-nav i { 
+    font-size: 1.4rem; 
+    transition: transform 0.2s ease; 
+}
+.wa-bottom-nav .tab-label { 
+    display: none; 
+    font-size: 0.65rem; 
+    font-weight: bold; 
+    margin-top: 3px; 
+}
 
-/* ANIMASI SIKLUS TEMA HEADER */
-@keyframes iconPop { 0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-.theme-icon-animate { animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; display: inline-block; }
+/* Kondisi Aktif Navigasi Bawah */
+.wa-bottom-nav .nav-link.active, .wa-bottom-nav .btn-nav:active { 
+    color: var(--wa-primary) !important; 
+}
+.wa-bottom-nav .nav-link.active i { 
+    transform: scale(1.15); 
+    color: var(--wa-primary) !important; 
+}
+.wa-bottom-nav .nav-link.active .tab-label { 
+    display: block; 
+    color: var(--wa-primary) !important; 
+}
 
-/* INDIKATOR STATUS JARINGAN (WIFI) */
-.net-status-icon { transition: color 0.3s ease; }
-.net-online { color: #00ff00 !important; }
+/* ==========================================
+   TOMBOL MELAYANG (FLOATING ACTION BUTTONS)
+   ========================================== */
+.fab-container { 
+    position: fixed; 
+    bottom: 90px; 
+    right: 15px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    z-index: 1025; 
+}
+.fab-btn { 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.5rem; 
+    color: white; 
+    border: none; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+    transition: transform 0.2s; 
+}
+.fab-btn:active { transform: scale(0.9); }
+.fab-wa { background-color: #25D366; }
+.fab-chat { background-color: var(--wa-primary); }
+
+/* Animasi dan Status */
+@keyframes iconPop { 
+    0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 
+    50% { transform: scale(1.2) rotate(10deg); } 
+    100% { transform: scale(1) rotate(0deg); opacity: 1; } 
+}
+.theme-icon-animate { 
+    animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    display: inline-block; 
+}
+.net-online { color: #00ff00 !important; } 
 .net-offline { color: #ff0000 !important; }
 
-.timeline { border-left: 2px solid #00a884; margin-left: 15px; padding-left: 20px; list-style: none; }
+.timeline { border-left: 2px solid var(--wa-primary); margin-left: 15px; padding-left: 20px; list-style: none; }
 .timeline-item { position: relative; margin-bottom: 20px; }
-.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid #00a884; border-radius: 50%; }
+.timeline-item::before { content: ''; position: absolute; left: -27px; top: 0; width: 12px; height: 12px; background-color: var(--wa-card-bg); border: 2px solid var(--wa-primary); border-radius: 50%; }
 .timeline-date { font-size: 0.75rem; font-weight: bold; color: var(--wa-text-muted); } .timeline-title { font-size: 0.95rem; font-weight: bold; } .timeline-desc { font-size: 0.8rem; color: var(--wa-text-muted); }
