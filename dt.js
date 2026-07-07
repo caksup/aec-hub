@@ -1,12 +1,15 @@
 /* ==================================================
-   dt.js - Script Khusus Direktur (Panel Mas Afif)
+   dt.js - Script Khusus Direktur
+   AEC Hub - Versi 1.5.3 Ultimate
    
    Riwayat Versi (JS):
-   - v1.0 - v3.0: Core logic Firebase Direktur.
-   - v4.0: Pemisahan file (dt.js) & Auto-login handler.
-   - v4.1: Listener Roadmap Sistem.
-   - v5.0: Tombol Tema Siklus Header.
-   - v5.1: (CURRENT) Offcanvas Logout Logic terintegrasi.
+   - v1.0 - v1.2: Core logic Firebase Direktur.
+   - v1.3: Pemisahan file & Auto-login handler.
+   - v1.4: Listener Roadmap Sistem.
+   - v1.5: Tombol Tema Siklus Header.
+   - v1.5.1: Offcanvas Logout Logic.
+   - v1.5.2: Uji coba rendering tab adaptif.
+   - v1.5.3: (CURRENT) FIX TOTAL Jam & Tanggal Header Realtime, PWA Persistence, Detektor Wi-Fi.
    ================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, enableIndexedDbPersistence, doc, onSnapshot, updateDoc, collection, query, where, serverTimestamp, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -17,11 +20,18 @@ enableIndexedDbPersistence(db).catch(err => console.warn(err.code));
 
 const actUser = localStorage.getItem("loggedInUser"); const myName = localStorage.getItem("loggedInName");
 if (!actUser) window.location.replace("index.html");
-if(document.getElementById("userNameDisplay")) document.getElementById("userNameDisplay").innerText = myName;
+if(document.getElementById("userNameDisplay")) document.getElementById("userNameDisplay").innerText = myName || "Direktur";
+if(document.getElementById("userIdDisplay")) document.getElementById("userIdDisplay").innerText = actUser || "direktur";
 
-// FUNGSI TEMA SIKLUS (V5.1)
+function updateNetworkStatus() {
+    const icon = document.getElementById("networkStatusIcon"); if(!icon) return;
+    if (navigator.onLine) { icon.className = "bi bi-wifi ms-1 net-status-icon net-online"; } 
+    else { icon.className = "bi bi-wifi-off ms-1 net-status-icon net-offline"; }
+}
+window.addEventListener('online', updateNetworkStatus); window.addEventListener('offline', updateNetworkStatus); updateNetworkStatus();
+
 const themes = ['light', 'dark', 'system'];
-const themeIcons = ['bi-sun-fill text-warning', 'bi-moon-stars-fill text-white', 'bi-display text-info'];
+const themeIcons = ['bi-sun-fill text-warning', 'bi-moon-stars-fill text-light', 'bi-display text-info'];
 let currentThemeIndex = themes.indexOf(localStorage.getItem('aecTheme') || 'system');
 if (currentThemeIndex === -1) currentThemeIndex = 2;
 
@@ -38,42 +48,36 @@ applyThemeVisuals(currentThemeIndex);
 
 const btnCycleTheme = document.getElementById("btnCycleTheme");
 if(btnCycleTheme) { btnCycleTheme.onclick = () => { currentThemeIndex = (currentThemeIndex + 1) % 3; applyThemeVisuals(currentThemeIndex); }; }
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if(themes[currentThemeIndex] === 'system') applyThemeVisuals(currentThemeIndex); });
 
-// UI GLOBAL MODALS & LOGOUT OFFCANVAS
-function initGlobalUI() {
-    const globalModals = `
-    <div class="modal fade" id="modalTentang" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-info-circle-fill me-2"></i>Tentang</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center p-4 bg-light"><i class="bi bi-rocket-takeoff-fill text-wa" style="font-size: 3rem;"></i><h5 class="fw-bold mt-2 mb-0 text-dark">AEC Hub</h5><p class="text-muted text-xs mb-3">Versi 5.1 (Ultimate Cycle Theme)</p></div></div></div></div>
-    <div class="modal fade" id="modalPanduan" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-wa text-white py-2 border-0"><h6 class="modal-title fw-bold"><i class="bi bi-book-half me-2"></i>Panduan</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body bg-light text-sm"><div class="alert alert-info border-0 shadow-sm">Buku panduan Direktur sedang disusun.</div></div></div></div></div>
-    `;
-    if (!document.getElementById('modalTentang')) document.body.insertAdjacentHTML('beforeend', globalModals);
-
-    const logOutFunc = (e) => { e.preventDefault(); if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } };
-    if(document.getElementById("btnLogoutOffcanvas")) document.getElementById("btnLogoutOffcanvas").onclick = logOutFunc;
+function updateClock() {
+    const el = document.getElementById('headClockDate'); if(!el) return; const now = new Date();
+    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+    el.innerText = `${dateStr}\n${timeStr} WIB`;
 }
-initGlobalUI();
+setInterval(updateClock, 1000); updateClock();
 
-// SISTEM KONTROL: Moco Roadmap
+const logOutFunc = (e) => { e.preventDefault(); if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.replace("index.html"); } };
+if(document.getElementById("btnLogoutOffcanvas")) document.getElementById("btnLogoutOffcanvas").onclick = logOutFunc;
+
 onSnapshot(query(collection(db, "roadmaps")), (snap) => {
     const list = document.getElementById("sistemRoadmapList"); if(!list) return; list.innerHTML = "";
     let arr = []; snap.forEach(d => arr.push({id: d.id, ...d.data()}));
     arr.sort((a,b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
     arr.forEach(r => list.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`);
-    if(list.innerHTML==="") list.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap.</div></li>`;
 });
 
-// LOGIKA UTAMA DIREKTUR
 let currentSchoolId = ""; let dataLengkap = [];
 onSnapshot(collection(db, "schools"), (snap) => {
     let schools = []; snap.forEach(d => { if(d.data().status !== 'archived') schools.push({ id: d.id, ...d.data() }); });
     const c1 = document.getElementById("modernSchoolSelect"); const c2 = document.getElementById("overviewCardsContainer");
     if(c1) {
-        c1.innerHTML = `<button class="btn btn-sm ${currentSchoolId===''?'btn-danger':'btn-outline-secondary'} rounded-pill fw-bold school-pill" data-value="">GLOBAL</button>` + schools.map(s => `<button class="btn btn-sm ${currentSchoolId===s.id?'btn-wa border-0':'btn-outline-secondary'} rounded-pill fw-bold school-pill" data-value="${s.id}">${s.namaSekolah}</button>`).join('');
-        c1.querySelectorAll('.school-pill').forEach(btn => btn.onclick = (e) => window.langsungKeSekolah(e.target.getAttribute('data-value')));
+        c1.innerHTML = `<button class="btn btn-sm ${currentSchoolId===''?'btn-danger active-pill':'btn-outline-secondary'} rounded-pill fw-bold school-pill" data-value=""><i class="bi bi-globe"></i><span class="tab-label">GLOBAL</span></button>` + schools.map(s => `<button class="btn btn-sm ${currentSchoolId===s.id?'btn-wa active-pill':'btn-outline-secondary'} rounded-pill fw-bold school-pill" data-value="${s.id}"><i class="bi bi-building"></i><span class="tab-label">${s.namaSekolah}</span></button>`).join('');
+        c1.querySelectorAll('.school-pill').forEach(btn => btn.onclick = (e) => window.langsungKeSekolah(e.currentTarget.getAttribute('data-value')));
     }
     if(c2) {
         if (schools.length === 0) { c2.innerHTML = `<div class="col-12"><div class="alert alert-light text-center small border text-muted">Belum ada sekolah aktif...</div></div>`; return; }
-        c2.innerHTML = schools.map(s => { let jTutor=(s.assignedMentors||[]).length; let jSiswa=0; if(s.masterSiswa){s.masterSiswa.split('\n').forEach(l=>{if(l.includes(':'))jSiswa+=l.split(':')[1].split(',').filter(n=>n.trim()!=="").length;});} return `<div class="col-12 col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100 bg-white cursor-pointer" onclick="window.langsungKeSekolah('${s.id}')" style="border-left: 4px solid var(--wa-primary) !important;"><div class="card-body p-3"><h6 class="fw-bold text-dark mb-3 text-truncate"><i class="bi bi-building-check text-wa me-2"></i>${s.namaSekolah}</h6><div class="d-flex justify-content-between mb-2"><span class="text-xs fw-bold"><i class="bi bi-calendar-event"></i> Hari:</span><span class="badge bg-wa rounded-pill">${s.hariBerjalan||0}/${s.totalHari||0}</span></div><div class="d-flex justify-content-between"><span class="text-xs fw-bold"><i class="bi bi-people"></i> Peserta:</span><span class="badge bg-light text-dark border rounded-pill">${jSiswa}</span></div></div></div></div>`; }).join('');
+        c2.innerHTML = schools.map(s => { let jTutor=(s.assignedMentors||[]).length; let jSiswa=0; if(s.masterSiswa){s.masterSiswa.split('\n').forEach(l=>{if(l.includes(':'))jSiswa+=l.split(':')[1].split(',').filter(n=>n.trim()!=="").length;});} return `<div class="col-12 col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100 bg-white p-1 cursor-pointer" onclick="window.langsungKeSekolah('${s.id}')" style="border-left: 4px solid var(--wa-primary) !important;"><div class="card-body p-3"><h6 class="fw-bold text-dark mb-3 text-truncate"><i class="bi bi-building-check text-wa me-2"></i>${s.namaSekolah}</h6><div class="d-flex justify-content-between mb-2"><span class="text-xs fw-bold">Hari:</span><span class="badge bg-wa rounded-pill">${s.hariBerjalan||0}/${s.totalHari||0}</span></div><div class="d-flex justify-content-between"><span class="text-xs fw-bold">Siswa:</span><span class="badge bg-light text-dark border rounded-pill">${jSiswa}</span></div></div></div></div>`; }).join('');
     }
 });
 
