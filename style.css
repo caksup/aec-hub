@@ -1,18 +1,20 @@
 /* ==================================================
    style.css - Stylesheet Global Terpadu (AEC Hub)
-   AEC Hub - Versi 1.5.4 Ultimate
+   AEC Hub - Versi 1.5.6 Ultimate
    
    Riwayat Versi:
-   - v1.0: Desain awal halaman masuk (login) dan dasbor.
+   - v1.0: Desain awal halaman masuk dan dasbor.
    - v1.1: Adaptasi skema warna hijau gelap gaya WhatsApp Web.
    - v1.2: Penyesuaian tata letak responsif untuk gawai (mobile).
    - v1.3: Penambahan variabel warna untuk mendukung mode gelap (dark mode).
-   - v1.4: Modifikasi gaya untuk pop-up modal modern (pengganti alert bawaan).
+   - v1.4: Modifikasi gaya untuk pop-up modal modern.
    - v1.5: Animasi interaktif ikon tema & transisi warna mode gelap.
-   - v1.5.1: Perbaikan alur navigasi bawah (Offcanvas titik tiga).
-   - v1.5.2: Uji coba penyesuaian kontras warna dan tab menu adaptif.
-   - v1.5.3: Restrukturisasi tata letak menu sesuai daftar periksa dan integrasi FAB.
-   - v1.5.4: (CURRENT) PENGGABUNGAN TOTAL (MERGER). Penyatuan su.css, dt.css, mt.css ke dalam satu berkas style.css global untuk penyederhanaan sistem.
+   - v1.5.1: Perbaikan alur navigasi bawah (Offcanvas).
+   - v1.5.2: Penyesuaian kontras warna dan tab menu adaptif.
+   - v1.5.3: Restrukturisasi tata letak menu dan integrasi tombol melayang (FAB).
+   - v1.5.4: Penggabungan total (Merger) su.css, dt.css, mt.css.
+   - v1.5.5: Pembersihan redundansi kode gaya.
+   - v1.5.6: (CURRENT) Penyelarasan gaya formulir Logbook statis pada panel Mentor.
    ================================================== */
 
 :root { 
@@ -51,8 +53,6 @@
         --wa-primary: #005c4b; 
         --wa-dark: #111b21; 
         --wa-bg: #0b141a; 
-        --wa-bubble-me: #005c4b; 
-        --wa-bubble-other: #202c33; 
         --wa-card-bg: #111b21; 
         --wa-text-main: #f0f2f3; 
         --wa-text-muted: #a1b0b9; 
@@ -85,17 +85,13 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease; 
 }
 
-/* ==========================================
-   GAYA HALAMAN MASUK (LOGIN)
-   ========================================== */
+/* Gaya Halaman Autentikasi (Login) */
 .login-body { height: 100vh; overflow: hidden; margin: 0; padding: 0; }
 .login-header-bg { position: absolute; top: 0; left: 0; width: 100%; height: 220px; background-color: var(--wa-primary); z-index: -1; transition: background-color 0.3s ease; }
 .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
 .login-card { background-color: var(--wa-card-bg); width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 17px 50px 0 rgba(0,0,0,.19), 0 12px 15px 0 rgba(0,0,0,.24); padding: 40px 30px; border: none; z-index: 1; transition: background-color 0.3s ease; }
 
-/* ==========================================
-   GAYA DASBOR (ADMIN, DIREKTUR, MENTOR)
-   ========================================== */
+/* Gaya Dasbor Global */
 .dashboard-body { padding-bottom: 85px; }
 .app-wrapper { max-width: 100%; overflow-x: hidden; }
 .bg-wa { background-color: var(--wa-primary) !important; color: white !important; transition: background-color 0.3s ease; }
@@ -116,9 +112,7 @@ body {
 #modernSchoolSelect::-webkit-scrollbar { display: none; } 
 .table, th, td { color: var(--wa-text-main) !important; border-color: var(--wa-border) !important; }
 
-/* ==========================================
-   TAB PILLS ADAPTIF (Sub-Menu)
-   ========================================== */
+/* Menu Navigasi Sub-Tab (Pills) Adaptif */
 .school-pill .tab-label, 
 .nav-pills .nav-link .tab-label { display: none !important; }
 .school-pill i, .nav-pills .nav-link i { color: var(--bottom-nav-icon) !important; font-size: 1.25rem; transition: transform 0.2s ease; }
@@ -127,9 +121,7 @@ body {
 .school-pill.active-pill i, .nav-pills .nav-link.active i { color: #ffffff !important; transform: scale(1.1); }
 .nav-pills .nav-link.active { background-color: var(--wa-primary) !important; }
 
-/* ==========================================
-   NAVIGASI BAWAH ADAPTIF (4 Menu + Offcanvas)
-   ========================================== */
+/* Navigasi Bawah Utama (Bottom Nav) Adaptif */
 .wa-bottom-nav { 
     position: fixed; 
     bottom: 0; 
@@ -162,23 +154,19 @@ body {
 .wa-bottom-nav i { font-size: 1.4rem; transition: transform 0.3s ease; margin-bottom: 2px; }
 .wa-bottom-nav .tab-label { display: none; font-size: 0.65rem; font-weight: bold; margin-top: 3px; }
 
-/* Kondisi Saat Navigasi Aktif */
+/* Efek Menu Saat Aktif */
 .wa-bottom-nav .nav-link.active, .wa-bottom-nav .btn-nav:active { color: var(--wa-primary) !important; }
 .wa-bottom-nav .nav-link.active i { transform: scale(1.15) translateY(-3px); color: var(--wa-primary) !important; }
 .wa-bottom-nav .nav-link.active .tab-label { display: block; color: var(--wa-primary) !important; }
 
-/* ==========================================
-   TOMBOL MELAYANG (FLOATING ACTION BUTTONS)
-   ========================================== */
+/* Tombol Melayang (Floating Action Buttons) */
 .fab-container { position: fixed; bottom: 85px; right: 15px; display: flex; flex-direction: column; gap: 15px; z-index: 1025; }
 .fab-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s; }
 .fab-btn:active { transform: scale(0.9); }
 .fab-wa { background-color: #25D366; }
 .fab-chat { background-color: var(--wa-primary); }
 
-/* ==========================================
-   ANIMASI, INDIKATOR, DAN LINI MASA (TIMELINE)
-   ========================================== */
+/* Animasi, Indikator Jaringan, dan Peta Jalan */
 @keyframes iconPop { 0% { transform: scale(0.5) rotate(-45deg); opacity: 0; } 50% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
 .theme-icon-animate { animation: iconPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; display: inline-block; }
 .animate-pop { animation: iconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
