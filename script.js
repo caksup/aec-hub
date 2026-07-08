@@ -1,15 +1,13 @@
 /* ==================================================
    script.js - Skrip Pangkalan Data Global Terpadu
-   AEC Hub - Versi 1.5.4 Ultimate
+   AEC Hub - Versi 1.5.6 Ultimate
    
    Riwayat Versi (JS):
-   - v1.0: Inisialisasi Firebase dan logika masuk (login) dasar.
-   - v1.1: Penambahan pengaturan pengalihan rute (redirect) berdasarkan peran.
-   - v1.2: Pengelolaan dan penyimpanan data sesi di LocalStorage.
-   - v1.3: Penghapusan alert bawaan dan diganti dengan fungsi Pop-up Modern.
-   - v1.4: Deteksi otomatis mode gelap.
-   - v1.5.3: Evaluasi keamanan masuk, perlindungan akun nonaktif.
-   - v1.5.4: (CURRENT) PENGGABUNGAN TOTAL (MERGER). Penyatuan logika dari su.js, dt.js, dan mt.js ke dalam satu kontrol skrip global dengan perlindungan pembatasan peran (Role-Based Access Control) yang sangat ketat untuk mencegah konflik DOM.
+   - v1.0 - v1.4: Inisialisasi Firebase dan manajemen CRUD secara terpisah.
+   - v1.5.3: Evaluasi keamanan masuk dan perlindungan akun.
+   - v1.5.4: PENGGABUNGAN TOTAL (MERGER) seluruh logika Admin, Direktur, Mentor.
+   - v1.5.5: Pembersihan rute dan fungsi ganda.
+   - v1.5.6: (CURRENT) FIX TOTAL SISTEM MENTOR. Pemisahan fungsi render HTML Logbook dari pendengar pembaruan (onSnapshot) untuk mencegah hilangnya Event Listener. Validasi fungsi Obrolan dan WA untuk semua peran.
    ================================================== */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -27,7 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig); 
 export const db = getFirestore(app);
 
-// Mengaktifkan Penyimpanan Luring (PWA Offline Persistence)
+// Aktifkan Penyimpanan Luring (PWA Offline Persistence)
 enableIndexedDbPersistence(db).catch((err) => { 
     console.warn("Peringatan PWA Luring:", err.code); 
 });
@@ -42,7 +40,7 @@ window.showModernAlert = function(title, message, type = 'error') {
     const modalEl = document.getElementById('modernAlertModal');
     
     if(!titleEl || !msgEl || !iconEl || !modalEl) {
-        alert(message); return; // Jatuh kembali (fallback) jika HTML belum termuat
+        alert(message); return;
     }
     
     titleEl.innerText = title;
@@ -56,7 +54,7 @@ window.showModernAlert = function(title, message, type = 'error') {
     modal.show();
 }
 
-// Deteksi Tema Gelap (Dark Mode) Global
+// Deteksi Tema Gelap Otomatis
 const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
 
@@ -66,47 +64,50 @@ const actRole = localStorage.getItem("loggedInRole");
 const myName = localStorage.getItem("loggedInName");
 
 // ==========================================
-// BLOK 1: LOGIKA HALAMAN MASUK (LOGIN)
+// BLOK 1: HALAMAN MASUK (LOGIN)
 // ==========================================
-if (document.getElementById("loginForm")) {
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById("btnLogin");
-        const u = document.getElementById("username").value.toLowerCase().trim();
-        const p = document.getElementById("pin").value.trim();
-        
-        if (!u || !p) return window.showModernAlert("Akses Ditolak", "ID Pengguna dan PIN keamanan wajib diisi secara lengkap.");
-        
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memverifikasi...'; btn.disabled = true;
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("btnLogin");
+            const u = document.getElementById("username").value.toLowerCase().trim();
+            const p = document.getElementById("pin").value.trim();
+            
+            if (!u || !p) return window.showModernAlert("Akses Ditolak", "ID Pengguna dan PIN keamanan wajib diisi secara lengkap.");
+            
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Memverifikasi...'; btn.disabled = true;
 
-        try {
-            const snap = await getDoc(doc(db, "users", u));
-            if (snap.exists() && snap.data().pin === p) {
-                const data = snap.data();
-                if (data.status === "nonaktif") {
-                    window.showModernAlert("Akses Terkunci", "Akun Anda sedang dinonaktifkan oleh Administrator. Silakan hubungi pusat.");
-                    btn.innerHTML = 'MASUK SISTEM'; btn.disabled = false; return;
+            try {
+                const snap = await getDoc(doc(db, "users", u));
+                if (snap.exists() && snap.data().pin === p) {
+                    const data = snap.data();
+                    if (data.status === "nonaktif") {
+                        window.showModernAlert("Akses Terkunci", "Akun Anda sedang dinonaktifkan oleh Administrator.");
+                        btn.innerHTML = 'MASUK SISTEM'; btn.disabled = false; return;
+                    }
+                    localStorage.setItem("loggedInUser", u);
+                    localStorage.setItem("loggedInRole", data.role);
+                    localStorage.setItem("loggedInName", data.julukan || u);
+                    
+                    if (data.role === "admin") window.location.replace("superuser.html");
+                    else if (data.role === "direktur") window.location.replace("direktur.html");
+                    else window.location.replace("mentor.html");
+                } else {
+                    window.showModernAlert("Akses Ditolak", "Kombinasi ID Pengguna atau PIN tidak valid.");
+                    btn.innerHTML = 'MASUK SISTEM'; btn.disabled = false;
                 }
-                localStorage.setItem("loggedInUser", u);
-                localStorage.setItem("loggedInRole", data.role);
-                localStorage.setItem("loggedInName", data.julukan || u);
-                
-                if (data.role === "admin") window.location.replace("superuser.html");
-                else if (data.role === "direktur") window.location.replace("direktur.html");
-                else window.location.replace("mentor.html");
-            } else {
-                window.showModernAlert("Akses Ditolak", "Kombinasi ID Pengguna atau PIN tidak valid.");
+            } catch (err) {
+                window.showModernAlert("Kesalahan Jaringan", "Gagal terhubung ke pangkalan data. Periksa koneksi internet Anda.");
                 btn.innerHTML = 'MASUK SISTEM'; btn.disabled = false;
             }
-        } catch (err) {
-            window.showModernAlert("Kesalahan Jaringan", "Gagal terhubung ke pangkalan data. Harap periksa koneksi internet Anda.");
-            btn.innerHTML = 'MASUK SISTEM'; btn.disabled = false;
-        }
-    });
-}
+        });
+    }
+});
 
 // ==========================================
-// BLOK 2: LOGIKA GLOBAL DASBOR (ADMIN/DIREKTUR/MENTOR)
+// BLOK 2: LOGIKA GLOBAL DASBOR
 // ==========================================
 if (actUser && document.getElementById("userNameDisplay")) {
     document.getElementById("userNameDisplay").innerText = myName || "Pengguna";
@@ -133,7 +134,7 @@ if (actUser && document.getElementById("userNameDisplay")) {
     applyThemeVisuals(currentThemeIndex);
     if(document.getElementById("btnCycleTheme")) document.getElementById("btnCycleTheme").onclick = () => { currentThemeIndex = (currentThemeIndex + 1) % 3; applyThemeVisuals(currentThemeIndex); };
 
-    // Waktu Nyata
+    // Penghasil Waktu Nyata
     function updateClock() {
         const el = document.getElementById('headClockDate'); if(!el) return; const now = new Date();
         const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
@@ -142,15 +143,15 @@ if (actUser && document.getElementById("userNameDisplay")) {
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // Fungsi Logout Global
+    // Fungsi Keluar (Logout)
     if(document.getElementById("btnLogoutOffcanvas")) { 
         document.getElementById("btnLogoutOffcanvas").onclick = (e) => { 
             e.preventDefault(); 
-            if(confirm("Keluar dari sistem keamanan AEC Hub?")) { localStorage.clear(); window.location.replace("index.html"); } 
+            if(confirm("Apakah Anda yakin ingin keluar dari sistem keamanan AEC Hub?")) { localStorage.clear(); window.location.replace("index.html"); } 
         }; 
     }
 
-    // Variabel Penampung Data Global Pangkalan Data
+    // Variabel Pusat
     let currentSchoolId = ""; let rawKurikulum = {}; let rawMasterSiswa = ""; let dataLengkap = []; let masterTugasWA = [];
     let globalAllSchools = []; let globalAllUsers = []; let currentAssignedMentors = []; 
     let unsubSchool = null; let unsubLogbooks = null; let unsubChats = null; let unsubWA = null;
@@ -158,9 +159,9 @@ if (actUser && document.getElementById("userNameDisplay")) {
     function bersihkanListener() { if(unsubSchool) unsubSchool(); if(unsubLogbooks) unsubLogbooks(); if(unsubChats) unsubChats(); if(unsubWA) unsubWA(); dataLengkap = []; masterTugasWA = []; }
 
     // ==========================================
-    // BLOK KHUSUS: ADMINISTRATOR (SUPERUSER)
+    // BLOK 3A: LOGIKA ADMINISTRATOR (SUPERUSER)
     // ==========================================
-    if (actRole === 'admin' && document.getElementById("adminTabs")) {
+    if (actRole === 'admin' && window.location.pathname.includes("superuser.html")) {
         
         onSnapshot(collection(db, "schools"), (snap) => { 
             globalAllSchools = []; let archivedSchools = [];
@@ -324,7 +325,7 @@ if (actUser && document.getElementById("userNameDisplay")) {
     }
 
     // ==========================================
-    // BLOK KHUSUS: DIREKTUR
+    // BLOK 3B: LOGIKA DIREKTUR (PENGAWAS)
     // ==========================================
     if (actRole === 'direktur' && window.location.pathname.includes("direktur.html")) {
         
@@ -385,10 +386,23 @@ if (actUser && document.getElementById("userNameDisplay")) {
     }
 
     // ==========================================
-    // BLOK KHUSUS: MENTOR (EKSEKUTOR)
+    // BLOK 3C: LOGIKA MENTOR (EKSEKUTOR LAPANGAN)
     // ==========================================
     if (actRole === 'mentor' && window.location.pathname.includes("mentor.html")) {
         
+        // Pemasangan Event Listener Statis (Dipasang 1x)
+        const selKelas = document.getElementById('inputKelas');
+        if(selKelas) selKelas.addEventListener('change', renderFormAbsenMentor);
+        
+        const btnSubmit = document.getElementById("btnSubmitLogbook");
+        if(btnSubmit) btnSubmit.addEventListener('click', eksekusiKirimLogbookMentor);
+
+        const btnChat = document.getElementById("btnSendChat");
+        if(btnChat) { btnChat.addEventListener('click', async () => { const msg = document.getElementById("inputChat").value.trim(); if(!msg || !currentSchoolId) return; await addDoc(collection(db, "chats"), { schoolId: currentSchoolId, sender: myName, message: msg, waktu: serverTimestamp(), type: 'global', role: "mentor" }); document.getElementById("inputChat").value = ""; }); }
+        
+        const btnLapor = document.getElementById("btnKirimLapor");
+        if(btnLapor) { btnLapor.addEventListener('click', () => { const detail = document.getElementById("laporDetail").value.trim(); if(!detail) return window.showModernAlert("Peringatan", "Mohon lengkapi detail kendala Anda secara spesifik."); const text = `🚨 *LAPORAN KENDALA LAPANGAN (AEC HUB)* 🚨\n\n*Pelapor:* ${myName}\n*Role:* Mentor Eksekutor\n*Kendala:* ${detail}`; window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`, '_blank'); document.getElementById("laporDetail").value = ""; }); }
+
         onSnapshot(collection(db, "schools"), (snap) => {
             let listSekolah = []; snap.forEach(doc => { if(doc.data().status !== 'archived') listSekolah.push({ id: doc.id, ...doc.data() }); });
             const tugasSekolahku = listSekolah.find(s => s.assignedMentors && s.assignedMentors.includes(actUser));
@@ -400,15 +414,24 @@ if (actUser && document.getElementById("userNameDisplay")) {
             onSnapshot(doc(db, "schools", sid), (docSnap) => {
                 if(!docSnap.exists()) return; const d = docSnap.data();
                 const filledArr = ["❶","❷","❸","❹","❺","❻","❼","❽","❾","❿","⓫","⓬","⓭","⓮","⓯","⓰","⓱","⓲","⓳","⓴"]; const hBerjalan = parseInt(d.hariBerjalan) || 0; const tHari = parseInt(d.totalHari) || 5; const timelineText = `${(hBerjalan > 0 && hBerjalan <= 20) ? filledArr[hBerjalan - 1] : hBerjalan}/${tHari}`;
-                let jadwalLive = "Tidak ada jadwal kelas."; if (d.jadwal && d.jadwal !== "-") { const lines = d.jadwal.split('\n'); const now = new Date(); const cur = now.getHours() * 60 + now.getMinutes(); for (let line of lines) { const match = line.match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/); if (match) { const s = parseInt(match[1]) * 60 + parseInt(match[2]); const e = parseInt(match[3]) * 60 + parseInt(match[4]); if (cur >= s && cur <= e) return line; } } jadwalLive = "Di luar jam kelas operasional."; }
+                let jadwalLive = "Tidak ada jadwal kelas."; if (d.jadwal && d.jadwal !== "-") { const lines = d.jadwal.split('\n'); const now = new Date(); const cur = now.getHours() * 60 + now.getMinutes(); for (let line of lines) { const match = line.match(/(\d{1,2})[.:](\d{2})\s*-\s*(\d{1,2})[.:](\d{2})/); if (match) { const s = parseInt(match[1]) * 60 + parseInt(match[2]); const e = parseInt(match[3]) * 60 + parseInt(match[4]); if (cur >= s && cur <= e) { jadwalLive = line; break; } } } }
                 
                 if(document.getElementById("schoolInfoBar")) document.getElementById("schoolInfoBar").classList.remove("d-none"); if(document.getElementById("headSekolah")) document.getElementById("headSekolah").innerText = d.namaSekolah; if(document.getElementById("headTimeline")) document.getElementById("headTimeline").innerText = timelineText; if(document.getElementById("tutorJadwalHarian")) document.getElementById("tutorJadwalHarian").innerText = jadwalLive;
                 if(document.getElementById("tutorBriefing")) document.getElementById("tutorBriefing").innerText = d.briefing || "-"; if(document.getElementById("tutorJadwal")) document.getElementById("tutorJadwal").innerText = d.jadwal || "-"; if(document.getElementById("tutorGoal")) document.getElementById("tutorGoal").innerText = d.goal || "-";
                 
                 rawKurikulum = d.kurikulum || {}; rawMasterSiswa = d.masterSiswa || "";
-                renderStrukturFormLogbookMentor(d.masterKelas); renderDinamicMateriMentor(jadwalLive); renderFormAbsenMentor();
                 
-                const arrKelas = (d.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!==""); const filWA = document.getElementById("filterWA"); if(filWA) { filWA.innerHTML = `<option value="SEMUA">Semua Kelas Tergabung</option>` + arrKelas.map(k => `<option value="${k}">${k}</option>`).join(''); }
+                // Pembaruan Kelas Dinamis tanpa Menghapus Formulir Utama
+                if(document.getElementById("inputKelas")) {
+                    const arrKelas = (d.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!=="");
+                    const currentSelected = document.getElementById("inputKelas").value;
+                    let htmlOptions = '<option value="">Pilih...</option>' + arrKelas.map(k => `<option value="${k}" ${k===currentSelected?'selected':''}>${k}</option>`).join('');
+                    document.getElementById("inputKelas").innerHTML = htmlOptions;
+                }
+                
+                renderDinamicMateriMentor(jadwalLive); renderFormAbsenMentor();
+                
+                const arrKelasFilter = (d.masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!==""); const filWA = document.getElementById("filterWA"); if(filWA) { filWA.innerHTML = `<option value="SEMUA">Semua Kelas Tergabung</option>` + arrKelasFilter.map(k => `<option value="${k}">${k}</option>`).join(''); }
             });
 
             onSnapshot(query(collection(db, "chats"), where("schoolId", "==", sid)), (snap) => {
@@ -428,14 +451,6 @@ if (actUser && document.getElementById("userNameDisplay")) {
         if(document.getElementById("filterWA")) document.getElementById("filterWA").addEventListener('change', renderTugasWAEksekusiMentor);
         window.kirimKeWAMentor = function(encodedText) { window.open(`https://wa.me/?text=${encodedText}`, '_blank'); }
 
-        function renderStrukturFormLogbookMentor(masterKelas) {
-            const formBox = document.getElementById("formLogbook"); if(!formBox) return;
-            if(document.getElementById("inputKelas")) { const arrKelas = (masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!==""); const currentSelected = document.getElementById("inputKelas").value; let htmlOptions = arrKelas.map(k => `<option value="${k}" ${k===currentSelected?'selected':''}>${k}</option>`).join(''); document.getElementById("inputKelas").innerHTML = htmlOptions; return; }
-            const arrKelas = (masterKelas || "").split(',').map(k=>k.trim()).filter(k=>k!==""); let htmlOptions = arrKelas.map(k => `<option value="${k}">${k}</option>`).join('');
-            formBox.innerHTML = `<h6 class="fw-bold text-primary mb-3"><i class="bi bi-journal-check me-2"></i> Input Sesi Kelas</h6><div class="row g-2 mb-3"><div class="col-6"><label class="text-xs fw-bold text-secondary mb-1">PILIH KELAS</label><select id="inputKelas" class="form-select form-select-sm rounded-pill border-primary fw-bold text-dark">${htmlOptions}</select></div><div class="col-6"><label class="text-xs fw-bold text-secondary mb-1">SESI / JAM KE</label><select id="inputJam" class="form-select form-select-sm rounded-pill border-primary fw-bold text-dark"><option value="Jam 1">Sesi 1</option><option value="Jam 2">Sesi 2</option><option value="Jam 3">Sesi 3</option><option value="Jam 4">Sesi 4</option><option value="Jam 5">Sesi 5</option></select></div></div><div class="p-2 border rounded bg-light mb-3"><h6 class="text-xs fw-bold text-wa mb-2 border-bottom pb-1"><i class="bi bi-list-check me-1"></i> CENTANG MATERI SESI INI:</h6><div id="wadahVocab" class="mb-2 d-none"><span class="badge bg-primary mb-1 shadow-sm px-3">Vocab</span><div id="checkVocab" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahSpeaking"><span class="badge bg-success mb-1 shadow-sm px-3">Speaking</span><div id="checkSpeaking" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahGrammar"><span class="badge bg-danger mb-1 shadow-sm px-3">Grammar</span><div id="checkGrammar" class="row g-1 text-xs px-1"></div></div><div class="mb-2 d-none" id="wadahPractice"><span class="badge bg-warning text-dark mb-1 shadow-sm px-3">Practice</span><div id="checkPractice" class="row g-1 text-xs px-1"></div></div></div><div class="mb-3"><label class="text-xs fw-bold text-secondary mb-1">CATATAN KELAS (EVALUASI)</label><textarea id="inputCatatan" class="form-control text-sm border-secondary" rows="3" placeholder="Sampaikan kendala, pertanyaan siswa, dan keberhasilan kelas..."></textarea></div><div class="mb-3"><label class="text-xs fw-bold text-secondary mb-1">TUGAS MANDIRI / PR (OPSIONAL)</label><textarea id="inputTugasSiswa" class="form-control text-sm border-secondary" rows="2" placeholder="Tugas yang harus dikerjakan di rumah..."></textarea></div><div class="p-2 border rounded bg-white shadow-sm mb-3"><h6 class="border-bottom pb-1 mb-2"><b>👥 DAFTAR PESERTA & NILAI:</b></h6><div id="listAbsenSiswa" class="space-y-2"></div></div><button id="btnSubmitLogbook" class="btn btn-wa w-100 fw-bold rounded-pill py-2 shadow-sm"><i class="bi bi-send-fill me-2"></i> KIRIM DATA LAPORAN (LOGBOOK)</button>`;
-            document.getElementById('inputKelas').addEventListener('change', renderFormAbsenMentor); document.getElementById("btnSubmitLogbook").addEventListener('click', eksekusiKirimLogbookMentor);
-        }
-
         function renderDinamicMateriMentor(jadwalLive) {
             const low = jadwalLive.toLowerCase(); const v = document.getElementById("wadahVocab"); const s = document.getElementById("wadahSpeaking"); const g = document.getElementById("wadahGrammar"); const p = document.getElementById("wadahPractice"); const cv = document.getElementById("checkVocab"); const cs = document.getElementById("checkSpeaking"); const cg = document.getElementById("checkGrammar"); const cp = document.getElementById("checkPractice");
             if(!v) return; v.classList.add('d-none'); s.classList.add('d-none'); g.classList.add('d-none'); p.classList.add('d-none'); cv.innerHTML = ""; cs.innerHTML = ""; cg.innerHTML = ""; cp.innerHTML = "";
@@ -447,6 +462,7 @@ if (actUser && document.getElementById("userNameDisplay")) {
 
         function renderFormAbsenMentor() {
             const klsEl = document.getElementById('inputKelas'); const list = document.getElementById('listAbsenSiswa'); if(!list || !klsEl) return; const kls = klsEl.value; list.innerHTML = ""; let arrSiswa = [];
+            if(!kls) { list.innerHTML = `<div class="text-muted small text-center p-3 border rounded bg-light">Pilih kelas terlebih dahulu.</div>`; return; }
             rawMasterSiswa.split('\n').forEach(line => { if(line.startsWith(kls + ":")) { arrSiswa = line.split(':')[1].split(',').map(n => n.trim()).filter(n => n !== ""); } });
             if(arrSiswa.length === 0) { list.innerHTML = `<div class="text-center text-muted small p-3 border rounded bg-light">Data absen peserta (mahasiswa) belum diunggah secara sistem oleh Admin untuk ruang kelas ini.</div>`; return; }
             arrSiswa.forEach((nama) => { list.innerHTML += `<div class="d-flex align-items-center justify-content-between p-2 border rounded bg-light siswa-row mb-2 shadow-sm"><div class="fw-bold text-dark text-xs text-truncate w-50 nama-siswa">${nama}</div><div class="d-flex gap-2 justify-content-end w-50"><select class="form-select form-select-sm absen-siswa p-1 text-center fw-bold border-success text-success shadow-sm" style="width:55px; font-size:0.75rem;"><option value="h">✔ (Hadir)</option><option value="a">✖ (Alfa)</option><option value="s">S (Sakit)</option><option value="i">I (Izin)</option></select><input type="text" class="form-control form-control-sm nilai-siswa p-1 text-center text-xs border-primary fw-bold shadow-sm" style="width:50px;" placeholder="Nilai"></div></div>`; });
@@ -454,31 +470,31 @@ if (actUser && document.getElementById("userNameDisplay")) {
 
         async function eksekusiKirimLogbookMentor() {
             const btn = document.getElementById("btnSubmitLogbook"); const kelas = document.getElementById("inputKelas").value; const jam = document.getElementById("inputJam").value; const catatan = document.getElementById("inputCatatan").value; const tugas = document.getElementById("inputTugasSiswa").value;
+            if(!kelas) return window.showModernAlert("Peringatan Sistem", "Pilih kelas terlebih dahulu!");
             let flatMateri = []; document.querySelectorAll('.cek-materi:checked').forEach(el => flatMateri.push(el.value));
             if(flatMateri.length === 0) { return window.showModernAlert("Peringatan Sistem", "Harap centang minimal satu materi yang diajarkan pada sesi ini sebelum memproses pengiriman data!"); }
             let dataSiswa = []; document.querySelectorAll('.siswa-row').forEach(row => { dataSiswa.push({ nama: row.querySelector('.nama-siswa').innerText, kehadiran: row.querySelector('.absen-siswa').value, nilai: row.querySelector('.nilai-siswa').value.trim() }); });
             btn.innerHTML = '<span class="spinner-border spinner-border-sm text-white"></span> Menyinkronkan...'; btn.disabled = true;
-            try { await addDoc(collection(db, "logbooks"), { schoolId: currentSchoolId, mentorId: actUser, nama: myName, kelas, jamKe: jam, materi: flatMateri, laporanSiswa: catatan, dataSiswa, tugasSiswa: tugas, waktu: serverTimestamp() }); window.showModernAlert("Transmisi Berhasil", "Seluruh data laporan aktivitas (Logbook) Anda telah terekam aman secara global dan terenkripsi di dalam pangkalan data.", "success"); document.getElementById("inputCatatan").value = ""; document.getElementById("inputTugasSiswa").value = ""; document.querySelectorAll('.cek-materi').forEach(el => el.checked = false); document.querySelectorAll('.nilai-siswa').forEach(el => el.value = ""); document.querySelectorAll('.absen-siswa').forEach(el => el.value = "h"); } catch(e) { window.showModernAlert("Gagal Mentransmisikan", "Kegagalan teknis saat menghubungkan: " + e.message); }
+            try { await addDoc(collection(db, "logbooks"), { schoolId: currentSchoolId, mentorId: actUser, nama: myName, kelas, jamKe: jam, materi: flatMateri, laporanSiswa: catatan, dataSiswa, tugasSiswa: tugas, waktu: serverTimestamp() }); window.showModernAlert("Transmisi Berhasil", "Seluruh data laporan aktivitas (Logbook) Anda telah terekam aman secara global dan terenkripsi di dalam pangkalan data.", "success"); document.getElementById("inputCatatan").value = ""; document.getElementById("inputTugasSiswa").value = ""; document.querySelectorAll('.cek-materi').forEach(el => el.checked = false); document.querySelectorAll('.nilai-siswa').forEach(el => el.value = ""); document.querySelectorAll('.absen-siswa').forEach(el => el.value = "h"); document.getElementById("inputKelas").value = ""; renderFormAbsenMentor(); } catch(e) { window.showModernAlert("Gagal Mentransmisikan", "Kegagalan teknis saat menghubungkan: " + e.message); }
             btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> KIRIM DATA LAPORAN (LOGBOOK)'; btn.disabled = false;
         }
-
-        if(document.getElementById("btnSendChat")) { document.getElementById("btnSendChat").onclick = async () => { const msg = document.getElementById("inputChat").value.trim(); if(!msg || !currentSchoolId) return; await addDoc(collection(db, "chats"), { schoolId: currentSchoolId, sender: myName, message: msg, waktu: serverTimestamp(), type: 'global', role: "mentor" }); document.getElementById("inputChat").value = ""; }; }
-        
-        if(document.getElementById("btnKirimLapor")) { document.getElementById("btnKirimLapor").onclick = () => { const detail = document.getElementById("laporDetail").value.trim(); if(!detail) return window.showModernAlert("Peringatan", "Mohon lengkapi detail kendala Anda secara spesifik."); const text = `🚨 *LAPORAN KENDALA LAPANGAN (AEC HUB)* 🚨\n\n*Pelapor:* ${myName}\n*Role:* Mentor Eksekutor\n*Kendala:* ${detail}`; window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(text)}`, '_blank'); document.getElementById("laporDetail").value = ""; }; }
     }
 
-    // PUSTAKA GUDANG MATERI CLOUD (GLOBAL UNTUK SEMUA ROLE JIKA ADA ID)
-    onSnapshot(collection(db, "materials"), (snap) => {
-        const list = document.getElementById("listGudangMateri"); if(!list) return; list.innerHTML = ""; let html = "";
-        snap.forEach(d => { const data = d.data(); html += `<div class="d-flex justify-content-between align-items-center p-3 border rounded mb-2 bg-white shadow-sm border-start border-info border-4"><div><div class="fw-bold text-dark text-sm mb-1">${data.judul} <span class="badge bg-wa rounded-pill ms-1">${data.kelas}</span></div></div><a href="${data.link}" target="_blank" class="btn btn-sm btn-primary py-1 px-4 rounded-pill fw-bold shadow-sm">Akses Modul</a></div>`; });
-        list.innerHTML = html || "<div class='text-muted text-center small mt-2 p-3 border rounded bg-light'>Belum ada transmisi modul materi eksternal pembelajaran (pustaka) dari ruang Administrator pusat.</div>";
-    });
-    
-    // ROADMAP GLOBAL MENTOR & DIREKTUR READ ONLY
-    onSnapshot(query(collection(db, "roadmaps")), (snap) => {
-        const list = document.getElementById("sistemRoadmapList"); if(!list) return; list.innerHTML = "";
-        let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
-        if(arr.length === 0) list.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap program instruksi.</div></li>`;
-        arr.forEach(r => list.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`);
-    });
+    // ==========================================
+    // BLOK 4: FUNGSI PUSTAKA (DIREKTUR & MENTOR)
+    // ==========================================
+    if (actRole !== 'admin') {
+        onSnapshot(collection(db, "materials"), (snap) => {
+            const list = document.getElementById("listGudangMateri"); if(!list) return; list.innerHTML = ""; let html = "";
+            snap.forEach(d => { const data = d.data(); html += `<div class="d-flex justify-content-between align-items-center p-3 border rounded mb-2 bg-white shadow-sm border-start border-info border-4"><div><div class="fw-bold text-dark text-sm mb-1">${data.judul} <span class="badge bg-wa rounded-pill ms-1">${data.kelas}</span></div></div><a href="${data.link}" target="_blank" class="btn btn-sm btn-primary py-1 px-4 rounded-pill fw-bold shadow-sm">Akses Modul</a></div>`; });
+            list.innerHTML = html || "<div class='text-muted text-center small mt-2 p-3 border rounded bg-light'>Belum ada transmisi modul materi eksternal pembelajaran (pustaka) dari ruang Administrator pusat.</div>";
+        });
+        
+        onSnapshot(query(collection(db, "roadmaps")), (snap) => {
+            const list = document.getElementById("sistemRoadmapList"); if(!list) return; list.innerHTML = "";
+            let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => (b.created_at?.toMillis() || 0) - (a.created_at?.toMillis() || 0));
+            if(arr.length === 0) list.innerHTML = `<li class="timeline-item"><div class="timeline-desc text-muted">Belum ada roadmap program instruksi.</div></li>`;
+            arr.forEach(r => list.innerHTML += `<li class="timeline-item"><div class="timeline-date">${r.waktu_target}</div><div class="timeline-title">${r.judul}</div><div class="timeline-desc">${r.deskripsi}</div></li>`);
+        });
+    }
 }
