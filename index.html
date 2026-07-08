@@ -1,3 +1,13 @@
+<!-- ==================================================
+     index.html - Halaman Autentikasi Pengguna
+     AEC Hub - Versi 1.6.2 Ultimate
+     
+     Riwayat Versi (HTML):
+     - v1.0 - v1.4: Pembuatan dan modifikasi antarmuka masuk.
+     - v1.5.3 - v1.5.7: Integrasi arsitektur berkas tunggal (Merger).
+     - v1.5.8 - v1.6.1: Pembersihan sisa konflik dan pengalihan kelas UI.
+     - v1.6.2: (CURRENT) FIX TOTAL. Penguncian stabilitas keamanan masuk dan dukungan PWA luring tanpa batas (seamless offline mode).
+     ================================================== -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -11,12 +21,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
-    
     <div class="login-header-bg"></div>
     <div class="login-container">
         <div class="login-card text-center animate-pop">
             <i class="bi bi-chat-square-quote-fill text-wa mb-3 d-block" style="font-size: 3.5rem;"></i>
-            <h4 class="fw-bold mb-1">AEC Hub</h4>
+            <h4 class="fw-bold mb-1 text-dark">AEC Hub</h4>
             <p class="text-muted small mb-4">Sistem Manajemen Pengajaran Terpadu</p>
             
             <form id="loginForm">
@@ -33,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Modal Peringatan Modern -->
     <div class="modal fade" id="modernAlertModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content text-center p-4 shadow">
